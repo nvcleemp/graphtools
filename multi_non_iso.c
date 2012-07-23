@@ -19,8 +19,10 @@ typedef unsigned long *NAUTYGRAPH;
 typedef struct le { NAUTYGRAPH nautyg;
 		    int knotenzahl;
 		    struct le *smaller;
-		    struct le *larger; } LISTENTRY;
+		    struct le *larger;
+			int id;} LISTENTRY;
 
+int  zaehlen=0;
 
 int graphenzahl=0, noniso, debugzaehler=0, ausgabezaehler=0;
 LISTENTRY *arbeitsliste;
@@ -120,13 +122,14 @@ debugzaehler++;
      el->knotenzahl=knotenzahl;
      el->smaller=nil;
      el->larger=nil;
+	 el->id=zaehlen;
    }
 
 
 
 /**************************IN_LISTE********************************/
 
-void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test)
+void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test, int *copy)
 /* schaut nach, ob canong schon in der Liste ist und schreibt ihn eventuell
   rein */
 { int compare;
@@ -137,27 +140,35 @@ void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test)
  compare = knotenzahl - el->knotenzahl;
  if (compare==0)
    compare=memcmp(canong,el->nautyg,m*knotenzahl*sizeof(unsigned long));
- if (compare==0) *test=0;
- else if (compare<0) 
-   { if (el->smaller==nil)
-	{ *test=1; 
-	  el->smaller=(LISTENTRY *)malloc(sizeof(LISTENTRY));
-	  if (el->smaller==nil) 
-	    { fprintf(stderr,"Can not get more memory !\n"); exit(99); }
-	  einbauen(el->smaller,canong,m,knotenzahl);
+ if (compare==0) {
+     *test=0;
+	 *copy=el->id;
+ } else if (compare<0){
+	if (el->smaller==nil){
+		*test=1; 
+		*copy=0;
+		el->smaller=(LISTENTRY *)malloc(sizeof(LISTENTRY));
+		if (el->smaller==nil) {
+			fprintf(stderr,"Can not get more memory !\n"); exit(99);
+		}
+		einbauen(el->smaller,canong,m,knotenzahl);
+	} else {
+		in_liste(el->smaller,canong,m,knotenzahl,test,copy);
 	}
-     else in_liste(el->smaller,canong,m,knotenzahl,test);
-   }
- else /* compare > 0 */
-   { if (el->larger==nil)
-	{ *test=1; 
-	  el->larger=(LISTENTRY *)malloc(sizeof(LISTENTRY));
-	  if (el->larger==nil) 
-	    { fprintf(stderr,"Can not get more memory !\n"); exit(99); }
-	  einbauen(el->larger,canong,m,knotenzahl);
+ } else { /* compare > 0 */
+   if (el->larger==nil){
+		*test=1;
+		*copy=0; 
+		el->larger=(LISTENTRY *)malloc(sizeof(LISTENTRY));
+		if (el->larger==nil) {
+			fprintf(stderr,"Can not get more memory !\n");
+			exit(99);
+		}
+		einbauen(el->larger,canong,m,knotenzahl);
+	} else {
+		in_liste(el->larger,canong,m,knotenzahl,test,copy);
 	}
-    else in_liste(el->larger,canong,m,knotenzahl,test);
-   }
+ }
 
 }
 
@@ -166,16 +177,17 @@ void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test)
 
 /**************************NEU*************************************/
 
-int neu(GRAPH gr, LISTENTRY **liste)
+int add_to_list(GRAPH gr, LISTENTRY **liste)
 /* Entscheidet, ob ein graph schon in der Liste behandelter Graphen ist 
   und fuegt ihn ein, wenn nicht */
+/* returns 0 if the graph wasn't in the list, otherwise returns the number of the graph of which it is a copy*/
 {
 NAUTYGRAPH nautyg, canong;
 nvector lab[knoten], ptn[knoten], orbits[knoten];
 static DEFAULTOPTIONS(options);
 statsblk(stats);
 setword workspace[100*knoten];
-int m,n,test,knotenzahl;
+int m,n,test,knotenzahl,copy;
 
 knotenzahl=gr[0][0];
 /*options.invarproc= &distances;*/
@@ -206,12 +218,13 @@ if ((*liste)==nil)
 	    { fprintf(stderr,"Can not get more memory (0)!\n"); exit(99); }
 	  einbauen(*liste,canong,m,knotenzahl); 
 	}
-else in_liste(*liste,canong,m,gr[0][0],&test);
+else in_liste(*liste,canong,m,gr[0][0],&test,&copy);
+
 
 free(nautyg); 
 if (test==0) free(canong); /* sonst wurde er in die Liste geschrieben */
 
-return(test);
+return copy;
 }
 
 
@@ -415,8 +428,8 @@ char *argv[];
 GRAPH gr;
 ADJAZENZ adj;
 unsigned char *code=NULL;
-int  zaehlen=0, number=0, after=0, codelaenge;
-int dreier=0, vierer=0, dummy, writethem=0, writenew=0, writeold=0;
+int  number=0, after=0, codelaenge;
+int dreier=0, vierer=0, dummy, writethem, info;
 int i,j, nuller;
 int anzB=0, anzC=0, anzS=0;
 
@@ -424,22 +437,18 @@ int anzB=0, anzC=0, anzS=0;
 
 arbeitsliste=nil;
 
-for (i=1;i<argc;i++)
-  {  if (argv[i][0]=='w') writethem=1; 
-    else if (argv[i][0]=='n') writenew=1;
-     else if (argv[i][0]=='o') writeold=1;
-     else
-	{ 
-	  fprintf(stderr,"usage: mu_non_iso [w] [n] [o]");
-	  fprintf(stderr,"It reads multigraph codes from stdin, and writes them --\n");
-	  fprintf(stderr,"In case option w is given -- \n");
-	  fprintf(stderr,"one of each isomorphism class -- on stdout and in the order \n");
-	  fprintf(stderr,"that they were read.\n");
-	  fprintf(stderr,"Option n: write number of new\n");
-	  fprintf(stderr,"Option o: write number of old graphs\n");
-	  fprintf(stderr,"ONLY FOR SIMPLE GRAPHS !! \n");
-	  exit(0); }
-  }
+if (argc==2 && argv[1][0]=='w') writethem=1; else writethem=0;
+if (argc==2 && argv[1][0]=='i') info=1; else info=0;
+
+if (argc > 2 || (argc==2 && (argv[1][0]!='w' && argv[1][0]!='i'))) 
+{ fprintf(stderr,"usage: mu_non_iso [w]");
+ fprintf(stderr,"It reads multigraph codes from stdin, and writes them --\n");
+ fprintf(stderr,"In case option w is given -- \n");
+ fprintf(stderr,"one of each isomorphism class -- on stdout and in the order \n");
+ fprintf(stderr,"that they were read.\n");
+ fprintf(stderr,"ONLY FOR SIMPLE GRAPHS !! \n");
+     exit(0); }
+
 
 zaehlen=noniso=0;
 
@@ -448,11 +457,15 @@ while(lese_multicode(&code, &codelaenge, stdin) != EOF)
    zaehlen++; 
    decodiere(code,gr,adj,codelaenge);
    //schreibegraph(gr);
-   if (neu(gr,&arbeitsliste))
-     { if (writethem) fwrite(code,sizeof(unsigned char),codelaenge,stdout);
-	if (writenew) fprintf(stderr,"Number %d is new.\n",zaehlen);
-     }
-   else { if (writeold) fprintf(stderr,"Number %d is old.\n",zaehlen); }
+   int copy = add_to_list(gr,&arbeitsliste);
+   if (!copy && writethem) fwrite(code,sizeof(unsigned char),codelaenge,stdout);
+   if (info){
+      if(!copy){
+		fprintf(stdout, "Graph %d is new.\n", zaehlen);
+	  } else {
+		fprintf(stdout, "Graph %d is not new, copy is %d.\n", zaehlen, copy);
+	  }
+   }
  }
 
   if (arbeitsliste != nil) ausgabe(arbeitsliste);
