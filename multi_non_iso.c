@@ -5,16 +5,16 @@
 #include<memory.h>
 #include "nauty.h"
 
-#define leer 0
+#define EMPTY 0
 #define nil 0
-#define knoten 500 
+#define MAXVERTICES 500 
 
 #define reg 3
-#define MAXVAL knoten-1
+#define MAXVAL MAXVERTICES-1
 
 
-typedef unsigned short GRAPH[knoten+1][MAXVAL];
-typedef unsigned short ADJAZENZ[knoten+1];
+typedef unsigned short GRAPH[MAXVERTICES+1][MAXVAL];
+typedef unsigned short ADJAZENZ[MAXVERTICES+1];
 typedef unsigned long *NAUTYGRAPH;
 typedef struct le { NAUTYGRAPH nautyg;
 		    int knotenzahl;
@@ -36,7 +36,7 @@ void schreibegraph(GRAPH g) {
 
 
     for (maxval=0, x=1; x<=g[0][0]; x++)
-        while (g[x][maxval]!=leer)
+        while (g[x][maxval]!=EMPTY)
             maxval++;
 
     maxkn=g[0][0];
@@ -58,7 +58,7 @@ void schreibegraph(GRAPH g) {
     for(x=0; x < maxval; x++) {
         fprintf(stderr," |  ");
         for(y=1; (y<=maxkn)&&(y<=24); y++)
-            if (g[y][x] ==leer)
+            if (g[y][x] ==EMPTY)
                 fprintf(stderr,"|  ");
             else
                 fprintf(stderr,"|%2d",g[y][x]);
@@ -85,7 +85,7 @@ void schreibegraph(GRAPH g) {
         for(y=0; y < maxval; y++){
             fprintf(stderr,"    ");
             for(x=unten; (x <= maxkn)&&(x<=oben); x++)
-                if (g[x][y]==leer)
+                if (g[x][y]==EMPTY)
                     fprintf(stderr,"|  ");
                 else
                     fprintf(stderr,"|%2d",g[x][y]);
@@ -97,9 +97,9 @@ void schreibegraph(GRAPH g) {
 }
 
 
-/**********UMWANDELN****************************************************/
+/**********TRANSFORM****************************************************/
 
-void umwandeln(GRAPH g,NAUTYGRAPH nautyg,int m){
+void transform(GRAPH g,NAUTYGRAPH nautyg,int m){
 /* die fuer nauty kanonische m-Variable */
 /* wandelt einen graphen in der normalen darstellung in einen fuer nauty
   passenden graphen um */
@@ -113,14 +113,14 @@ void umwandeln(GRAPH g,NAUTYGRAPH nautyg,int m){
         nautyg[i]=0;
 
     for (i=0; i<g[0][0]; i++) { 
-        for (j=0; g[i+1][j]!=leer; j++) 
+        for (j=0; g[i+1][j]!=EMPTY; j++) 
             ADDELEMENT(nautyg+(m*i),g[i+1][j]-1);
     }
 }
 
 
-/**************************EINBAUEN********************************/
-void einbauen(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl){
+/**************************CONSTRUCT********************************/
+void construct(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl){
 
     debugzaehler++;
     el->nautyg= canong;
@@ -132,11 +132,11 @@ void einbauen(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl){
 
 
 
-/**************************IN_LISTE********************************/
+/**************************FIND_POSITION_IN_LIST********************************/
 
 /* schaut nach, ob canong schon in der Liste ist und schreibt ihn eventuell
   rein */
-void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test, int *copy){
+void findPositionInList(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test, int *copy){
     int compare;
 
 
@@ -157,9 +157,9 @@ void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test,
 		    fprintf(stderr,"Can not get more memory !\n");
                     exit(99);
 		}
-		einbauen(el->smaller,canong,m,knotenzahl);
+		construct(el->smaller,canong,m,knotenzahl);
 	} else {
-		in_liste(el->smaller,canong,m,knotenzahl,test,copy);
+		findPositionInList(el->smaller,canong,m,knotenzahl,test,copy);
 	}
     } else { /* compare > 0 */
         if (el->larger==nil){
@@ -170,9 +170,9 @@ void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test,
 			fprintf(stderr,"Can not get more memory !\n");
 			exit(99);
 		}
-		einbauen(el->larger,canong,m,knotenzahl);
+		construct(el->larger,canong,m,knotenzahl);
 	} else {
-		in_liste(el->larger,canong,m,knotenzahl,test,copy);
+		findPositionInList(el->larger,canong,m,knotenzahl,test,copy);
 	}
     }
 
@@ -181,17 +181,17 @@ void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test,
 
 
 
-/**************************NEU*************************************/
+/**************************ADD_TO_LIST*************************************/
 
 /* Entscheidet, ob ein graph schon in der Liste behandelter Graphen ist 
   und fuegt ihn ein, wenn nicht */
 /* returns 0 if the graph wasn't in the list, otherwise returns the number of the graph of which it is a copy*/
-int add_to_list(GRAPH gr, LISTENTRY **liste){
+int addToList(GRAPH gr, LISTENTRY **liste){
     NAUTYGRAPH nautyg, canong;
-    nvector lab[knoten], ptn[knoten], orbits[knoten];
+    nvector lab[MAXVERTICES], ptn[MAXVERTICES], orbits[MAXVERTICES];
     static DEFAULTOPTIONS(options);
     statsblk(stats);
-    setword workspace[100*knoten];
+    setword workspace[100*MAXVERTICES];
     int m,test,knotenzahl,copy;
 
     knotenzahl=gr[0][0];
@@ -207,7 +207,7 @@ canong= (NAUTYGRAPH)calloc(m*knotenzahl,sizeof(unsigned long));
 if ((nautyg==nil) || (canong==nil) )
 	    { fprintf(stderr,"Can not get more memory (1)!\n"); exit(99); }
 
-umwandeln(gr,nautyg,m);
+transform(gr,nautyg,m);
 nauty(nautyg,lab,ptn,NILSET,orbits,&options, &stats,workspace,100,
                                                   m,gr[0][0],canong); 
 
@@ -217,9 +217,9 @@ if ((*liste)==nil)
 	  *liste =(LISTENTRY *)malloc(sizeof(LISTENTRY));
 	  if (*liste==nil) 
 	    { fprintf(stderr,"Can not get more memory (0)!\n"); exit(99); }
-	  einbauen(*liste,canong,m,knotenzahl); 
+	  construct(*liste,canong,m,knotenzahl); 
 	}
-else in_liste(*liste,canong,m,gr[0][0],&test,&copy);
+else findPositionInList(*liste,canong,m,gr[0][0],&test,&copy);
 
 
 free(nautyg); 
@@ -229,12 +229,12 @@ return copy;
 }
 
 
-/****************************EINFUGEN****************************************/
+/****************************ADD_EDGE****************************************/
 
 /* Fuegt die Kante (v,w) in den Graphen graph ein. Dabei wird aber davon */
 /* ausgegangen, dass in adj die wirklich aktuellen werte fuer die */
 /* Adjazenzen stehen. Die adjazenzen werden dann aktualisiert. */
-void einfugen (GRAPH gr, unsigned short adj[knoten+1], unsigned short v, unsigned short w){
+void addEdge (GRAPH gr, unsigned short adj[MAXVERTICES+1], unsigned short v, unsigned short w){
     gr[v][adj[v]]=w;
     gr[w][adj[w]]=v;
     adj[v]++;
@@ -242,10 +242,10 @@ void einfugen (GRAPH gr, unsigned short adj[knoten+1], unsigned short v, unsigne
 }
 
 
-/**************************DECODIERE*****************************************/
+/**************************DECODE*****************************************/
 
 
-void decodiere(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
+void decode(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
     int i,j;
     unsigned short knotenzahl;
 
@@ -254,9 +254,9 @@ void decodiere(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
     for (i=1; i<= knotenzahl; i++) {
         adj[i]=0;
         for (j=0; j<MAXVAL; j++)
-            graph[i][j]=leer;
+            graph[i][j]=EMPTY;
     }
-    for (j=1; j<knoten; j++)
+    for (j=1; j<MAXVERTICES; j++)
         graph[0][j]=0;
 
 
@@ -266,14 +266,14 @@ void decodiere(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
         if (code[i]==0)
             j++;
         else
-            einfugen(graph,adj,j,code[i]);
+            addEdge(graph,adj,j,code[i]);
     }
 }
 
 
 
 
-/**********************************CODIERE********************************/
+/**********************************CODE********************************/
 
 /* Codierung: Erstes byte: knotenzahl danach die zu knoten 1 adjazenten
   ALLE GROESSEREN vertices, beendet durch 0, danach die zu knoten 2 
@@ -281,21 +281,21 @@ void decodiere(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
   nie zu groesseren adjazent sein kann, braucht seine (immer leere) Liste 
   nicht durch 0 abgeschlossen werden*/
 
-void codiere_und_schreibe(GRAPH gr) {
+void codeAndWrite(GRAPH gr) {
     int i,j,codestelle;
-    unsigned short code[knoten*knoten];
+    unsigned short code[MAXVERTICES*MAXVERTICES];
 
 
     code[0]=gr[0][0];
 
-    for (codestelle=1; gr[1][codestelle-1]!=leer; codestelle++) 
+    for (codestelle=1; gr[1][codestelle-1]!=EMPTY; codestelle++) 
         code[codestelle]=gr[1][codestelle-1]; 
     /* 0 ist das Trennzeichen fuer den naechsten Code */
     /* Gesamtcodelaenge: Kantenzahl+knotenzahl      */
 
     for (j=2; j<=gr[0][0]; j++){ 
         code[codestelle]=0; codestelle++;
-        for (i=0; gr[j][i]!=leer; i++) 
+        for (i=0; gr[j][i]!=EMPTY; i++) 
             if (gr[j][i]>j){
                 code[codestelle]=gr[j][i]; codestelle++;
             }
@@ -318,8 +318,8 @@ void nauty_to_graph(NAUTYGRAPH nautyg, GRAPH gr, int knotenzahl){
     else
         m=knotenzahl/32+1;
 
-for (i=0; i<=knoten; i++) 
-  { for (j=0;j<MAXVAL; j++) gr[i][j]=leer;
+for (i=0; i<=MAXVERTICES; i++) 
+  { for (j=0;j<MAXVAL; j++) gr[i][j]=EMPTY;
     adj[i]=0; }
 
 gr[0][0]=knotenzahl;
@@ -327,7 +327,7 @@ gr[0][0]=knotenzahl;
 for (i=0; i<knotenzahl; i++)
    { j = -1;
      while ((j = nextelement(nautyg+m*i,m,j)) >= 0)
-	  if (j>i) { einfugen(gr,adj,i+1,j+1); }
+	  if (j>i) { addEdge(gr,adj,i+1,j+1); }
    }
 
 }
@@ -357,12 +357,12 @@ void ausgabe(LISTENTRY *liste){
 
 
 
-/****************************LESE_MULTICODE************************/
+/****************************READ_MULTICODE************************/
 int readTwoByteNumber(unsigned short *number, FILE *f){
 
 }
 
-int readMulticodeShort(unsigned short **code, int *codelength, FILE *f, int *maxVertexCount){
+int readMulticodeShort(unsigned short **code, int *codeLength, FILE *f, int *maxVertexCount){
     unsigned short vertexCount = 0;
     int codel;
     int zeroCount = 0;
@@ -389,83 +389,83 @@ int readMulticodeShort(unsigned short **code, int *codelength, FILE *f, int *max
         codel++;
     }
 
-    *codelength=codel;
+    *codeLength=codel;
     return 1;
 }
 
 /* Liest den code und gibt EOF zurueck, wenn das Ende der Datei erreicht
   ist, 1 sonst. Der Speicher fuer den code wird alloziert, falls noetig,
   was entschieden wird anhand der lokalen Variablen maxknotenzahl */
-int lese_multicode(unsigned short**code, int *codelaenge, FILE *fil){
-    static int maxknotenzahl= -1;
-    int codel, gepuffert=0;
-    int knotenzahl, a, b, nuller;
-    unsigned short ucharpuffer;
+int readMulticode(unsigned short**code, int *codeLength, FILE *f){
+    static int maxVertexCount= -1;
+    int codel, isBuffered=0;
+    int vertexCount, a, b, zeroCount;
+    unsigned short tempValue;
 
-    if ((knotenzahl=getc(fil))==EOF){
+    if ((vertexCount=getc(f))==EOF){
         return EOF;
     }
 
-    if (knotenzahl==0){
+    if (vertexCount==0){
         fprintf(stderr,"Umschaltung auf short noch nicht implementiert.\n");
         exit(0);
     }
 
-    nuller=0; codel=1;
-    if (knotenzahl=='>'){
+    zeroCount=0; codel=1;
+    if (vertexCount=='>'){
         /* koennte ein header sein -- oder 'ne 62, also ausreichend fuer unsigned char */
-	gepuffert=1;
-	a=getc(fil);
-	if(a==0) nuller++; 
-	b=getc(fil);
-	if(b==0) nuller++; 
+	isBuffered=1;
+	a=getc(f);
+	if(a==0) zeroCount++; 
+	b=getc(f);
+	if(b==0) zeroCount++; 
 	/* jetzt wurden 3 Zeichen gelesen */
 	if ((a=='>') && (b=='m')){
 		/*garantiert header*/
-	    gepuffert=0;
-	    while ((ucharpuffer=getc(fil)) != '<');
-	    /* noch zweimal: */ ucharpuffer=getc(fil); 
-	    if (ucharpuffer!='<') {
+	    isBuffered=0;
+	    while ((tempValue=getc(f)) != '<');
+	    /* noch zweimal: */ tempValue=getc(f); 
+	    if (tempValue!='<') {
                 fprintf(stderr,"Problems with header -- single '<'\n");
                 exit(1);
             }
-	    if ((knotenzahl=getc(fil))==EOF)
+	    if ((vertexCount=getc(f))==EOF)
                 return EOF;
 	        /* kein graph drin */
 	  }
 	/* else kein header */
     }
 
-    if (knotenzahl==0){
+    if (vertexCount==0){
         fprintf(stderr,"Umschaltung auf short noch nicht implementiert.\n");
         exit(0);
     }
 
-    if (knotenzahl > maxknotenzahl){
+    if (vertexCount > maxVertexCount){
         if (*code)
             free(*code);
-        *code = (unsigned short *)malloc((knotenzahl*(knotenzahl-1)/2+knotenzahl)*sizeof(unsigned short));
+        *code = (unsigned short *)malloc((vertexCount*(vertexCount-1)/2+vertexCount)*sizeof(unsigned short));
         if (code==NULL) {
             fprintf(stderr,"Do not get memory for code\n");
             exit(0);
         }
-        maxknotenzahl=knotenzahl;
+        maxVertexCount=vertexCount;
     }
 
-    (*code)[0]=knotenzahl;
-    if (gepuffert) {
+    (*code)[0]=vertexCount;
+    if (isBuffered) {
         codel=3;
         (*code)[1]=a;
         (*code)[2]=b;
     }
 
-    while (nuller<knotenzahl-1){
-        if (((*code)[codel]=getc(fil))==0)
-            nuller++;
+    while (zeroCount<vertexCount-1){
+        if (((*code)[codel]=getc(f))==0)
+            zeroCount++;
         codel++;
     }
 
-    *codelaenge=codel;
+    *codeLength=codel;
     return 1;
 }
 
@@ -508,10 +508,10 @@ int main(int argc, char *argv[]) {
 
     zaehlen=noniso=0;
 
-    while(lese_multicode(&code, &codelaenge, stdin) != EOF){
+    while(readMulticode(&code, &codelaenge, stdin) != EOF){
         zaehlen++; 
-        decodiere(code,gr,adj,codelaenge);
-        int copy = add_to_list(gr,&arbeitsliste);
+        decode(code,gr,adj,codelaenge);
+        int copy = addToList(gr,&arbeitsliste);
         if (!copy && writethem)
             fwrite(code,sizeof(unsigned short),codelaenge,stdout);
         if (info){
