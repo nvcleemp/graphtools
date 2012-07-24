@@ -363,13 +363,14 @@ int readTwoByteNumber(unsigned short *number, FILE *f){
 
 }
 
-int readMulticodeShort(unsigned short **code, int *codelength, FILE *f){
-    short vertexCount = 0;
+int readMulticodeShort(unsigned short **code, int *codelength, FILE *f, int *maxVertexCount){
+    unsigned short vertexCount = 0;
     int codel;
+    int zeroCount = 0;
 
     readTwoByteNumber(&vertexCount, f);
 
-    if (vertexCount > maxknotenzahl){
+    if (vertexCount > *maxVertexCount){
         if (*code)
             free(*code);
         *code = (unsigned short *)malloc((vertexCount*(vertexCount-1)/2+vertexCount)*sizeof(unsigned short));
@@ -377,15 +378,15 @@ int readMulticodeShort(unsigned short **code, int *codelength, FILE *f){
             fprintf(stderr,"Do not get memory for code\n");
             exit(0);
         }
-        maxknotenzahl=vertexCount;
+        *maxVertexCount=vertexCount;
     }
 
     (*code)[0]=vertexCount;
     codel=1;
 
-    while (nuller<vertexCount-1){
-        if (((*code)[codel]=getc(fil))==0)
-            nuller++;
+    while (zeroCount<vertexCount-1){
+        if((readTwoByteNumber((*code)+codel,f))==0)
+            zeroCount++;
         codel++;
     }
 
