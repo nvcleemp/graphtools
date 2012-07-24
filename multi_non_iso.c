@@ -6,7 +6,6 @@
 #include "nauty.h"
 
 #define EMPTY 0
-#define nil 0
 #define MAXVERTICES 500 
 
 #define reg 3
@@ -128,8 +127,8 @@ void construct(LISTENTRY *el, NAUTYGRAPH canong, int knotenzahl) {
     debugzaehler++;
     el->nautyg = canong;
     el->knotenzahl = knotenzahl;
-    el->smaller = nil;
-    el->larger = nil;
+    el->smaller = NULL;
+    el->larger = NULL;
     el->id = zaehlen;
 }
 
@@ -152,11 +151,11 @@ void findPositionInList(LISTENTRY *el, NAUTYGRAPH canong, int m, int knotenzahl,
         *test = 0;
         *copy = el->id;
     } else if (compare < 0) {
-        if (el->smaller == nil) {
+        if (el->smaller == NULL) {
             *test = 1;
             *copy = 0;
             el->smaller = (LISTENTRY *) malloc(sizeof (LISTENTRY));
-            if (el->smaller == nil) {
+            if (el->smaller == NULL) {
                 fprintf(stderr, "Can not get more memory !\n");
                 exit(99);
             }
@@ -165,11 +164,11 @@ void findPositionInList(LISTENTRY *el, NAUTYGRAPH canong, int m, int knotenzahl,
             findPositionInList(el->smaller, canong, m, knotenzahl, test, copy);
         }
     } else { /* compare > 0 */
-        if (el->larger == nil) {
+        if (el->larger == NULL) {
             *test = 1;
             *copy = 0;
             el->larger = (LISTENTRY *) malloc(sizeof (LISTENTRY));
-            if (el->larger == nil) {
+            if (el->larger == NULL) {
                 fprintf(stderr, "Can not get more memory !\n");
                 exit(99);
             }
@@ -209,7 +208,7 @@ int addToList(GRAPH gr, LISTENTRY **liste) {
 
     nautyg = (NAUTYGRAPH) calloc(m*knotenzahl, sizeof (unsigned long));
     canong = (NAUTYGRAPH) calloc(m*knotenzahl, sizeof (unsigned long));
-    if ((nautyg == nil) || (canong == nil)) {
+    if ((nautyg == NULL) || (canong == NULL)) {
         fprintf(stderr, "Can not get more memory (1)!\n");
         exit(99);
     }
@@ -219,10 +218,10 @@ int addToList(GRAPH gr, LISTENTRY **liste) {
             m, gr[0][0], canong);
 
 
-    if ((*liste) == nil) {
+    if ((*liste) == NULL) {
         test = 1;
         *liste = (LISTENTRY *) malloc(sizeof (LISTENTRY));
-        if (*liste == nil) {
+        if (*liste == NULL) {
             fprintf(stderr, "Can not get more memory (0)!\n");
             exit(99);
         }
@@ -350,19 +349,19 @@ void ausgabe(LISTENTRY *liste) {
 
     /* GRAPH gr;  muss global gehandhabt werden, um beim iterierten aufruf Platz zu
     sparen */
-    if (liste == nil)
+    if (liste == NULL)
         return;
 
     ausgabezaehler++;
 
-    if (liste->larger != nil)
+    if (liste->larger != NULL)
         ausgabe(liste->larger);
 
     //nauty_to_graph(liste->nautyg,global_puffer_gr,liste->knotenzahl);
     noniso++;
     //codiere_und_schreibe(global_puffer_gr);
 
-    if (liste->smaller != nil)
+    if (liste->smaller != NULL)
         ausgabe(liste->smaller);
 
 }
@@ -492,7 +491,7 @@ int main(int argc, char *argv[]) {
 
 
 
-    arbeitsliste = nil;
+    arbeitsliste = NULL;
 
     if (argc == 2 && argv[1][0] == 'w')
         writethem = 1;
@@ -532,7 +531,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (arbeitsliste != nil) ausgabe(arbeitsliste);
+    if (arbeitsliste != NULL) ausgabe(arbeitsliste);
 
     fprintf(stderr, "Gelesen: %d Graphen, davon %d paarweise nicht isomorph.\n", zaehlen, noniso);
 
