@@ -225,7 +225,7 @@ int addToList(GRAPH gr, LISTENTRY **liste) {
             fprintf(stderr, "Can not get more memory (0)!\n");
             exit(99);
         }
-        construct(*liste, canong, m, knotenzahl);
+        construct(*liste, canong, knotenzahl);
     } else findPositionInList(*liste, canong, m, gr[0][0], &test, &copy);
 
 
