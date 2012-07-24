@@ -99,7 +99,7 @@ void schreibegraph(GRAPH g) {
 
 /**********UMWANDELN****************************************************/
 
-umwandeln(GRAPH g,NAUTYGRAPH nautyg,int m){
+void umwandeln(GRAPH g,NAUTYGRAPH nautyg,int m){
 /* die fuer nauty kanonische m-Variable */
 /* wandelt einen graphen in der normalen darstellung in einen fuer nauty
   passenden graphen um */
@@ -235,7 +235,7 @@ return copy;
 /* Fuegt die Kante (v,w) in den Graphen graph ein. Dabei wird aber davon */
 /* ausgegangen, dass in adj die wirklich aktuellen werte fuer die */
 /* Adjazenzen stehen. Die adjazenzen werden dann aktualisiert. */
-einfugen (GRAPH gr, unsigned short adj[knoten+1], unsigned short v, unsigned short w){
+void einfugen (GRAPH gr, unsigned short adj[knoten+1], unsigned short v, unsigned short w){
     gr[v][adj[v]]=w;
     gr[w][adj[w]]=v;
     adj[v]++;
@@ -246,7 +246,7 @@ einfugen (GRAPH gr, unsigned short adj[knoten+1], unsigned short v, unsigned sho
 /**************************DECODIERE*****************************************/
 
 
-decodiere(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
+void decodiere(unsigned short *code, GRAPH graph, ADJAZENZ adj, int codelaenge){
     int i,j;
     unsigned short knotenzahl;
 
