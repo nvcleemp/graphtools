@@ -409,7 +409,7 @@ int readMulticodeShort(unsigned short **code, int *codeLength, FILE *f, int *max
 int readMulticode(unsigned short**code, int *codeLength, FILE *f) {
     static int maxVertexCount = -1;
     int codel, isBuffered = 0;
-    int vertexCount, a, b, zeroCount;
+    int vertexCount, a=0, b=0, zeroCount;
     unsigned short tempValue;
 
     if ((vertexCount = getc(f)) == EOF) {
