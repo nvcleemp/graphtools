@@ -8,7 +8,6 @@
 #define EMPTY 0
 #define MAXVERTICES 500 
 
-#define reg 3
 #define MAXVAL MAXVERTICES-1
 
 
