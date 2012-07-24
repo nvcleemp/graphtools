@@ -427,8 +427,7 @@ int readMulticode(unsigned short**code, int *codeLength, FILE *f) {
     }
 
     if (vertexCount == 0) {
-        fprintf(stderr, "Umschaltung auf short noch nicht implementiert.\n");
-        exit(0);
+        return readMulticodeShort(code, codeLength, f, &maxVertexCount);
     }
 
     zeroCount = 0;
@@ -511,8 +510,7 @@ int readMulticode(unsigned short**code, int *codeLength, FILE *f) {
     }
 
     if (vertexCount == 0) {
-        fprintf(stderr, "Umschaltung auf short noch nicht implementiert.\n");
-        exit(0);
+        return readMulticodeShort(code, codeLength, f, &maxVertexCount);
     }
 
     if (vertexCount > maxVertexCount) {
