@@ -120,7 +120,7 @@ void transform(GRAPH g,NAUTYGRAPH nautyg,int m){
 
 
 /**************************CONSTRUCT********************************/
-void construct(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl){
+void construct(LISTENTRY *el, NAUTYGRAPH canong, int knotenzahl){
 
     debugzaehler++;
     el->nautyg= canong;
@@ -157,7 +157,7 @@ void findPositionInList(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, 
 		    fprintf(stderr,"Can not get more memory !\n");
                     exit(99);
 		}
-		construct(el->smaller,canong,m,knotenzahl);
+		construct(el->smaller,canong,knotenzahl);
 	} else {
 		findPositionInList(el->smaller,canong,m,knotenzahl,test,copy);
 	}
@@ -170,7 +170,7 @@ void findPositionInList(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, 
 			fprintf(stderr,"Can not get more memory !\n");
 			exit(99);
 		}
-		construct(el->larger,canong,m,knotenzahl);
+		construct(el->larger,canong,knotenzahl);
 	} else {
 		findPositionInList(el->larger,canong,m,knotenzahl,test,copy);
 	}
