@@ -138,7 +138,6 @@ void einbauen(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl){
   rein */
 void in_liste(LISTENTRY *el, NAUTYGRAPH canong,int m, int knotenzahl, int *test, int *copy){
     int compare;
-    int n;
 
 
 
@@ -193,7 +192,7 @@ int add_to_list(GRAPH gr, LISTENTRY **liste){
     static DEFAULTOPTIONS(options);
     statsblk(stats);
     setword workspace[100*knoten];
-    int m,n,test,knotenzahl,copy;
+    int m,test,knotenzahl,copy;
 
     knotenzahl=gr[0][0];
     /*options.invarproc= &distances;*/
@@ -479,10 +478,8 @@ int main(int argc, char *argv[]) {
     GRAPH gr;
     ADJAZENZ adj;
     unsigned short *code=NULL;
-    int  number=0, after=0, codelaenge;
-    int dreier=0, vierer=0, dummy, writethem, info;
-    int i,j, nuller;
-    int anzB=0, anzC=0, anzS=0;
+    int codelaenge;
+    int writethem, info;
 
 
 
