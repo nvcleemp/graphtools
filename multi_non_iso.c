@@ -368,8 +368,17 @@ void ausgabe(LISTENTRY *liste) {
 }
 
 /****************************READ_MULTICODE************************/
-int readTwoByteNumber(unsigned short *number, FILE *f) {
-
+void readTwoByteNumber(unsigned short *number, FILE *f) {
+    unsigned char a, b;
+    
+    a = getc(f);
+    b = getc(f);
+    
+    if(littleEndian){
+        *number = b*256 + a;
+    } else {
+        *number = a*256 + b;
+    }
 }
 
 int readMulticodeShort(unsigned short **code, int *codeLength, FILE *f, int *maxVertexCount) {
@@ -394,7 +403,8 @@ int readMulticodeShort(unsigned short **code, int *codeLength, FILE *f, int *max
     codel = 1;
 
     while (zeroCount < vertexCount - 1) {
-        if ((readTwoByteNumber((*code) + codel, f)) == 0)
+        readTwoByteNumber((*code) + codel, f);
+        if ((*code)[codel] == 0)
             zeroCount++;
         codel++;
     }
