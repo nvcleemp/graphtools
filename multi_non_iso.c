@@ -26,6 +26,8 @@ typedef struct le {
 
 int zaehlen = 0;
 
+int littleEndian = TRUE; // if no header is given, we assume little endian
+
 int graphenzahl = 0, noniso, debugzaehler = 0, ausgabezaehler = 0;
 LISTENTRY *arbeitsliste;
 GRAPH global_puffer_gr;
@@ -433,11 +435,64 @@ int readMulticode(unsigned short**code, int *codeLength, FILE *f) {
         if ((a == '>') && (b == 'm')) {
             /*garantiert header*/
             isBuffered = 0;
-            while ((tempValue = getc(f)) != '<');
-            /* noch zweimal: */ tempValue = getc(f);
-            if (tempValue != '<') {
-                fprintf(stderr, "Problems with header -- single '<'\n");
+            if((tempValue = getc(f)) != 'u'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
                 exit(1);
+            }
+            if((tempValue = getc(f)) != 'l'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            if((tempValue = getc(f)) != 't'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            if((tempValue = getc(f)) != 'i'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            if((tempValue = getc(f)) != 'c'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            if((tempValue = getc(f)) != 'o'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            if((tempValue = getc(f)) != 'd'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            if((tempValue = getc(f)) != 'e'){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            }
+            tempValue = getc(f);
+            if(tempValue == '<'){
+                if ((tempValue = getc(f)) != '<') {
+                    fprintf(stderr, "Problems with header -- single '<'\n");
+                    exit(1);
+                }
+                //no endianness specified: this means little endian
+                littleEndian = TRUE;
+            } else if(tempValue != ' '){
+                fprintf(stderr, "Problems with header -- not multicode\n");
+                exit(1);
+            } else {
+                tempValue = getc(f);
+                if(tempValue == 'l'){
+                    littleEndian = TRUE;
+                } else if(tempValue == 'b'){
+                    littleEndian = FALSE;
+                } else {
+                    fprintf(stderr, "Problems with header -- not multicode\n");
+                    exit(1);
+                }
+                while ((tempValue = getc(f)) != '<');
+                if ((tempValue = getc(f)) != '<') {
+                    fprintf(stderr, "Problems with header -- single '<'\n");
+                    exit(1);
+                }
             }
             if ((vertexCount = getc(f)) == EOF)
                 return EOF;
