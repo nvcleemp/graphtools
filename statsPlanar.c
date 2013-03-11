@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <string.h>
 
 
 #ifndef MAXN
@@ -411,6 +412,8 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
     unsigned char c;
     char testheader[20];
     int bufferSize, zeroCounter;
+    
+    int readCount;
 
 
     if (first) {
@@ -479,7 +482,11 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
             bufferSize++;
         }
     } else {
-        fread(code, sizeof (unsigned short), 1, file);
+        readCount = fread(code, sizeof (unsigned short), 1, file);
+        if(!readCount){
+            fprintf(stderr, "Unexpected EOF.\n");
+            exit(1);
+        }
         if (code[0] > MAXN) {
             fprintf(stderr, "Constant N too small %d > %d \n", code[0], MAXN);
             exit(1);
@@ -487,7 +494,11 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
         bufferSize = 1;
         zeroCounter = 0;
         while (zeroCounter < code[0]) {
-            fread(code + bufferSize, sizeof (unsigned short), 1, file);
+            readCount = fread(code + bufferSize, sizeof (unsigned short), 1, file);
+            if(!readCount){
+                fprintf(stderr, "Unexpected EOF.\n");
+                exit(1);
+            }
             if (code[bufferSize] == 0) zeroCounter++;
             bufferSize++;
         }
