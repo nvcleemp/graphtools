@@ -560,7 +560,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    /*=========== read quadrangulations ===========*/
+    /*=========== read planar graphs ===========*/
 
     unsigned short code[MAXCODELENGTH];
     int length;
