@@ -1,10 +1,10 @@
 /* This program reads planar graphs from standard in and
- * generates a summary of statistics for each graph.   
+ * counts the number of graphs.   
  * 
  * 
  * Compile with:
  *     
- *     cc -o statsPlanar -O4 statsPlanar.c
+ *     cc -o countPlanar -O4 countPlanar.c
  * 
  */
 
