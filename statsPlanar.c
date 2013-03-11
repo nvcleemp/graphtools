@@ -543,7 +543,7 @@ int main(int argc, char *argv[]) {
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
-            case 't':
+            case 's':
                 includeSummary = TRUE;
                 break;
             case 'f':
