@@ -232,7 +232,7 @@ void writeDegreeSequence() {
 }
 
 void writeNumberingLatex() {
-    fprintf(stdout, "\\section{Graph %d}\n", numberOfGraphs);
+    fprintf(stdout, "\\section*{Graph %d}\n", numberOfGraphs);
 }
 
 void writeDataLatex() {
