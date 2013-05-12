@@ -143,11 +143,11 @@ void help(char *name) {
     fprintf(stderr, "The program %s counts the number of planar graphs in a file.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s\n\n", name);
-    fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
-    fprintf(stderr, "graphs.\n\n");
+    fprintf(stderr, "\nThis program can handle graphs up to %d vertices.\n", MAXN);
+    fprintf(stderr, "Recompile with a larger value for MAXN if you need larger graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
-    fprintf(stderr, "    -h, --help\n");
-    fprintf(stderr, "       Print this help and return.\n");
+    fprintf(stderr, " -h, --help\n");
+    fprintf(stderr, "    Print this help and return.\n");
 }
 
 void usage(char *name) {
