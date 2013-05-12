@@ -1,3 +1,10 @@
+/*
+ * Main developer: Nico Van Cleemput
+ * 
+ * Copyright (C) 2013 Ghent University.
+ * Licensed under the GNU GPL, read the file LICENSE.txt for details.
+ */
+
 /* This program reads planar graphs from standard in and
  * counts the number of graphs.   
  * 
