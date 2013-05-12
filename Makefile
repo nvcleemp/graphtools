@@ -6,6 +6,7 @@ all: build/statsPlanar build/countPlanar build/filterPlanar
 
 clean:
 	rm -rf build
+	rm -rf dist
 
 build/statsPlanar: statsPlanar.c
 	mkdir -p build
