@@ -18,6 +18,7 @@
 
 # build files
 /build/
+/dist/
 
 # NetBeans folder
 /nbproject/
