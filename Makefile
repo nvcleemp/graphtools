@@ -1,12 +1,16 @@
-all: statsPlanar countPlanar filterPlanar
+all: build/statsPlanar build/countPlanar build/filterPlanar
 
 clean:
+	rm -rf build
 
-statsPlanar: statsPlanar.c
-	cc -o statsPlanar -O4 statsPlanar.c
+build/statsPlanar: statsPlanar.c
+	mkdir -p build
+	cc -o build/statsPlanar -O4 statsPlanar.c
 
-countPlanar: countPlanar.c
-	cc -o countPlanar -O4 countPlanar.c
+build/countPlanar: countPlanar.c
+	mkdir -p build
+	cc -o build/countPlanar -O4 countPlanar.c
 
-filterPlanar: filterPlanar.c
-	cc -o filterPlanar -O4 filterPlanar.c
+build/filterPlanar: filterPlanar.c
+	mkdir -p build
+	cc -o build/filterPlanar -O4 filterPlanar.c
