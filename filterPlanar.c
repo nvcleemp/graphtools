@@ -30,6 +30,11 @@
 
 #define INFI (MAXN + 1)
 
+#undef FALSE
+#undef TRUE
+#define FALSE 0
+#define TRUE  1
+
 typedef int boolean;
 
 int numberOfGraphs = 0;
@@ -55,16 +60,29 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPri
     if (first) {
         first = 0;
 
-        if (fread(&testheader, sizeof (unsigned char), 15, file) != 15) {
+        if (fread(&testheader, sizeof (unsigned char), 13, file) != 13) {
             fprintf(stderr, "can't read header ((1)file too small)-- exiting\n");
             exit(1);
         }
-        testheader[15] = 0;
-        if (strcmp(testheader, ">>planar_code<<") == 0) {
+        testheader[13] = 0;
+        if (strcmp(testheader, ">>planar_code") == 0) {
 
         } else {
             fprintf(stderr, "No planarcode header detected -- exiting!\n");
             exit(1);
+        }
+        //read reminder of header (either empty or le/be specification)
+        if (fread(&c, sizeof (unsigned char), 1, file) == 0) {
+            return FALSE;
+        }
+        while (c!='<'){
+            if (fread(&c, sizeof (unsigned char), 1, file) == 0) {
+                return FALSE;
+            }
+        }
+        //read one more character
+        if (fread(&c, sizeof (unsigned char), 1, file) == 0) {
+            return FALSE;
         }
     }
 
