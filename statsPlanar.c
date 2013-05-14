@@ -93,10 +93,42 @@ int automorphismsCount;
 //////////////////////////////////////////////////////////////////////////////
 
 int certificate[MAXE+MAXN];
+int canonicalLabelling[MAXN];
+EDGE *canonicalFirstedge[MAXN];
 int alternateCertificate[MAXE+MAXN];
 int alternateLabelling[MAXN];
 EDGE *alternateFirstedge[MAXN];
 int queue[MAXN];
+
+int constructCertificate(EDGE *eStart){
+    int i;
+    for(i=0; i<MAXN; i++){
+        canonicalLabelling[i] = MAXN;
+    }
+    EDGE *e, *elast;
+    int head = 1;
+    int tail = 0;
+    int vertexCounter = 1;
+    int position = 0;
+    queue[0] = eStart->start;
+    canonicalFirstedge[eStart->start] = eStart;
+    canonicalLabelling[eStart->start] = 0;
+    while(head>tail){
+        int currentVertex = queue[tail++];
+        e = elast = canonicalFirstedge[currentVertex];
+        do {
+            if(canonicalLabelling[e->end]==MAXN){
+                queue[head++] = e->end;
+                canonicalLabelling[e->end] = vertexCounter++;
+                canonicalFirstedge[e->end] = e->inverse;
+            }
+            certificate[position++] = canonicalLabelling[e->end];
+            e = e->next;
+        } while (e!=elast);
+        certificate[position++] = MAXN;
+    }
+    return position;
+}
 
 void constructAlternateCertificate(EDGE *eStart){
     int i;
@@ -163,16 +195,7 @@ void calculateAutomorphismGroup(){
     int pos = 0;
     int i, j;
     
-    for(i=0; i<nv; i++){
-        EDGE *e, *elast;
-    
-        e = elast = firstedge[i];
-        do {
-            certificate[pos++] = e->end;
-            e = e->next;
-        } while (e!=elast);
-        certificate[pos++] = MAXN;
-    }
+    pos = constructCertificate(firstedge[0]);
     
     //construct alternate certificates
     EDGE *ebase = firstedge[0];
