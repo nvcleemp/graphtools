@@ -63,7 +63,7 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
             exit(1);
         }
         testheader[13] = 0;
-        if (strcmp(testheader, ">>planar_code<<") == 0) {
+        if (strcmp(testheader, ">>planar_code") == 0) {
 
         } else {
             fprintf(stderr, "No planarcode header detected -- exiting!\n");
