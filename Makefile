@@ -1,8 +1,10 @@
 
 SOURCES = statsPlanar.c countPlanar.c filterPlanar.c \
+          splitPlanar.c \
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
-all: build/statsPlanar build/countPlanar build/filterPlanar
+all: build/statsPlanar build/countPlanar build/filterPlanar \
+	build/splitPlanar
 
 clean:
 	rm -rf build
@@ -19,6 +21,10 @@ build/countPlanar: countPlanar.c
 build/filterPlanar: filterPlanar.c
 	mkdir -p build
 	cc -o build/filterPlanar -O4 filterPlanar.c
+
+build/splitPlanar: splitPlanar.c
+	mkdir -p build
+	cc -o build/splitPlanar -O4 splitPlanar.c
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
