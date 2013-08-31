@@ -252,9 +252,30 @@ void writeDegreeSequence() {
         degreeFrequency[degree[i] - 1]++;
     }
 
-    fprintf(stdout, "Degree sequence: ");
+    fprintf(stdout, "Degree sequence:    ");
     for (i = MAXVAL; i > 0; i--) {
         for (j = 0; j < degreeFrequency[i - 1]; j++) {
+            fprintf(stdout, "%d ", i);
+        }
+    }
+    fprintf(stdout, "\n");
+}
+
+void writeFaceSizeSequence() {
+    int i, j;
+    int faceSizeFrequency[MAXVAL];
+
+    for (i = 0; i < MAXVAL; i++) {
+        faceSizeFrequency[i] = 0;
+    }
+
+    for (i = 0; i < nf; i++) {
+        faceSizeFrequency[faceSize[i] - 1]++;
+    }
+
+    fprintf(stdout, "Face size sequence: ");
+    for (i = MAXVAL; i > 0; i--) {
+        for (j = 0; j < faceSizeFrequency[i - 1]; j++) {
             fprintf(stdout, "%d ", i);
         }
     }
@@ -294,6 +315,27 @@ void writeDegreeSequenceLatex() {
     fprintf(stdout, "\\\\\n");
 }
 
+void writeFaceSizeSequenceLatex() {
+    int i, j;
+    int faceSizeFrequency[MAXVAL];
+
+    for (i = 0; i < MAXVAL; i++) {
+        faceSizeFrequency[i] = 0;
+    }
+
+    for (i = 0; i < nf; i++) {
+        faceSizeFrequency[faceSize[i] - 1]++;
+    }
+
+    fprintf(stdout, "Face size sequence: ");
+    for (i = MAXVAL; i > 0; i--) {
+        for (j = 0; j < faceSizeFrequency[i - 1]; j++) {
+            fprintf(stdout, "%d ", i);
+        }
+    }
+    fprintf(stdout, "\\\\\n");
+}
+
 void writeStatistics() {
     calculateAutomorphismGroup();
     if(latex){
@@ -306,6 +348,7 @@ void writeStatistics() {
         if(includeNumbering) writeNumbering();
         writeData();
         writeDegreeSequence();
+        writeFaceSizeSequence();
 
         fprintf(stdout, "\n");
     }
