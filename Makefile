@@ -4,7 +4,7 @@ SOURCES = statsPlanar.c countPlanar.c filterPlanar.c \
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 all: build/statsPlanar build/countPlanar build/filterPlanar \
-	build/splitPlanar
+	build/splitPlanar build/nauty_pl
 
 clean:
 	rm -rf build
@@ -25,6 +25,11 @@ build/filterPlanar: filterPlanar.c
 build/splitPlanar: splitPlanar.c
 	mkdir -p build
 	cc -o build/splitPlanar -O4 splitPlanar.c
+
+build/nauty_pl: nauty_pl.c nauty/nauty.c nauty/nautil.c nauty/naugraph.c nauty/schreier.c nauty/naurng.c
+	mkdir -p build
+	cc -o build/nauty_pl -O4 nauty_pl.c nauty/nauty.c nauty/nautil.c nauty/naugraph.c nauty/schreier.c \
+	nauty/naurng.c
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
