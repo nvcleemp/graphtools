@@ -173,7 +173,7 @@ int main(int argc, char** argv) {
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsf:", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
