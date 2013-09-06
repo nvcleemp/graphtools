@@ -6,12 +6,12 @@
  */
 
 /* This program reads planar graphs from standard in and
- * counts the number of graphs.   
+ * filters out the specified graphs.   
  * 
  * 
  * Compile with:
  *     
- *     cc -o countPlanar -O4 countPlanar.c
+ *     cc -o filter_pl -O4 filter_pl.c
  * 
  */
 
@@ -21,7 +21,7 @@
 
 
 #ifndef MAXN
-#define MAXN 64            /* the maximum number of vertices */
+#define MAXN 200            /* the maximum number of vertices */
 #endif
 #define MAXE (6*MAXN-12)    /* the maximum number of oriented edges */
 #define MAXF (2*MAXN-4)      /* the maximum number of faces */
@@ -35,6 +35,8 @@
 #define FALSE 0
 #define TRUE  1
 
+typedef int boolean;
+
 int numberOfGraphs = 0;
 
 //=============== Reading and decoding planarcode ===========================
@@ -42,11 +44,11 @@ int numberOfGraphs = 0;
 /**
  * 
  * @param code
- * @param laenge
+ * @param length
  * @param file
  * @return returns 1 if a code was read and 0 otherwise. Exits in case of error.
  */
-int readPlanarCode(unsigned short code[], int *length, FILE *file) {
+int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPrint) {
     static int first = 1;
     unsigned char c;
     char testheader[20];
@@ -124,17 +126,21 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 
     if (c != 0) /* unsigned chars would be sufficient */ {
         code[0] = c;
+        if (doPrint) fputc(c, stdout);
         if (code[0] > MAXN) {
             fprintf(stderr, "Constant N too small %d > %d \n", code[0], MAXN);
             exit(1);
         }
         while (zeroCounter < code[0]) {
             code[bufferSize] = (unsigned short) getc(file);
+            if (doPrint) fputc(code[bufferSize], stdout);
             if (code[bufferSize] == 0) zeroCounter++;
             bufferSize++;
         }
     } else {
+        if (doPrint) fputc(0, stdout);
         readCount = fread(code, sizeof (unsigned short), 1, file);
+        if (doPrint) fwrite(code, sizeof (unsigned short), 1, stdout);
         if(!readCount){
             fprintf(stderr, "Unexpected EOF.\n");
             exit(1);
@@ -147,6 +153,7 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
         zeroCounter = 0;
         while (zeroCounter < code[0]) {
             readCount = fread(code + bufferSize, sizeof (unsigned short), 1, file);
+            if (doPrint) fwrite(code + bufferSize, sizeof (unsigned short), 1, stdout);
             if(!readCount){
                 fprintf(stderr, "Unexpected EOF.\n");
                 exit(1);
@@ -157,6 +164,9 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
     }
 
     *length = bufferSize;
+    
+    
+    
     return (1);
 
 
@@ -165,7 +175,7 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s counts the number of planar graphs in a file.\n\n", name);
+    fprintf(stderr, "The program %s filters specified planar graphs in a file.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices.\n", MAXN);
@@ -176,7 +186,7 @@ void help(char *name) {
 }
 
 void usage(char *name) {
-    fprintf(stderr, "Usage: %s [options]\n", name);
+    fprintf(stderr, "Usage: %s [options] g1 g2 ...\n", name);
     fprintf(stderr, "For more information type: %s -h \n\n", name);
 }
 
@@ -207,13 +217,30 @@ int main(int argc, char *argv[]) {
                 return EXIT_FAILURE;
         }
     }
+    
+    if (argc - optind == 0) {
+        usage(name);
+        return EXIT_FAILURE;
+    }
+    
+    int i;
+    int selectedGraphs[argc - optind];
+    for (i = 0; i < argc - optind; i++){
+        selectedGraphs[i] = atoi(argv[i + optind]);
+    }
+    
+    
+    fprintf(stdout, ">>planar_code<<");
 
     /*=========== read planar graphs ===========*/
 
     unsigned short code[MAXCODELENGTH];
     int length;
-    while (readPlanarCode(code, &length, stdin)) {
+    i = 0;
+    while (readPlanarCode(code, &length, stdin, (i < argc - optind && numberOfGraphs == selectedGraphs[i] - 1))) {
         numberOfGraphs++;
+        if (i < argc - optind && (numberOfGraphs == selectedGraphs[i])) {
+            i++;
+        }
     }
-    fprintf(stdout, "%d\n", numberOfGraphs);
 }

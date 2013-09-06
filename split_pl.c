@@ -11,7 +11,7 @@
  * 
  * Compile with:
  *     
- *     cc -o splitPlanar -O4 splitPlanar.c
+ *     cc -o split_pl -O4 split_pl.c
  * 
  */
 

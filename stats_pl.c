@@ -11,7 +11,7 @@
  * 
  * Compile with:
  *     
- *     cc -o statsPlanar -O4 statsPlanar.c
+ *     cc -o stats_pl -O4 stats_pl.c
  * 
  */
 

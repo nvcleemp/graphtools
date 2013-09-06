@@ -1,30 +1,29 @@
 
-SOURCES = statsPlanar.c countPlanar.c filterPlanar.c \
-          splitPlanar.c \
+SOURCES = stats_pl.c count_pl.c filter_pl.c split_pl.c \
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
-all: build/statsPlanar build/countPlanar build/filterPlanar \
-	build/splitPlanar build/nauty_pl
+all: build/stats_pl build/count_pl build/filter_pl \
+	build/split_pl build/nauty_pl
 
 clean:
 	rm -rf build
 	rm -rf dist
 
-build/statsPlanar: statsPlanar.c
+build/stats_pl: stats_pl.c
 	mkdir -p build
-	cc -o build/statsPlanar -O4 statsPlanar.c
+	cc -o build/stats_pl -O4 stats_pl.c
 
-build/countPlanar: countPlanar.c
+build/count_pl: count_pl.c
 	mkdir -p build
-	cc -o build/countPlanar -O4 countPlanar.c
+	cc -o build/count_pl -O4 count_pl.c
 
-build/filterPlanar: filterPlanar.c
+build/filter_pl: filter_pl.c
 	mkdir -p build
-	cc -o build/filterPlanar -O4 filterPlanar.c
+	cc -o build/filter_pl -O4 filter_pl.c
 
-build/splitPlanar: splitPlanar.c
+build/split_pl: split_pl.c
 	mkdir -p build
-	cc -o build/splitPlanar -O4 splitPlanar.c
+	cc -o build/split_pl -O4 split_pl.c
 
 build/nauty_pl: nauty_pl.c nauty/nauty.c nauty/nautil.c nauty/naugraph.c nauty/schreier.c nauty/naurng.c
 	mkdir -p build
