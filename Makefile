@@ -1,5 +1,6 @@
 
-SOURCES = stats_pl.c count_pl.c filter_pl.c split_pl.c \
+SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
+          planar/split_pl.c \
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 all: build/stats_pl build/count_pl build/filter_pl \
@@ -9,26 +10,27 @@ clean:
 	rm -rf build
 	rm -rf dist
 
-build/stats_pl: stats_pl.c
+build/stats_pl: planar/stats_pl.c
 	mkdir -p build
-	cc -o build/stats_pl -O4 stats_pl.c
+	cc -o build/stats_pl -O4 planar/stats_pl.c
 
-build/count_pl: count_pl.c
+build/count_pl: planar/count_pl.c
 	mkdir -p build
-	cc -o build/count_pl -O4 count_pl.c
+	cc -o build/count_pl -O4 planar/count_pl.c
 
-build/filter_pl: filter_pl.c
+build/filter_pl: planar/filter_pl.c
 	mkdir -p build
-	cc -o build/filter_pl -O4 filter_pl.c
+	cc -o build/filter_pl -O4 planar/filter_pl.c
 
-build/split_pl: split_pl.c
+build/split_pl: planar/split_pl.c
 	mkdir -p build
-	cc -o build/split_pl -O4 split_pl.c
+	cc -o build/split_pl -O4 planar/split_pl.c
 
-build/nauty_pl: nauty_pl.c nauty/nauty.c nauty/nautil.c nauty/naugraph.c nauty/schreier.c nauty/naurng.c
+build/nauty_pl: planar/nauty_pl.c planar/nauty/nauty.c planar/nauty/nautil.c planar/nauty/naugraph.c planar/nauty/schreier.c planar/nauty/naurng.c
 	mkdir -p build
-	cc -o build/nauty_pl -O4 nauty_pl.c nauty/nauty.c nauty/nautil.c nauty/naugraph.c nauty/schreier.c \
-	nauty/naurng.c
+	cc -o build/nauty_pl -O4 planar/nauty_pl.c planar/nauty/nauty.c \
+	planar/nauty/nautil.c planar/nauty/naugraph.c planar/nauty/schreier.c \
+	planar/nauty/naurng.c
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
