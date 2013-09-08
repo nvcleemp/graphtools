@@ -64,6 +64,8 @@
 #endif
 #endif
 
+#define INFINITY INT_MAX
+
 #ifdef MAXN
 #undef MAXN
 #define MAXN     (INFINITY-3)
