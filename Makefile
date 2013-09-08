@@ -39,7 +39,7 @@ build/dual_pl: planar/dual_pl.c
 	cc -o build/dual_pl -O4 planar/dual_pl.c
 
 build/gconv: conversion/gconv.c
-	cd conversion; make
+	cd conversion && make
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
