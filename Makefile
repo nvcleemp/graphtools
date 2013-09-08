@@ -1,10 +1,10 @@
 
 SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
-          planar/split_pl.c \
+          planar/split_pl.c planar/dual_pl.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 all: build/stats_pl build/count_pl build/filter_pl \
-	build/split_pl build/nauty_pl
+	build/split_pl build/nauty_pl build/dual_pl
 
 clean:
 	rm -rf build
@@ -31,6 +31,10 @@ build/nauty_pl: planar/nauty_pl.c planar/nauty/nauty.c planar/nauty/nautil.c pla
 	cc -o build/nauty_pl -O4 planar/nauty_pl.c planar/nauty/nauty.c \
 	planar/nauty/nautil.c planar/nauty/naugraph.c planar/nauty/schreier.c \
 	planar/nauty/naurng.c
+	
+build/dual_pl: planar/dual_pl.c
+	mkdir -p build
+	cc -o build/dual_pl -O4 planar/dual_pl.c
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
