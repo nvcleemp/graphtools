@@ -1,0 +1,849 @@
+gconv.c  -  program for converting graph codings
+------------------------------------------------
+by Thomas Harmuth                     11.04.1996
+email:       harmuth@mathematik.uni-bielefeld.de
+
+Manual
+======
+
+Introduction
+------------
+The program GCONV converts different codings for graphs into each other. 
+Most of these codes stick to a common format developed in 1995. However, the program
+is also able to load codes that do not stick to this format. So the program can also
+be used to load non-standard codes and bring them to the standard format.
+The standard does not concern the code itself. Some of the codes are completely
+different. The only thing the standard does is to provide a header for each code
+so that every code can be automatically recognized by this header.
+
+The goal of the program is to put all graph codes under one roof. So there
+will always be updates of the program as soon as a new code is included. This will
+be done in Ljubljana/Slovenia, since this program has been developed in Ljubljana.
+If there is a code that should be included in the program, please send a description
+of the code and a suggestion for a name of the code to the following address:
+Tomaz.Pisanski@mat.uni-lj.si 
+
+Headers
+-------
+You only need to know about the conventions for a header if you want to create a
+code on your own or if you write your own programs that must recognize the header.
+Of course, GCONV produces the headers automatically if you convert one code
+into another.
+An example for a header is the following:  >>reg_code 20 3 le<<
+So, every header begins with >>, followed by the name of the code. Then some 
+parameters follow which are required by the code. The header ends with <<.
+After that, the code itself follows. How the code and how the parameters look like
+is completely dependent on the code itself. So, another example for a header
+might be:  >>planar_code<<  
+This code obviously needs no additional parameters.
+Between the last parameter of the code and the ending << there can be added comments.
+So another example of a header is:    >>reg_code 20 3 le Hi Mum, I'm still alive!<<
+The following header is not allowed:  >>reg_code 20 Hi Mum, I'm still alive! 3 le<<
+because the code "reg_code" needs 3 additional parameters and they must come first.
+Immediately after the name of a code, a newline character is not allowed. There must
+be either a blank or the ending <<.
+
+Your programs
+-------------
+Maybe you have created a program that reads graphs, but they must be coded in a
+special way. This is the normal case, since most of the programs read exactly one 
+code. You can use the program GCONV to convert other codes into that code and then
+read them. However, the program GCONV must be able to produce the code that your
+program reads. So if you develop new programs, you should use a code for reading that
+sticks to the standard (i.e. that begins with a header).
+If you have already created a program and the program GCONV does not write 
+the code that your program reads, you should change your program so that it reads
+one of the codes which are given as output by GCONV. This is easy because if your
+code is at least read by GCONV, then GCONV provides the same code together with
+a header as output. So the only thing you must change in your program is to make it
+drop the header (and then go on reading the code as usual). Of course, you can make
+your program check the header to recognize if the given code is the required one.
+If your code is not even read by GCONV, then you should write to the above email-
+address to let the code be included into the program.
+
+Using GCONV
+-----------
+You get the program GCONV by compiling the source code "gconv.c". You need to have
+the header file "nauty.h" written by Brendan McKay. Before you compile, you must
+change this header file (as described in itself) so that it fits to your computer. 
+
+Some codes require information about the endian of your computer. You must change
+the constants ENDIAN_IN and ENDIAN_OUT to either LITTLE_ENDIAN or BIG_ENDIAN.
+
+The program GCONV is run by calling its name (on disk) and several options. It
+reads from stdin and writes to stdout. Error messages and other messages are written
+to stderr.
+
+Options
+-------
+< x    Input file is x instead of stdin
+
+> x    Output file is x instead of stdout.
+
+>> x   Output is appended to file x. Using this command, a header is not produced.
+       So you should not use this parameter if file x does not yet exist.
+       Make sure that the code in file x is the same one as the appended code!
+       
+       You can use -i instead of <, -o instead of >, and -oo instead of >>.
+       This is important if you want to read/write binary files and your system
+       handles <,> and >> itself (for example MS-DOS).       
+
+-f x   x is the name of the code into which the input is converted. There is no
+       default, so if you don't use -f, no output is produced.
+       See the appendix for the code names ("formats").
+
+-s x   If the input file does not follow the standard, its code must be specified
+       with this option. x ist the name of the code that is to be read. If the
+       code needs additional parameters, they must be given right after x.
+       If the input file contains a header, -s must not be used!
+
++e     With this option ("extract") the program writes the header of the input
+       file on stdout. This is an easy way to have a look at the code type.
+
+-e x   With this option the program writes the header of the input file into the
+       file x. You can use -e with no additional parameter instead of +e,
+       but then you must be careful that either no parameter follows or it begins
+       with -,+,< or >. Otherwise that parameter will be interpreted as a filename.
+
+-a x   With this option the program adds the header which is in the file x to the
+       input file and writes the result to the output file. If the input file already
+       contains a header, then this old header is dropped.
+
+       You cannot use -e and -a simultaneously. When +e,-e or -a are used, no
+       convertion is done. So all other parameters (except >,>> and <) are ignored.
+       The options -e and -a provide an easy way to change the header of a file
+       since many files cannot be read into an editor (they contain binary data
+       that cannot be written in ASCII-code). Use -e to extract the header of a file,
+       read the header into an editor, change it (for example, put comments into the
+       header) and then add it to the file by using the option -a.    
+       
+-n x   x is the maximum number of vertices a graph can have. Default: 511.  On PC
+       you might get problems if you increase this number. The total maximum is
+       determined by INFINITY (see nauty.h).
+
+-m x   This option is only important if you use a short code (_s) for input. See
+       appendix for details. x is the maximum common code length of two successive
+       graphs in the file. Default: 16300. On PC you might get problems if you 
+       increase this number.
+
+num,   Usually the whole input file is converted. If it contains many graphs and you
+n1-n2  want only some of them to be converted, you can give range numbers. A single
+       number (num) means that only the graph with this number is converted. A range
+       n1-n2 means that all graphs that are numbered from n1 to n2 are converted.
+       The number of the first graph in the file is 1.
+
+Examples:
+Note: In the appendix you can have a look at how a special example file is converted.
+1) gconv < a:snarks20 > snarks20.new -s reg_code_old 20 3 -f reg_code
+         The file a:snarks20 is read. It contains code "reg_code_old". This code
+         is for storing regular graphs and needs two more additional parameters:
+         The number of vertices of each graph (20) and the regularity (3).
+         The output file is snarks.new. The output code is "reg_code". This is
+         mainly the same code as "reg_code_old" but with a header. So this is a
+         typical call of the program to bring an old archive to the new standard.
+2) gconv < snarks.new > multi -f multi_code
+         The input file snarks.new is converted into a file that contains 
+         multi_code. The output is written into the file multi. Since the input
+         file contains a header, the option -s is not needed to recognize the code.
+         Even more:  the option -s must not be given!         
+3) gconv -i snarks.new -o multi -f multi_code
+         The same as 2), but now it is guaranteed that the i/o-files are opened binary.
+4) gconv < a:snarks.new -f writegraph 7
+         The seventh graph in the input file a:snarks.new is printed to stdout.
+5) gconv < multi > some 14 6 -f multi_code 5 7 8-10 12 15-18 3
+         Graphs number 3,5,6,7,8,9,10,12,14,15,16,17,18 are converted and written 
+         to the file "some". The new code multi_code is the same as the code in the
+         file "multi". So the graphs are not really converted. You can use the program
+         this way to extract some graphs of a file.
+   
+
+Appendix
+========
+
+The following code names are recognized by the program (date: 28.8.1995). You cannot
+convert each code into each other. For example, you cannot convert a reg_code-graph 
+into code "planar_code". The program contains a table of possible and impossible
+convertions. If you call an impossible convertion, an error message is printed.
+If you call a convertion that is only possible under several conditions, a warning
+is printed or the program checks for each graph if the convertion is possible. If not,
+an error message is printed. Example:  If you want to convert a graph into "reg_code",
+you must pay attention that the graph is regular. If during the convertion a non-regular
+graph appears, an error message is printed.
+The table of possible convertions may change according to several updates of the
+program. Of course, a convertion that was once possible will be possible for all
+time.
+Some of the following codes are binary and some ASCII. There is an A oder B printed behind
+the code name. If the code sticks to the standard, then this is marked by an S. 
+
+
+Code names
+----------
+ 1) writegraph        AS (for printing graphs to be easily read by humans)
+ 2) planar_code_old   B  (for planar graphs that are already embedded in the plane)
+ 3) reg_code_old      B  (for regular graphs with unique regularity and number of vertices)
+                          two additional parameters required:
+                          1) The unique number of vertices for all graphs
+                          2) The unique regularity for all graphs
+ 4) multi_code_old    B  (for simple graphs)
+ 5) planar_code       BS (see planar_code_old, but new standard with header)
+ 6) reg_code          BS (see reg_code_old, but new standard with header; the header
+                          includes the required parameters)
+ 7) multi_code        BS (see multi_code_old, but new standard with header)
+ 8) planar_code_s     BS (see planar_code, but short coding)
+ 9) reg_code_s        BS (see reg_code, but short coding)
+10) multi_code_s      BS (see multi_code, but short coding)
+11) planar_code_s_old B  (see planar_code_old, but short coding)
+12) reg_code_s_old    B  (see reg_code_old, but short coding)
+13) multi_code_s_old  B  (see multi_code_old, but short coding)
+14) graph6            AS (for simple graphs)
+15) graph6_old        A  (the same without a header)
+16) digraph6          AS (for directed graphs)
+17) digraph6_old      A  (the same without a header)
+18) writegraph2d_old  A  (combinatorica format for one graph with 2d-coordinates)
+19) writegraph3d_old  A  (combinatorica format for one graph with 3d-coordinates)
+20) writegraph2d      AS (see writegraph2d_old, for whole archives)
+21) writegraph3d      AS (see writegraph3d_old, for whole archives)
+22) multi_code2_s_old B  (see multi_code_s_old, slightly different)
+
+Code descriptions
+-----------------
+
+1) writegraph
+   This is a code that is easy to read on a screen. First it shows the number of vertices
+   of the graph. After that, the vertices are listed. To each vertex there is given a
+   list of the neighbours of this vertex. After the last vertex there are some newlines
+   and then the next graph follows.
+2) planar_code_old
+   This code is binary and so it cannot be read on a screen. First the number of vertices
+   of the graph appears. Vertices are numbered 1,...,n. First the neighbours of vertex 1
+   are listed in clockwise direction, followed by a zero. Then the same continues
+   with vertex 2,3,...,n. After the last zero, the next graph follows.
+3) reg_code_old (in this description 3-regular graphs as an example)
+   This code is binary and only for regular graphs with a common number n of vertices.
+   The code does not contain the regularity and the number of vertices of each graph.
+   The coding of the graphs is as follows: The vertices of a graph with n
+   vertices are numbered 1 to n. Vertex 1 is always assumed to be adjacent to vertex 2, 3
+   and 4, so there is no need to store this. For every vertex, all the adjacent
+   vertices with a number larger than the vertex itself, are stored with one byte
+   per entry all in a row starting with vertex 2, then 3, ... .
+
+   So if one wants to reconstruct the graph from the code, one first has to fill
+   in the edges (1,2),(1,3) and (1,4). Then one has to fill up the list of vertex
+   2: Vertex 2 is already adjacent to 1, so two edges are missing. This means
+   that the next two entries in the code are the missing neighbours of 2.
+
+   In general: If one has already filled up the adjacency list of vertex 1 to
+   k-1 and the valence of vertex k is m, then the next 3 - m entries give the
+   missing neighbours of vertex k. It is easily seen, that coded this way every
+   graph needs 3*(n/2)-3 bytes, with n the number of vertices.
+   After the last byte the next graph follows.
+4) multi_code_old
+   This code is binary. The first entry is the number of vertices.
+   Vertices are numbered 1,...,n. To each vertex x there is a list of
+   neighbours with higher numbers than x (like in reg_code_old), followed by a zero.
+   The last list is always empty (no neighbours of n with a higher number than n),
+   so the last "list" is not followed by a zero.
+   After the last byte the next graph follows.
+
+Normally the entries in the codes 2)-4) are of type "unsigned char". But if the number
+of vertices for one graph is higher than 252, then the code for this graph begins with
+a zero (unsigned char) and then each following entry is of the type "unsigned short"
+(2 bytes). In this case it makes a difference whether the entry is stored in little
+endian or big endian style. The output style that is produced ALWAYS depends on the
+definition of the constant ENDIAN_OUT (see chapter "using GCONV). The input style 
+that is assumed depends on the definition of the constant ENDIAN_IN. But if the input
+file begins with a header that contains a "be" or "le"-parameter, then the input style
+is big endian or little endian, respectively. If the file contains no graphs with
+more than 252 vertices, then it is not important if the style is little endian or
+big endian.
+  
+5) planar_code
+   See 2), but with the header at the beginning. The header is one of the following:   
+   >>planar_code<<
+   >>planar_code le<<
+   >>planar_code be<<
+   where "le/be" stands for little endian/big endian. It is poosible to add comments
+   before the <<-ending (see chapter "headers").
+6) reg_code
+   See 3), but with the header at the beginning. The header is one of the following:
+   >>reg_code x y<<
+   >>reg_code x y be<<
+   >>reg_code x y le<<
+   where x is the number of vertices of each graph, y is the regularity of each graph
+   and "le/be" stands for little endian/big endian.
+   Furthermore, this code does not assume that the first vertex is a neighbour of the
+   vertices 2,3 and 4. So this code takes three entries more per graph, but offers
+   more flexibility.
+7) multi_code
+   See 4), but with the header at the beginning. The header is one of the following:
+   >>multi_code<<
+   >>multi_code le<<
+   >>multi_code be<<
+   where "le/be" stands for little endian/big endian.
+8) planar_code_s
+   See 5), but the code is shortened like this:
+   Every code starts with the (unsigned-short-) number of entries that should be taken
+   from the previous code. This number is followed by the entries in which the codes
+   differ. So the code for the first graph always begins with a zero followed by the
+   usual code. For an example see reg_code_s.
+9) reg_code_s
+   See 6), but the code is shortened as described under 8).
+   Example: Normal codes 2 3 4 3 5 6 5 7 8 7 8 8 and 2 3 4 3 5 6 7 8 7 8 7 8
+        give short codes 0 2 3 4 3 5 6 5 7 8 7 8 8 and 6 7 8 7 8 7 8
+        where the 6 in the second code stands for six entries (2 3 4 3 5 6) that have 
+        to be taken from the first code.
+10) multi_code_s
+    See 7), but the code is shortened as described under 8).
+11) planar_code_s_old
+    see 8), but without header
+12) reg_code_s_old
+    see 9), but without header
+13) multi_code_s_old
+    see 10), but without header
+
+14) graph6
+15) graph6_old
+16) digraph6
+17) digraph6_old
+    see the following description:
+   
+-------------------------------------------------------------------
+Data codes using 6/8 encoding.       B. McKay  16 Aug 1995
+-----------------------------
+
+General principles:
+
+  All numbers are in decimal unless obviously in binary.
+
+  Apart from the header, there is one object per line.  Apart from the
+  header and the end-of-line characters, all bytes have a value in the
+  range 63-126 (which are all printable ASCII characters).
+
+Bit vectors:
+
+  A bit vector x of length k can be represented as follows.
+		Example:  1000101100011100
+
+  (1) Pad on the right with 0 to make the length a multiple of 6.
+		Example:  100010110001110000
+
+  (2) Split into groups of 6 bits each.
+		Example:  100010 110001 110000
+
+  (3) Add 63 to each group, considering them as bigendian binary numbers.
+		Example:  97 112 111
+
+  These values are then stored one per byte.
+  So, the number of bytes is ceiling(k/6).
+
+  Let R(x) denote this representation of x as a string of bytes.
+
+Small nonnegative integers:
+
+  Let n be an integer in the range 0-262143 (262143 = 2^18-1).
+
+  If 0 <= n <= 62, define N(n) to be the single byte n+63.
+  If n >= 63, define N(n) to be the four bytes 126 R(x), where
+	 x is the bigendian 18-bit binary form of n.
+
+  Examples:  N(30) = 93
+				 N(12345) = N(000011 000000 111001) = 126 69 63 120
+
+
+Description of graph6 format.
+----------------------------
+
+Data type:
+	simple undirected graphs of order 0 to 262143.
+
+Header:
+	>>graph6<<
+
+File name extension:
+	.gr6  (optional)
+
+One graph:
+	Suppose G has n vertices.  Write the upper triangle of the adjacency
+	matrix of G as a bit vector x of length n(n-1)/2, using the ordering
+	(0,1),(0,2),(1,2),(0,3),(1,3),(2,3),...,(n-1,n).
+
+	Then the graph is represented as  N(n) R(x).
+
+Example:
+	Suppose n=5 and G has edges 0-2, 0-4, 1-3 and 3-4.
+
+	x = 0 10 010 1001
+
+	Then N(n) = 68 and R(x) = R(010010 100100) = 81 99.
+	So, the graph is  68 81 99.
+
+
+Description of digraph6 format.
+------------------------------
+
+Data type:
+	simple directed graphs of order 0 to 262143 (loops ok).
+
+Header:
+	>>digraph6<<
+
+File name extension:
+	.dg6  (optional)
+
+One digraph:
+	Suppose G has n vertices.  Write the adjacency matrix of G as a
+	bit vector x of length n*n, using the ordering
+	(0,0),(0,1),...,(0,n-1),(1,0),...,(1,n-1),...,(0,n-1),...,(n-1,n-1).
+
+	Then the digraph is represented as  N(n) R(x).
+
+Example:
+	Suppose n=5 and G has edges 0->2, 1->1, 2->3 and 3->4.
+
+	x = 00100 01000 00010 00001 00000
+
+	Then N(n) = 68 and
+	R(x) = R(001000 100000 010000 010000 000000) = 71 95 79 79 63.
+	So, the digraph is  68 71 95 79 79 63.
+
+-------------------------------------------------------------------------------
+
+18) writegraph2d_old
+    This is a Combinatorica format. It is ASCII. Vertices are numbered 1,...,n.
+    For each vertex there is one line in the file. The first number in the line is
+    the vertex number to which the following numbers are related, then two coordinates
+    between 0 and 1 follow. They are used to embed the vertex into the plane.
+    After that, the numbers of the neighbours of the vertex follow (see 1)).
+    Only one graph can be stored in one file.
+    Empty lines are possible.   
+19) writegraph3d_old
+    See 18), but with three coordinates for each vertex.
+20) writegraph2d
+    See 18), but after the last vertex there is a line that contains only a zero.
+    Then the next graph follows. So more than one graph can be stored in one file.
+21) writegraph3d
+    See 20), but with three coordinates for each vertex.
+22) multi_code2_s_old
+    See 13), but there is only an unsigned-char instead of an unsigned-short for 
+    the number of entries that should be taken from the previous graph. You can 
+    use this code only for graphs with at most 252 vertices (otherwise the entries
+    of the code cannot be interpreted uniquely).  
+
+    
+Example file
+------------
+Let's now have a look how a special example file is converted. Imagine having a file
+called "crit_24_3". It contains nine graphs which are 3-critical with 24 vertices.
+Unfortunately they are stored in "multi_code_old" code. This is a binary code, and so
+we cannot print it. The following command 
+
+gconv.exe -i crit_24_3 -o output1 -s multi_code_old -f writegraph2d
+
+produces the file "output1" which contains data in "writegraph2d" code. This code is
+ASCII and can therefore be printed. This is the result:
+
+>>writegraph2d<<
+
+1 0 0 5 7
+2 0 0 6 8
+3 0 0 10 12
+4 0 0 9 11
+5 0 0 1 8 13
+6 0 0 2 7 13
+7 0 0 1 6 15
+8 0 0 2 5 14
+9 0 0 4 12 17
+10 0 0 3 11 16
+11 0 0 4 10 19
+12 0 0 3 9 18
+13 0 0 5 6 20
+14 0 0 8 17 23
+15 0 0 7 16 22
+16 0 0 10 15 23
+17 0 0 9 14 22
+18 0 0 12 19 24
+19 0 0 11 18 24
+20 0 0 13 21 24
+21 0 0 20 22 23
+22 0 0 15 17 21
+23 0 0 14 16 21
+24 0 0 18 19 20
+0
+
+1 0 0 5 9
+2 0 0 6 10
+3 0 0 8 12
+4 0 0 7 11
+5 0 0 1 10 13
+6 0 0 2 9 13
+7 0 0 4 12 14
+8 0 0 3 11 14
+9 0 0 1 6 16
+10 0 0 2 5 15
+11 0 0 4 8 17
+12 0 0 3 7 18
+13 0 0 5 6 19
+14 0 0 7 8 19
+15 0 0 10 18 24
+16 0 0 9 17 23
+17 0 0 11 16 24
+18 0 0 12 15 23
+19 0 0 13 14 22
+20 0 0 21 22 24
+21 0 0 20 22 23
+22 0 0 19 20 21
+23 0 0 16 18 21
+24 0 0 15 17 20
+0
+
+1 0 0 5 9
+2 0 0 6 10
+3 0 0 8 12
+4 0 0 7 11
+5 0 0 1 10 13
+6 0 0 2 9 13
+7 0 0 4 12 14
+8 0 0 3 11 14
+9 0 0 1 6 16
+10 0 0 2 5 15
+11 0 0 4 8 17
+12 0 0 3 7 18
+13 0 0 5 6 21
+14 0 0 7 8 20
+15 0 0 10 18 24
+16 0 0 9 17 23
+17 0 0 11 16 24
+18 0 0 12 15 23
+19 0 0 22 23 24
+20 0 0 14 21 22
+21 0 0 13 20 22
+22 0 0 19 20 21
+23 0 0 16 18 19
+24 0 0 15 17 19
+0
+
+1 0 0 5 11
+2 0 0 6 12
+3 0 0 8 10
+4 0 0 7 9
+5 0 0 1 12 13
+6 0 0 2 11 13
+7 0 0 4 10 14
+8 0 0 3 9 14
+9 0 0 4 8 16
+10 0 0 3 7 15
+11 0 0 1 6 18
+12 0 0 2 5 17
+13 0 0 5 6 19
+14 0 0 7 8 19
+15 0 0 10 22 24
+16 0 0 9 21 23
+17 0 0 12 18 24
+18 0 0 11 17 23
+19 0 0 13 14 20
+20 0 0 19 21 22
+21 0 0 16 20 24
+22 0 0 15 20 23
+23 0 0 16 18 22
+24 0 0 15 17 21
+0
+
+1 0 0 6 8
+2 0 0 5 7
+3 0 0 10 12
+4 0 0 9 11
+5 0 0 2 8 13
+6 0 0 1 7 13
+7 0 0 2 6 18
+8 0 0 1 5 19
+9 0 0 4 10 20
+10 0 0 3 9 15
+11 0 0 4 14 16
+12 0 0 3 14 17
+13 0 0 5 6 22
+14 0 0 11 12 16
+15 0 0 10 16 22
+16 0 0 11 14 15
+17 0 0 12 18 23
+18 0 0 7 17 24
+19 0 0 8 20 23
+20 0 0 9 19 24
+21 0 0 22 23 24
+22 0 0 13 15 21
+23 0 0 17 19 21
+24 0 0 18 20 21
+0
+
+1 0 0 6 8
+2 0 0 7 12
+3 0 0 9 11
+4 0 0 5 10
+5 0 0 4 8 14
+6 0 0 1 10 14
+7 0 0 2 9 13
+8 0 0 1 5 16
+9 0 0 3 7 19
+10 0 0 4 6 18
+11 0 0 3 13 15
+12 0 0 2 15 17
+13 0 0 7 11 21
+14 0 0 5 6 21
+15 0 0 11 12 17
+16 0 0 8 23 24
+17 0 0 12 15 23
+18 0 0 10 19 22
+19 0 0 9 18 24
+20 0 0 21 22 24
+21 0 0 13 14 20
+22 0 0 18 20 23
+23 0 0 16 17 22
+24 0 0 16 19 20
+0
+
+1 0 0 6 9
+2 0 0 5 10
+3 0 0 11 12
+4 0 0 7 8
+5 0 0 2 9 13
+6 0 0 1 10 13
+7 0 0 4 8 14
+8 0 0 4 7 15
+9 0 0 1 5 17
+10 0 0 2 6 18
+11 0 0 3 14 16
+12 0 0 3 15 19
+13 0 0 5 6 21
+14 0 0 7 11 22
+15 0 0 8 12 16
+16 0 0 11 15 21
+17 0 0 9 22 24
+18 0 0 10 19 23
+19 0 0 12 18 24
+20 0 0 21 23 24
+21 0 0 13 16 20
+22 0 0 14 17 23
+23 0 0 18 20 22
+24 0 0 17 19 20
+0
+
+1 0 0 7 9
+2 0 0 8 10
+3 0 0 6 12
+4 0 0 5 11
+5 0 0 4 10 13
+6 0 0 3 9 14
+7 0 0 1 12 14
+8 0 0 2 11 13
+9 0 0 1 6 16
+10 0 0 2 5 15
+11 0 0 4 8 18
+12 0 0 3 7 17
+13 0 0 5 8 19
+14 0 0 6 7 19
+15 0 0 10 17 24
+16 0 0 9 18 24
+17 0 0 12 15 23
+18 0 0 11 16 22
+19 0 0 13 14 21
+20 0 0 21 22 23
+21 0 0 19 20 24
+22 0 0 18 20 23
+23 0 0 17 20 22
+24 0 0 15 16 21
+0
+
+1 0 0 8 12
+2 0 0 7 11
+3 0 0 6 10
+4 0 0 5 9
+5 0 0 4 12 14
+6 0 0 3 11 13
+7 0 0 2 10 13
+8 0 0 1 9 14
+9 0 0 4 8 16
+10 0 0 3 7 15
+11 0 0 2 6 18
+12 0 0 1 5 17
+13 0 0 6 7 20
+14 0 0 5 8 20
+15 0 0 10 21 23
+16 0 0 9 23 24
+17 0 0 12 18 22
+18 0 0 11 17 24
+19 0 0 20 22 24
+20 0 0 13 14 19
+21 0 0 15 22 23
+22 0 0 17 19 21
+23 0 0 15 16 21
+24 0 0 16 18 19
+0
+
+If you compare the output with the description of the "writegraph2d" code, you
+see that every vertex has the same coordinates (0,0). This is the default because
+the code "multi_code_old" does not provide the possibility to store coordinates.
+
+Now let's convert this file into another which contains the code "graph6".
+The following command does this:
+
+gconv.exe -i output1 -o output2 -f graph6
+
+The -s parameter is no longer needed because the file "output1" already contains a
+header by which the code is recognized. Here is the destination file "output2":
+
+>>graph6<<W?`CIOOG?_cCB??O?O??`?GO?C??OG?C???@??IG?A`???w
+W?`?`ACQ?aCOB??o?A?@??AC?C_?E??????@???w??h??DG
+W?`?`ACQ?aCOB??o?A?@??AC?C_????A??A@???w??k??DO
+W?`?`?PGcGH?B??o?A?@??@??GG?E???C??P??GO??g_?DC
+W?QAKOOGG_C?B??B?A??R?@?A?GA??@?C?????gG??T???k
+W?EACOaD@?G??aB??@_A??@G?O?@?G????B@??@O??o_?AW
+W?Q?_eGP@?C?B??a?G_?P?G??O??GG????AP??Q???I_?@W
+W?CcAACQ?aCOAO@_?A?@??@G?GO?E??????B??@O??Q_?EC
+W?CaC?PGaGP?@_AO?A?@??@??GG????EC??_??Ag?@`??Ao
+
+You see that there is one graph per line. The first line also contains the header.
+The code is ASCII.
+
+Now we will convert only the four graphs 3-5 and 7. The destination file will be
+called "output3" and it will contain "writegraph" code. The command:
+
+gconv.exe -i output2 -o output3 -f writegraph 3-5 7
+
+We also could have used the input file "output1" instead of "output2" since both
+files contain the same data. They contain different codes but the codes are 
+recognized by their headers. However, if we use the input file "crit_24_3",
+then we must add the parameter "-s multi_code_old".
+Here is the output file "output3":
+
+>>writegraph 0<<
+
+Number of vertices:    24
+=========================
+    1 |     5     9 
+    2 |     6    10 
+    3 |     8    12 
+    4 |     7    11 
+    5 |     1    10    13 
+    6 |     2     9    13 
+    7 |     4    12    14 
+    8 |     3    11    14 
+    9 |     1     6    16 
+   10 |     2     5    15 
+   11 |     4     8    17 
+   12 |     3     7    18 
+   13 |     5     6    21 
+   14 |     7     8    20 
+   15 |    10    18    24 
+   16 |     9    17    23 
+   17 |    11    16    24 
+   18 |    12    15    23 
+   19 |    22    23    24 
+   20 |    14    21    22 
+   21 |    13    20    22 
+   22 |    19    20    21 
+   23 |    16    18    19 
+   24 |    15    17    19 
+
+
+Number of vertices:    24
+=========================
+    1 |     5    11 
+    2 |     6    12 
+    3 |     8    10 
+    4 |     7     9 
+    5 |     1    12    13 
+    6 |     2    11    13 
+    7 |     4    10    14 
+    8 |     3     9    14 
+    9 |     4     8    16 
+   10 |     3     7    15 
+   11 |     1     6    18 
+   12 |     2     5    17 
+   13 |     5     6    19 
+   14 |     7     8    19 
+   15 |    10    22    24 
+   16 |     9    21    23 
+   17 |    12    18    24 
+   18 |    11    17    23 
+   19 |    13    14    20 
+   20 |    19    21    22 
+   21 |    16    20    24 
+   22 |    15    20    23 
+   23 |    16    18    22 
+   24 |    15    17    21 
+
+
+Number of vertices:    24
+=========================
+    1 |     6     8 
+    2 |     5     7 
+    3 |    10    12 
+    4 |     9    11 
+    5 |     2     8    13 
+    6 |     1     7    13 
+    7 |     2     6    18 
+    8 |     1     5    19 
+    9 |     4    10    20 
+   10 |     3     9    15 
+   11 |     4    14    16 
+   12 |     3    14    17 
+   13 |     5     6    22 
+   14 |    11    12    16 
+   15 |    10    16    22 
+   16 |    11    14    15 
+   17 |    12    18    23 
+   18 |     7    17    24 
+   19 |     8    20    23 
+   20 |     9    19    24 
+   21 |    22    23    24 
+   22 |    13    15    21 
+   23 |    17    19    21 
+   24 |    18    20    21 
+
+
+Number of vertices:    24
+=========================
+    1 |     6     9 
+    2 |     5    10 
+    3 |    11    12 
+    4 |     7     8 
+    5 |     2     9    13 
+    6 |     1    10    13 
+    7 |     4     8    14 
+    8 |     4     7    15 
+    9 |     1     5    17 
+   10 |     2     6    18 
+   11 |     3    14    16 
+   12 |     3    15    19 
+   13 |     5     6    21 
+   14 |     7    11    22 
+   15 |     8    12    16 
+   16 |    11    15    21 
+   17 |     9    22    24 
+   18 |    10    19    23 
+   19 |    12    18    24 
+   20 |    21    23    24 
+   21 |    13    16    20 
+   22 |    14    17    23 
+   23 |    18    20    22 
+   24 |    17    19    20 
+
+We cannot convert this file because GCONV is not able to READ a file that
+contains "writegraph" code (but it is able to read "writegraph2d" code, as
+you could see). We could convert one of the files "output1", "output2" or
+"crit_24_3" in many ways, for example to binary codes, but the method is
+always the same and in the binary cases we cannot even show the result.
+So we will now end this example.
+
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
