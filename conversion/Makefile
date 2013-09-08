@@ -15,7 +15,7 @@ $(BUILD_DIR):
 
 
 $(BUILD_DIR)/gconv: $(BUILD_DIR) gconv.c
-	$(COMPILE.c) $(CFLAGS) $(CPPFLAGS) -o $@ gconv.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) -o $@ gconv.c
 
 
 #### Clean target deletes all generated files ####
