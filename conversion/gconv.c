@@ -1424,20 +1424,20 @@ void convert(graph *g,graph *g2,int maxn,int maxm,int oldformat,int newformat,
               if (erg==1) {erg=0;}  /* write only one graph */   break;} 
 	  }
 	  switch (erg) {
-	    case 2: {fprintf(stderr,"Error while writing graph %d!\n",num); 
+	    case 2: {fprintf(stderr,"Error while writing graph %lu!\n",num); 
                     return;}
-	    case 3: {fprintf(stderr,"Error while writing graph %d:"
+	    case 3: {fprintf(stderr,"Error while writing graph %lu:"
 				    " Graph too big!\n",num); return;}
 	  }
 	  count++;
 	  header = FALSE;    /* after first written graph no more headers */
 	}
 	break;}
-     case 3: {fprintf(stderr,"Error while reading graph %d: Graph too big!\n",
+     case 3: {fprintf(stderr,"Error while reading graph %lu: Graph too big!\n",
                       num+1);  return;}
      case 4: {fprintf(stderr,"Error while reading: No header found!\n");
 	       return;}
-     default: /* case 2 */ {fprintf(stderr,"Error while reading graph %d!\n",
+     default: /* case 2 */ {fprintf(stderr,"Error while reading graph %lu!\n",
                                     num+1); return;}
    }  /* switch */
    /* save written graph: */
@@ -1452,7 +1452,7 @@ void convert(graph *g,graph *g2,int maxn,int maxm,int oldformat,int newformat,
 	  {fprintf(stderr,"Error while copying internal data!\n"); return;}
    }
  } while (erg==1 && (r==0 || num<range_max));
- fprintf(stderr,"Read %d Graphs.\n",num);
+ fprintf(stderr,"Read %lu Graphs.\n",num);
 }
 
 /************************************MAIN************************************/
