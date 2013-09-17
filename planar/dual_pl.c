@@ -76,9 +76,7 @@ static int markvalue = 30000;
 int filterEnabled = FALSE;
 int filterOnly = 0;
 
-int includeSummary = FALSE;
-int includeNumbering = FALSE;
-int latex = FALSE;
+int edgecode = FALSE;
 
 int numberOfGraphs = 0;
 int reportsWritten = 0;
@@ -89,6 +87,74 @@ int nf;
 
 
 //////////////////////////////////////////////////////////////////////////////
+
+//=============== Writing edgecode of dual graph ===========================
+
+void writeDualEdgeCodeSmall(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the length of the body
+    fputc(ne + nf - 1, stdout);
+    
+    for(i=0; i<nf; i++){
+        e = elast = facestart[i];
+        do {
+            fputc(e->index, stdout);
+            e = e->inverse->prev;
+        } while (e != elast);
+        if(i < nf - 1){
+            fputc(255, stdout);
+        }
+    }
+}
+
+void writeDualEdgeCodeLarge(){
+    int i;
+    EDGE *e, *elast;
+    
+    fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+    exit(-1);
+}
+
+void writeDualEdgeCode(){
+    static int first = TRUE;
+    int i, counter=0;
+    EDGE *e, *elast;
+    
+    if(first){
+        first = FALSE;
+        
+        fprintf(stdout, ">>edge_code<<");
+    }
+    
+    //label the edges
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            e->index = -1;
+            e = e->next;
+        } while (e != elast);
+    }
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            if(e->index == -1){
+                e->index = counter;
+                e->inverse->index = counter;
+                counter++;
+            }
+            e = e->next;
+        } while (e != elast);
+    }
+    
+    if (ne + nf - 1 <= 255) {
+        writeDualEdgeCodeSmall();
+    } else {
+        writeDualEdgeCodeLarge();
+    }
+    
+}
 
 //=============== Writing planarcode of dual graph ===========================
 
@@ -400,6 +466,8 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -E, --edgecode\n");
+    fprintf(stderr, "       Write edge code instead of planar code.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -416,13 +484,17 @@ int main(int argc, char *argv[]) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"edgecode", no_argument, NULL, 'E'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hE", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
+                break;
+            case 'E':
+                edgecode = TRUE;
                 break;
             case 'h':
                 help(name);
@@ -443,7 +515,11 @@ int main(int argc, char *argv[]) {
     int length;
     while (readPlanarCode(code, &length, stdin)) {
         decodePlanarCode(code);
-        writeDualPlanarCode();
+        if(edgecode){
+            writeDualEdgeCode();
+        } else {
+            writeDualPlanarCode();
+        }
         numberOfGraphs++;
     }
     
