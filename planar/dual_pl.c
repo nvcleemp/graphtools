@@ -523,6 +523,6 @@ int main(int argc, char *argv[]) {
         numberOfGraphs++;
     }
     
-    fprintf(stderr, "Output dual of %d graph%s", numberOfGraphs, 
+    fprintf(stderr, "Output dual of %d graph%s.\n", numberOfGraphs, 
                 numberOfGraphs==1 ? "" : "s");
 }
