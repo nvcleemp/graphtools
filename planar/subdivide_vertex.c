@@ -402,7 +402,7 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s reads planar graphs from standard in and\n", name)
+    fprintf(stderr, "The program %s reads planar graphs from standard in and\n", name);
     fprintf(stderr, "subdivides each face with one vertex.\n\n");
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options]\n\n", name);
