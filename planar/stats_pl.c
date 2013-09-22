@@ -282,6 +282,48 @@ void writeFaceSizeSequence() {
     fprintf(stdout, "\n");
 }
 
+void writeDegreeVector() {
+    int i;
+    int degreeFrequency[MAXVAL];
+    int maxDegree = 0;
+
+    for (i = 0; i < MAXVAL; i++) {
+        degreeFrequency[i] = 0;
+    }
+
+    for (i = 0; i < nv; i++) {
+        degreeFrequency[degree[i] - 1]++;
+        if(degree[i]>maxDegree) maxDegree = degree[i];
+    }
+
+    fprintf(stdout, "Degree vector:    ");
+    for (i = 1; i <= maxDegree; i++) {
+        fprintf(stdout, "%d ", degreeFrequency[i - 1]);
+    }
+    fprintf(stdout, "\n");
+}
+
+void writeFaceSizeVector() {
+    int i;
+    int faceSizeFrequency[MAXVAL];
+    int maxSize = 0;
+
+    for (i = 0; i < MAXVAL; i++) {
+        faceSizeFrequency[i] = 0;
+    }
+
+    for (i = 0; i < nf; i++) {
+        faceSizeFrequency[faceSize[i] - 1]++;
+        if(faceSize[i]>maxSize) maxSize=faceSize[i];
+    }
+
+    fprintf(stdout, "Face size vector: ");
+    for (i = 1; i <= maxSize; i++) {
+        fprintf(stdout, "%d ", faceSizeFrequency[i - 1]);
+    }
+    fprintf(stdout, "\n");
+}
+
 void writeNumberingLatex() {
     fprintf(stdout, "\\section*{Graph %d}\n", numberOfGraphs);
 }
@@ -336,19 +378,66 @@ void writeFaceSizeSequenceLatex() {
     fprintf(stdout, "\\\\\n");
 }
 
+void writeDegreeVectorLatex() {
+    int i;
+    int degreeFrequency[MAXVAL];
+    int maxDegree = 0;
+
+    for (i = 0; i < MAXVAL; i++) {
+        degreeFrequency[i] = 0;
+    }
+
+    for (i = 0; i < nv; i++) {
+        degreeFrequency[degree[i] - 1]++;
+        if(degree[i]>maxDegree) maxDegree = degree[i];
+    }
+
+    fprintf(stdout, "Degree vector:    ");
+    for (i = 1; i <= maxDegree; i++) {
+        fprintf(stdout, "%d ", degreeFrequency[i - 1]);
+    }
+    fprintf(stdout, "\\\\\n");
+}
+
+void writeFaceSizeVectorLatex() {
+    int i;
+    int faceSizeFrequency[MAXVAL];
+    int maxSize = 0;
+
+    for (i = 0; i < MAXVAL; i++) {
+        faceSizeFrequency[i] = 0;
+    }
+
+    for (i = 0; i < nf; i++) {
+        faceSizeFrequency[faceSize[i] - 1]++;
+        if(faceSize[i]>maxSize) maxSize=faceSize[i];
+    }
+
+    fprintf(stdout, "Face size vector: ");
+    for (i = 1; i <= maxSize; i++) {
+        fprintf(stdout, "%d ", faceSizeFrequency[i - 1]);
+    }
+    fprintf(stdout, "\\\\\n");
+}
+
 void writeStatistics() {
     calculateAutomorphismGroup();
     if(latex){
         if(includeNumbering) writeNumberingLatex();
         writeDataLatex();
         writeDegreeSequenceLatex();
+        writeDegreeVectorLatex();
+        writeFaceSizeSequenceLatex();
+        writeFaceSizeVectorLatex();
 
         fprintf(stdout, "\\\\\n");
     } else {
         if(includeNumbering) writeNumbering();
         writeData();
         writeDegreeSequence();
+        writeDegreeVector();
         writeFaceSizeSequence();
+        writeFaceSizeVector();
 
         fprintf(stdout, "\n");
     }
