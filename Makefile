@@ -2,12 +2,13 @@
 SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           planar/split_pl.c planar/dual_pl.c planar/non_iso_pl/non_iso_pl.c\
           planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c\
+	  planar/subdivide_vertex.c\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 all: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
-	build/non_iso_pl build/gconv
+	build/non_iso_pl build/gconv build/subdivide_vertex
 
 clean:
 	rm -rf build
@@ -42,6 +43,10 @@ build/dual_pl: planar/dual_pl.c
 build/non_iso_pl: planar/non_iso_pl/non_iso_pl.c planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c
 	mkdir -p build
 	cc -o build/non_iso_pl -O4 planar/non_iso_pl/non_iso_pl.c
+	
+build/subdivide_vertex: planar/subdivide_vertex.c
+	mkdir -p build
+	cc -o build/subdivide_vertex -O4 planar/subdivide_vertex.c
 
 build/gconv: conversion/gconv.c
 	cd conversion && make
