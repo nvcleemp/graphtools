@@ -118,34 +118,8 @@ void writeSubdividedPlanarCodeChar(){
 }
 
 void writeSubdividedPlanarCodeShort(){
-    int i;
-    EDGE *e, *elast;
-    unsigned short temp;
-    
-    //write the number of vertices of the dual
-    fputc(0, stdout);
-    temp = nf;
-    if (fwrite(&temp, sizeof (unsigned short), 1, stdout) != 1) {
-        fprintf(stderr, "fwrite() failed -- exiting!\n");
-        exit(-1);
-    }
-    
-    for(i=0; i<nf; i++){
-        e = elast = facestart[i];
-        do {
-            temp = e->inverse->rightface + 1;
-            if (fwrite(&temp, sizeof (unsigned short), 1, stdout) != 1) {
-                fprintf(stderr, "fwrite() failed -- exiting!\n");
-                exit(-1);
-            }
-            e = e->inverse->prev;
-        } while (e != elast);
-        temp = 0;
-        if (fwrite(&temp, sizeof (unsigned short), 1, stdout) != 1) {
-            fprintf(stderr, "fwrite() failed -- exiting!\n");
-            exit(-1);
-        }
-    }
+    fprintf(stderr, "Graphs of this size are not yet supported\n");
+    exit(-1);
 }
 
 void writeSubdividedPlanarCode(){
