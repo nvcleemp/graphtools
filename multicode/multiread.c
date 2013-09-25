@@ -181,8 +181,6 @@ void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelaenge) {
     int i, j;
     ENTRYTYPE knotenzahl;
 
-    /*for(i=0;i<codelaenge;i++) printf(" %d ",code[i]); printf("\n");*/
-
     graph[0][0] = knotenzahl = code[0];
 
     for (i = 1; i <= knotenzahl; i++) {
@@ -249,7 +247,6 @@ main(int argc, char *argv[]) {
             printf("\n\n\n Graph Nr: %d \n\n", graphCount);
             writeGraph(graph);
         }
-        /*    if (welchergraph == zaehlen) break;*/
     }
 
 
