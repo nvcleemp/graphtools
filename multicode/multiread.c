@@ -6,7 +6,7 @@
 #include<memory.h>
 #include<limits.h>
 
-#define leer USHRT_MAX
+#define EMPTY USHRT_MAX
 
 #define KNOTEN 4000
 #define MAXVALENCE 100
@@ -37,7 +37,7 @@ void schreibegraph(GRAPH g) {
         for (x = 0; x < maxvalence; x++) {
             fprintf(stdout, " |  ");
             for (y = 1; (y <= g[0][0])&&(y <= 24); y++)
-                if (g[y][x] == leer) fprintf(stdout, "|  ");
+                if (g[y][x] == EMPTY) fprintf(stdout, "|  ");
                 else fprintf(stdout, "|%2d", g[y][x]);
             fprintf(stdout, "|\n");
         }
@@ -61,7 +61,7 @@ void schreibegraph(GRAPH g) {
             for (y = 0; y < maxvalence; y++) {
                 fprintf(stdout, "    ");
                 for (x = unten; (x <= g[0][0])&&(x <= oben); x++)
-                    if (g[x][y] == leer) fprintf(stdout, "|  ");
+                    if (g[x][y] == EMPTY) fprintf(stdout, "|  ");
                     else fprintf(stdout, "|%2d", g[x][y]);
                 fprintf(stdout, "|\n");
             }
@@ -82,7 +82,7 @@ void schreibegraph(GRAPH g) {
         for (x = 0; x < maxvalence; x++) {
             fprintf(stdout, " |   ");
             for (y = 1; (y <= g[0][0])&&(y <= 24); y++)
-                if (g[y][x] == leer) fprintf(stdout, "|   ");
+                if (g[y][x] == EMPTY) fprintf(stdout, "|   ");
                 else fprintf(stdout, "|%3d", g[y][x]);
             fprintf(stdout, "|\n");
         }
@@ -106,7 +106,7 @@ void schreibegraph(GRAPH g) {
             for (y = 0; y < maxvalence; y++) {
                 fprintf(stdout, "     ");
                 for (x = unten; (x <= g[0][0])&&(x <= oben); x++)
-                    if (g[x][y] == leer) fprintf(stdout, "|   ");
+                    if (g[x][y] == EMPTY) fprintf(stdout, "|   ");
                     else fprintf(stdout, "|%3d", g[x][y]);
                 fprintf(stdout, "|\n");
             }
@@ -127,7 +127,7 @@ void schreibegraph(GRAPH g) {
         for (x = 0; x < maxvalence; x++) {
             fprintf(stdout, " |    ");
             for (y = 1; (y <= g[0][0])&&(y <= 19); y++)
-                if (g[y][x] == leer) fprintf(stdout, "|    ");
+                if (g[y][x] == EMPTY) fprintf(stdout, "|    ");
                 else fprintf(stdout, "|%4d", g[y][x]);
             fprintf(stdout, "|\n");
         }
@@ -151,7 +151,7 @@ void schreibegraph(GRAPH g) {
             for (y = 0; y < maxvalence; y++) {
                 fprintf(stdout, "      ");
                 for (x = unten; (x <= g[0][0])&&(x <= oben); x++)
-                    if (g[x][y] == leer) fprintf(stdout, "|    ");
+                    if (g[x][y] == EMPTY) fprintf(stdout, "|    ");
                     else fprintf(stdout, "|%4d", g[x][y]);
                 fprintf(stdout, "|\n");
             }
@@ -187,7 +187,7 @@ void decodiere(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
 
     for (i = 1; i <= knotenzahl; i++) {
         adj[i] = 0;
-        for (j = 0; j <= MAXVALENCE; j++) graph[i][j] = leer;
+        for (j = 0; j <= MAXVALENCE; j++) graph[i][j] = EMPTY;
     }
     for (j = 1; j <= MAXVALENCE; j++) graph[0][j] = 0;
 
