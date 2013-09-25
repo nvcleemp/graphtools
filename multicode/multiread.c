@@ -224,13 +224,13 @@ void addEdge(GRAPH graph, ADJACENCY adj, int v, int w) {
     adj[w]++;
 }
 
-void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelaenge) {
+void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelength) {
     int i, j;
-    ENTRYTYPE knotenzahl;
+    ENTRYTYPE vertexCount;
 
-    graph[0][0] = knotenzahl = code[0];
+    graph[0][0] = vertexCount = code[0];
 
-    for (i = 1; i <= knotenzahl; i++) {
+    for (i = 1; i <= vertexCount; i++) {
         adj[i] = 0;
         for (j = 0; j <= MAXVALENCE; j++) {
             graph[i][j] = EMPTY;
@@ -242,7 +242,7 @@ void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelaenge) {
 
     j = 1;
 
-    for (i = 1; i < codelaenge; i++) {
+    for (i = 1; i < codelength; i++) {
         if (code[i] == 0) j++;
         else addEdge(graph, adj, j, (int) code[i]);
         if ((adj[code[i]] > MAXVALENCE) || (adj[j] > MAXVALENCE)) {
