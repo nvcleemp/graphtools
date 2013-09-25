@@ -15,7 +15,7 @@ typedef unsigned short ENTRYTYPE;
 typedef ENTRYTYPE GRAPH[MAXN + 1][MAXVALENCE + 1];
 typedef ENTRYTYPE ADJACENCY[MAXN + 1];
 
-int maxvalence, welchergraph, codeLength;
+int maxvalence, codeLength;
 ENTRYTYPE vertexCount;
 
 void writeGraph(GRAPH g) {
@@ -211,7 +211,7 @@ main(int argc, char *argv[]) {
     ENTRYTYPE code[MAXN * MAXVALENCE + MAXN];
     unsigned char dummy;
 
-    welchergraph = 0;
+    int welchergraph = 0;
 
     if (argc >= 2) sscanf(argv[1], "%d", &welchergraph);
 
