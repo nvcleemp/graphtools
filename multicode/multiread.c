@@ -26,19 +26,27 @@ void writeGraph(GRAPH g) {
     if (g[0][0] < 100) {
         fprintf(stdout, "|%2d", g[0][0]);
 
-        for (x = 1; (x <= g[0][0])&&(x <= 24); x++) fprintf(stdout, "|%2d", x);
+        for (x = 1; (x <= g[0][0])&&(x <= 24); x++) {
+            fprintf(stdout, "|%2d", x);
+        }
         fprintf(stdout, "|\n");
 
         fprintf(stdout, " ");
 
-        for (x = 0; (x <= g[0][0])&&(x <= 24); x++) fprintf(stdout, "|==");
+        for (x = 0; (x <= g[0][0])&&(x <= 24); x++) {
+            fprintf(stdout, "|==");
+        }
         fprintf(stdout, "|\n");
 
         for (x = 0; x < maxvalence; x++) {
             fprintf(stdout, " |  ");
-            for (y = 1; (y <= g[0][0])&&(y <= 24); y++)
-                if (g[y][x] == EMPTY) fprintf(stdout, "|  ");
-                else fprintf(stdout, "|%2d", g[y][x]);
+            for (y = 1; (y <= g[0][0])&&(y <= 24); y++) {
+                if (g[y][x] == EMPTY) {
+                    fprintf(stdout, "|  ");
+                } else {
+                    fprintf(stdout, "|%2d", g[y][x]);
+                }
+            }
             fprintf(stdout, "|\n");
         }
 
@@ -50,19 +58,27 @@ void writeGraph(GRAPH g) {
 
             fprintf(stdout, "    ");
 
-            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) fprintf(stdout, "|%2d", x);
+            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                fprintf(stdout, "|%2d", x);
+            }
             fprintf(stdout, "|\n");
 
             fprintf(stdout, "    ");
 
-            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) fprintf(stdout, "|==");
+            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                fprintf(stdout, "|==");
+            }
             fprintf(stdout, "|\n");
 
             for (y = 0; y < maxvalence; y++) {
                 fprintf(stdout, "    ");
-                for (x = unten; (x <= g[0][0])&&(x <= oben); x++)
-                    if (g[x][y] == EMPTY) fprintf(stdout, "|  ");
-                    else fprintf(stdout, "|%2d", g[x][y]);
+                for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                    if (g[x][y] == EMPTY) {
+                        fprintf(stdout, "|  ");
+                    } else {
+                        fprintf(stdout, "|%2d", g[x][y]);
+                    }
+                }
                 fprintf(stdout, "|\n");
             }
             unten += 24;
@@ -71,19 +87,27 @@ void writeGraph(GRAPH g) {
     } else if (g[0][0] < 1000) {
         fprintf(stdout, "|%3d", g[0][0]);
 
-        for (x = 1; (x <= g[0][0])&&(x <= 24); x++) fprintf(stdout, "|%3d", x);
+        for (x = 1; (x <= g[0][0])&&(x <= 24); x++) {
+            fprintf(stdout, "|%3d", x);
+        }
         fprintf(stdout, "|\n");
 
         fprintf(stdout, " ");
 
-        for (x = 0; (x <= g[0][0])&&(x <= 24); x++) fprintf(stdout, "|===");
+        for (x = 0; (x <= g[0][0])&&(x <= 24); x++) {
+            fprintf(stdout, "|===");
+        }
         fprintf(stdout, "|\n");
 
         for (x = 0; x < maxvalence; x++) {
             fprintf(stdout, " |   ");
-            for (y = 1; (y <= g[0][0])&&(y <= 24); y++)
-                if (g[y][x] == EMPTY) fprintf(stdout, "|   ");
-                else fprintf(stdout, "|%3d", g[y][x]);
+            for (y = 1; (y <= g[0][0])&&(y <= 24); y++) {
+                if (g[y][x] == EMPTY) {
+                    fprintf(stdout, "|   ");
+                } else {
+                    fprintf(stdout, "|%3d", g[y][x]);
+                }
+            }
             fprintf(stdout, "|\n");
         }
 
@@ -95,19 +119,27 @@ void writeGraph(GRAPH g) {
 
             fprintf(stdout, "     ");
 
-            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) fprintf(stdout, "|%3d", x);
+            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                fprintf(stdout, "|%3d", x);
+            }
             fprintf(stdout, "|\n");
 
             fprintf(stdout, "     ");
 
-            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) fprintf(stdout, "|===");
+            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                fprintf(stdout, "|===");
+            }
             fprintf(stdout, "|\n");
 
             for (y = 0; y < maxvalence; y++) {
                 fprintf(stdout, "     ");
-                for (x = unten; (x <= g[0][0])&&(x <= oben); x++)
-                    if (g[x][y] == EMPTY) fprintf(stdout, "|   ");
-                    else fprintf(stdout, "|%3d", g[x][y]);
+                for (x = unten; (x <= g[0][0])&&(x <= oben); x++){
+                    if (g[x][y] == EMPTY) {
+                        fprintf(stdout, "|   ");
+                    } else {
+                        fprintf(stdout, "|%3d", g[x][y]);
+                    }
+                }
                 fprintf(stdout, "|\n");
             }
             unten += 24;
@@ -116,19 +148,27 @@ void writeGraph(GRAPH g) {
     } else /*if (g[0][0] < 10000)*/ {
         fprintf(stdout, "|%4d", g[0][0]);
 
-        for (x = 1; (x <= g[0][0])&&(x <= 19); x++) fprintf(stdout, "|%4d", x);
+        for (x = 1; (x <= g[0][0])&&(x <= 19); x++) {
+            fprintf(stdout, "|%4d", x);
+        }
         fprintf(stdout, "|\n");
 
         fprintf(stdout, " ");
 
-        for (x = 0; (x <= g[0][0])&&(x <= 19); x++) fprintf(stdout, "|====");
+        for (x = 0; (x <= g[0][0])&&(x <= 19); x++) {
+            fprintf(stdout, "|====");
+        }
         fprintf(stdout, "|\n");
 
         for (x = 0; x < maxvalence; x++) {
             fprintf(stdout, " |    ");
-            for (y = 1; (y <= g[0][0])&&(y <= 19); y++)
-                if (g[y][x] == EMPTY) fprintf(stdout, "|    ");
-                else fprintf(stdout, "|%4d", g[y][x]);
+            for (y = 1; (y <= g[0][0])&&(y <= 19); y++) {
+                if (g[y][x] == EMPTY) {
+                    fprintf(stdout, "|    ");
+                } else {
+                    fprintf(stdout, "|%4d", g[y][x]);
+                }
+            }
             fprintf(stdout, "|\n");
         }
 
@@ -140,19 +180,26 @@ void writeGraph(GRAPH g) {
 
             fprintf(stdout, "      ");
 
-            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) fprintf(stdout, "|%4d", x);
+            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                fprintf(stdout, "|%4d", x);
+            }
             fprintf(stdout, "|\n");
 
             fprintf(stdout, "      ");
 
-            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) fprintf(stdout, "|====");
+            for (x = unten; (x <= g[0][0])&&(x <= oben); x++) {
+                fprintf(stdout, "|====");
+            }
             fprintf(stdout, "|\n");
 
             for (y = 0; y < maxvalence; y++) {
                 fprintf(stdout, "      ");
                 for (x = unten; (x <= g[0][0])&&(x <= oben); x++)
-                    if (g[x][y] == EMPTY) fprintf(stdout, "|    ");
-                    else fprintf(stdout, "|%4d", g[x][y]);
+                    if (g[x][y] == EMPTY) {
+                        fprintf(stdout, "|    ");
+                    } else {
+                        fprintf(stdout, "|%4d", g[x][y]);
+                    }
                 fprintf(stdout, "|\n");
             }
             unten += 19;
@@ -185,10 +232,13 @@ void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelaenge) {
 
     for (i = 1; i <= knotenzahl; i++) {
         adj[i] = 0;
-        for (j = 0; j <= MAXVALENCE; j++) graph[i][j] = EMPTY;
+        for (j = 0; j <= MAXVALENCE; j++) {
+            graph[i][j] = EMPTY;
+        }
     }
-    for (j = 1; j <= MAXVALENCE; j++) graph[0][j] = 0;
-
+    for (j = 1; j <= MAXVALENCE; j++) {
+        graph[0][j] = 0;
+    }
 
     j = 1;
 
@@ -211,7 +261,9 @@ main(int argc, char *argv[]) {
 
     int filterGraph = 0;
 
-    if (argc >= 2) sscanf(argv[1], "%d", &filterGraph);
+    if (argc >= 2) {
+        sscanf(argv[1], "%d", &filterGraph);
+    }
 
     graphCount = 0;
 
@@ -223,7 +275,9 @@ main(int argc, char *argv[]) {
             codeLength = 1;
             while (zeroCount < vertexCount - 1) {
                 code[codeLength] = getc(stdin);
-                if (code[codeLength] == 0) zeroCount++;
+                if (code[codeLength] == 0) {
+                    zeroCount++;
+                }
                 codeLength++;
             }
         } else {
@@ -233,7 +287,9 @@ main(int argc, char *argv[]) {
             codeLength = 1;
             while (zeroCount < vertexCount - 1) {
                 fread(code + codeLength, sizeof (ENTRYTYPE), 1, stdin);
-                if (code[codeLength] == 0) zeroCount++;
+                if (code[codeLength] == 0) {
+                    zeroCount++;
+                }
                 codeLength++;
             }
         }
@@ -242,8 +298,11 @@ main(int argc, char *argv[]) {
         graphCount++;
         if ((!filterGraph) || (filterGraph == graphCount)) {
             decode(code, graph, adj, codeLength);
-            for (i = 1, maxvalence = 0; i <= vertexCount; i++) if (adj[i] > maxvalence)
+            for (i = 1, maxvalence = 0; i <= vertexCount; i++) {
+                if (adj[i] > maxvalence) {
                     maxvalence = adj[i];
+                }
+            }
             printf("\n\n\n Graph Nr: %d \n\n", graphCount);
             writeGraph(graph);
         }
