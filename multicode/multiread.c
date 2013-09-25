@@ -18,7 +18,7 @@ typedef ENTRYTYPE ADJAZENZ[KNOTEN + 1];
 int kantenzahl, maxvalence, welchergraph, codelaenge;
 ENTRYTYPE knotenzahl;
 
-void schreibegraph(GRAPH g) {
+void writeGraph(GRAPH g) {
     int x, y, unten, oben;
     fprintf(stdout, "\n\n ");
 
@@ -170,14 +170,14 @@ void schreibegraph(GRAPH g) {
 /* ausgegangen, dass in adj die wirklich aktuellen werte fuer die */
 /* Adjazenzen stehen. Die adjazenzen werden dann aktualisiert. */
 
-void einfugen(GRAPH graph, ADJAZENZ adj, int v, int w) {
+void addEdge(GRAPH graph, ADJAZENZ adj, int v, int w) {
     graph[v][adj[v]] = w;
     graph[w][adj[w]] = v;
     adj[v]++;
     adj[w]++;
 }
 
-void decodiere(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
+void decode(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
     int i, j;
     ENTRYTYPE knotenzahl;
 
@@ -196,7 +196,7 @@ void decodiere(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
 
     for (i = 1; i < codelaenge; i++) {
         if (code[i] == 0) j++;
-        else einfugen(graph, adj, j, (int) code[i]);
+        else addEdge(graph, adj, j, (int) code[i]);
         if ((adj[code[i]] > MAXVALENCE) || (adj[j] > MAXVALENCE)) {
             fprintf(stderr, "MAXVALENCE too small (%d)!\n", MAXVALENCE);
             exit(0);
@@ -243,11 +243,11 @@ main(int argc, char *argv[]) {
 
         zaehlen++;
         if ((!welchergraph) || (welchergraph == zaehlen)) {
-            decodiere(code, graph, adj, codelaenge);
+            decode(code, graph, adj, codelaenge);
             for (i = 1, maxvalence = 0; i <= knotenzahl; i++) if (adj[i] > maxvalence)
                     maxvalence = adj[i];
             printf("\n\n\n Graph Nr: %d \n\n", zaehlen);
-            schreibegraph(graph);
+            writeGraph(graph);
         }
         /*    if (welchergraph == zaehlen) break;*/
     }
