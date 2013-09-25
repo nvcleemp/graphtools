@@ -15,7 +15,7 @@ typedef unsigned short ENTRYTYPE;
 typedef ENTRYTYPE GRAPH[MAXN + 1][MAXVALENCE + 1];
 typedef ENTRYTYPE ADJACENCY[MAXN + 1];
 
-int kantenzahl, maxvalence, welchergraph, codeLength;
+int maxvalence, welchergraph, codeLength;
 ENTRYTYPE vertexCount;
 
 void writeGraph(GRAPH g) {
