@@ -1,5 +1,6 @@
-/* Aufruf: cat Codes | multilies ------- oder
-           cat Codes | multilies welchergraph */
+/* Usage: cat codes | multiread 
+ * or:    cat codes | multiread graphNumber
+ */
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -209,14 +210,9 @@ void writeGraph(GRAPH g) {
 
 }
 
-
-
-
-
-/* Fuegt die Kante (v,w) in den Graphen graph ein. Dabei wird aber davon */
-/* ausgegangen, dass in adj die wirklich aktuellen werte fuer die */
-/* Adjazenzen stehen. Die adjazenzen werden dann aktualisiert. */
-
+/* This method adds the edge (v,w) to graph. This assumes that adj contains
+ * the current degree of the vertices v and w. This degrees are then updated.
+ */
 void addEdge(GRAPH graph, ADJACENCY adj, int v, int w) {
     graph[v][adj[v]] = w;
     graph[w][adj[w]] = v;
