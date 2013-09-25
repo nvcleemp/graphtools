@@ -18,9 +18,7 @@ typedef ENTRYTYPE ADJAZENZ[KNOTEN+1];
 int kantenzahl, maxvalence, welchergraph, codelaenge;
 ENTRYTYPE knotenzahl;
 
-schreibegraph(g)
-GRAPH g;
-{
+void schreibegraph(GRAPH g) {
  int x,y, unten,oben;
 fprintf(stdout,"\n\n ");
 
@@ -158,15 +156,11 @@ else /*if (g[0][0] < 10000)*/
 
 
 
-einfugen (graph,adj,v,w)
-GRAPH graph;
-ADJAZENZ adj;
-int v, w;
 /* Fuegt die Kante (v,w) in den Graphen graph ein. Dabei wird aber davon */
 /* ausgegangen, dass in adj die wirklich aktuellen werte fuer die */
 /* Adjazenzen stehen. Die adjazenzen werden dann aktualisiert. */
 
-{
+void einfugen (GRAPH graph, ADJAZENZ adj, int v, int w) {
 graph[v][adj[v]]=w;
 graph[w][adj[w]]=v;
 adj[v]++;
@@ -174,14 +168,7 @@ adj[w]++;
 }
 
 
-decodiere(code,graph,adj,codelaenge)
-
-ENTRYTYPE *code;
-GRAPH graph;
-ADJAZENZ adj;
-int codelaenge;
-
-{
+void decodiere(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
 int i,j;
 ENTRYTYPE knotenzahl;
 
@@ -206,13 +193,7 @@ for (i=1; i<codelaenge; i++)
 }
 
 
-main(argc,argv)
-
-int argc;
-char *argv[];
-
-
-{
+main(int argc,char *argv[]) {
 GRAPH graph;
 ADJAZENZ adj;
 int zaehlen, i, nuller;
