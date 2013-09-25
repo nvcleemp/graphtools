@@ -4,7 +4,6 @@
 
 #include<stdio.h>
 #include<stdlib.h>
-#include<memory.h>
 #include<limits.h>
 
 #define EMPTY USHRT_MAX
