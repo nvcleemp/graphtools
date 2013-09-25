@@ -207,46 +207,46 @@ void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelaenge) {
 main(int argc, char *argv[]) {
     GRAPH graph;
     ADJACENCY adj;
-    int zaehlen, i, nuller;
+    int graphCount, i, zeroCount;
     ENTRYTYPE code[MAXN * MAXVALENCE + MAXN];
     unsigned char dummy;
 
-    int welchergraph = 0;
+    int filterGraph = 0;
 
-    if (argc >= 2) sscanf(argv[1], "%d", &welchergraph);
+    if (argc >= 2) sscanf(argv[1], "%d", &filterGraph);
 
-    zaehlen = 0;
+    graphCount = 0;
 
 
     for (; fread(&dummy, sizeof (unsigned char), 1, stdin);) {
         if (dummy != 0) {
             vertexCount = code[0] = dummy;
-            nuller = 0;
+            zeroCount = 0;
             codeLength = 1;
-            while (nuller < vertexCount - 1) {
+            while (zeroCount < vertexCount - 1) {
                 code[codeLength] = getc(stdin);
-                if (code[codeLength] == 0) nuller++;
+                if (code[codeLength] == 0) zeroCount++;
                 codeLength++;
             }
         } else {
             fread(code, sizeof (ENTRYTYPE), 1, stdin);
             vertexCount = code[0];
-            nuller = 0;
+            zeroCount = 0;
             codeLength = 1;
-            while (nuller < vertexCount - 1) {
+            while (zeroCount < vertexCount - 1) {
                 fread(code + codeLength, sizeof (ENTRYTYPE), 1, stdin);
-                if (code[codeLength] == 0) nuller++;
+                if (code[codeLength] == 0) zeroCount++;
                 codeLength++;
             }
         }
 
 
-        zaehlen++;
-        if ((!welchergraph) || (welchergraph == zaehlen)) {
+        graphCount++;
+        if ((!filterGraph) || (filterGraph == graphCount)) {
             decode(code, graph, adj, codeLength);
             for (i = 1, maxvalence = 0; i <= vertexCount; i++) if (adj[i] > maxvalence)
                     maxvalence = adj[i];
-            printf("\n\n\n Graph Nr: %d \n\n", zaehlen);
+            printf("\n\n\n Graph Nr: %d \n\n", graphCount);
             writeGraph(graph);
         }
         /*    if (welchergraph == zaehlen) break;*/
