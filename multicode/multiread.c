@@ -15,8 +15,8 @@ typedef unsigned short ENTRYTYPE;
 typedef ENTRYTYPE GRAPH[MAXN + 1][MAXVALENCE + 1];
 typedef ENTRYTYPE ADJACENCY[MAXN + 1];
 
-int kantenzahl, maxvalence, welchergraph, codelaenge;
-ENTRYTYPE knotenzahl;
+int kantenzahl, maxvalence, welchergraph, codeLength;
+ENTRYTYPE vertexCount;
 
 void writeGraph(GRAPH g) {
     int x, y, unten, oben;
@@ -220,31 +220,31 @@ main(int argc, char *argv[]) {
 
     for (; fread(&dummy, sizeof (unsigned char), 1, stdin);) {
         if (dummy != 0) {
-            knotenzahl = code[0] = dummy;
+            vertexCount = code[0] = dummy;
             nuller = 0;
-            codelaenge = 1;
-            while (nuller < knotenzahl - 1) {
-                code[codelaenge] = getc(stdin);
-                if (code[codelaenge] == 0) nuller++;
-                codelaenge++;
+            codeLength = 1;
+            while (nuller < vertexCount - 1) {
+                code[codeLength] = getc(stdin);
+                if (code[codeLength] == 0) nuller++;
+                codeLength++;
             }
         } else {
             fread(code, sizeof (ENTRYTYPE), 1, stdin);
-            knotenzahl = code[0];
+            vertexCount = code[0];
             nuller = 0;
-            codelaenge = 1;
-            while (nuller < knotenzahl - 1) {
-                fread(code + codelaenge, sizeof (ENTRYTYPE), 1, stdin);
-                if (code[codelaenge] == 0) nuller++;
-                codelaenge++;
+            codeLength = 1;
+            while (nuller < vertexCount - 1) {
+                fread(code + codeLength, sizeof (ENTRYTYPE), 1, stdin);
+                if (code[codeLength] == 0) nuller++;
+                codeLength++;
             }
         }
 
 
         zaehlen++;
         if ((!welchergraph) || (welchergraph == zaehlen)) {
-            decode(code, graph, adj, codelaenge);
-            for (i = 1, maxvalence = 0; i <= knotenzahl; i++) if (adj[i] > maxvalence)
+            decode(code, graph, adj, codeLength);
+            for (i = 1, maxvalence = 0; i <= vertexCount; i++) if (adj[i] > maxvalence)
                     maxvalence = adj[i];
             printf("\n\n\n Graph Nr: %d \n\n", zaehlen);
             writeGraph(graph);
