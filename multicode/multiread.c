@@ -8,12 +8,12 @@
 
 #define EMPTY USHRT_MAX
 
-#define KNOTEN 4000
+#define MAXN 4000
 #define MAXVALENCE 100
 
 typedef unsigned short ENTRYTYPE;
-typedef ENTRYTYPE GRAPH[KNOTEN + 1][MAXVALENCE + 1];
-typedef ENTRYTYPE ADJAZENZ[KNOTEN + 1];
+typedef ENTRYTYPE GRAPH[MAXN + 1][MAXVALENCE + 1];
+typedef ENTRYTYPE ADJACENCY[MAXN + 1];
 
 int kantenzahl, maxvalence, welchergraph, codelaenge;
 ENTRYTYPE knotenzahl;
@@ -170,14 +170,14 @@ void writeGraph(GRAPH g) {
 /* ausgegangen, dass in adj die wirklich aktuellen werte fuer die */
 /* Adjazenzen stehen. Die adjazenzen werden dann aktualisiert. */
 
-void addEdge(GRAPH graph, ADJAZENZ adj, int v, int w) {
+void addEdge(GRAPH graph, ADJACENCY adj, int v, int w) {
     graph[v][adj[v]] = w;
     graph[w][adj[w]] = v;
     adj[v]++;
     adj[w]++;
 }
 
-void decode(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
+void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelaenge) {
     int i, j;
     ENTRYTYPE knotenzahl;
 
@@ -206,9 +206,9 @@ void decode(ENTRYTYPE *code, GRAPH graph, ADJAZENZ adj, int codelaenge) {
 
 main(int argc, char *argv[]) {
     GRAPH graph;
-    ADJAZENZ adj;
+    ADJACENCY adj;
     int zaehlen, i, nuller;
-    ENTRYTYPE code[KNOTEN * MAXVALENCE + KNOTEN];
+    ENTRYTYPE code[MAXN * MAXVALENCE + MAXN];
     unsigned char dummy;
 
     welchergraph = 0;
