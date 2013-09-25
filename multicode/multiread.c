@@ -243,8 +243,11 @@ void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelength) {
     j = 1;
 
     for (i = 1; i < codelength; i++) {
-        if (code[i] == 0) j++;
-        else addEdge(graph, adj, j, (int) code[i]);
+        if (code[i] == 0) {
+            j++;
+        } else {
+            addEdge(graph, adj, j, (int) code[i]);
+        }
         if ((adj[code[i]] > MAXVALENCE) || (adj[j] > MAXVALENCE)) {
             fprintf(stderr, "MAXVALENCE too small (%d)!\n", MAXVALENCE);
             exit(0);
