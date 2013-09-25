@@ -279,12 +279,18 @@ main(int argc, char *argv[]) {
                 codeLength++;
             }
         } else {
-            fread(code, sizeof (ENTRYTYPE), 1, stdin);
+            if (fread(code, sizeof (ENTRYTYPE), 1, stdin)!=1) {
+                fprintf(stderr, "Error while reading graph -- exiting!\n");
+                exit(EXIT_FAILURE);
+            }
             vertexCount = code[0];
             zeroCount = 0;
             codeLength = 1;
             while (zeroCount < vertexCount - 1) {
-                fread(code + codeLength, sizeof (ENTRYTYPE), 1, stdin);
+                if (fread(code + codeLength, sizeof (ENTRYTYPE), 1, stdin)!=1) {
+                    fprintf(stderr, "Error while reading graph -- exiting!\n");
+                    exit(EXIT_FAILURE);
+                }
                 if (code[codeLength] == 0) {
                     zeroCount++;
                 }
