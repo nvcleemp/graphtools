@@ -1,6 +1,9 @@
 The graphtools project is Copyright 2013 Universiteit Gent and is licensed
 under the terms of the GNU General Public License - see the file LICENSE.txt.
 
+The following programs do not fall under that license: gconv, multi_non_iso,
+multiread and non_iso_pl.
+
 Main developer: Nicolas Van Cleemput
 
 Research Group CAAGT
