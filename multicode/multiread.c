@@ -18,201 +18,82 @@ typedef ENTRYTYPE ADJACENCY[MAXN + 1];
 int maxvalence, codeLength;
 ENTRYTYPE vertexCount;
 
-void writeGraph2Digits(GRAPH g) {
+void writeGraph_impl(GRAPH g, int columns, char *numberFormat, char *headerSeparator, char* emptyCell) {
     int x, y, lowerBound, upperBound;
     fprintf(stdout, "\n\n ");
 
-    fprintf(stdout, "|%2d", g[0][0]);
+    fprintf(stdout, numberFormat, g[0][0]);
 
-    for (x = 1; (x <= g[0][0])&&(x <= 24); x++) {
-        fprintf(stdout, "|%2d", x);
+    for (x = 1; (x <= g[0][0])&&(x <= columns); x++) {
+        fprintf(stdout, numberFormat, x);
     }
     fprintf(stdout, "|\n");
 
     fprintf(stdout, " ");
 
-    for (x = 0; (x <= g[0][0])&&(x <= 24); x++) {
-        fprintf(stdout, "|==");
+    for (x = 0; (x <= g[0][0])&&(x <= columns); x++) {
+        fprintf(stdout, "|%s", headerSeparator);
     }
     fprintf(stdout, "|\n");
 
     for (x = 0; x < maxvalence; x++) {
-        fprintf(stdout, " |  ");
-        for (y = 1; (y <= g[0][0])&&(y <= 24); y++) {
+        fprintf(stdout, " |%s", emptyCell);
+        for (y = 1; (y <= g[0][0])&&(y <= columns); y++) {
             if (g[y][x] == EMPTY) {
-                fprintf(stdout, "|  ");
+                fprintf(stdout, "|%s", emptyCell);
             } else {
-                fprintf(stdout, "|%2d", g[y][x]);
+                fprintf(stdout, numberFormat, g[y][x]);
             }
         }
         fprintf(stdout, "|\n");
     }
 
-    lowerBound = 25;
-    upperBound = 48;
+    lowerBound = columns + 1;
+    upperBound = 2*columns;
 
     while (g[0][0] >= lowerBound) {
         fprintf(stdout, "\n");
 
-        fprintf(stdout, "    ");
+        fprintf(stdout, "  %s", emptyCell);
 
         for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
-            fprintf(stdout, "|%2d", x);
+            fprintf(stdout, numberFormat, x);
         }
         fprintf(stdout, "|\n");
 
-        fprintf(stdout, "    ");
+        fprintf(stdout, "  %s", emptyCell);
 
         for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
-            fprintf(stdout, "|==");
+            fprintf(stdout, "|%s", headerSeparator);
         }
         fprintf(stdout, "|\n");
 
         for (y = 0; y < maxvalence; y++) {
-            fprintf(stdout, "    ");
+            fprintf(stdout, "  %s", emptyCell);
             for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
                 if (g[x][y] == EMPTY) {
-                    fprintf(stdout, "|  ");
+                    fprintf(stdout, "|%s", emptyCell);
                 } else {
-                    fprintf(stdout, "|%2d", g[x][y]);
+                    fprintf(stdout, numberFormat, g[x][y]);
                 }
             }
             fprintf(stdout, "|\n");
         }
-        lowerBound += 24;
-        upperBound += 24;
+        lowerBound += columns;
+        upperBound += columns;
     }
+}
+
+void writeGraph2Digits(GRAPH g) {
+    writeGraph_impl(g, 24, "|%2d", "==", "  ");
 }
 
 void writeGraph3Digits(GRAPH g) {
-    int x, y, lowerBound, upperBound;
-    fprintf(stdout, "\n\n ");
-    
-    fprintf(stdout, "|%3d", g[0][0]);
-
-    for (x = 1; (x <= g[0][0])&&(x <= 24); x++) {
-        fprintf(stdout, "|%3d", x);
-    }
-    fprintf(stdout, "|\n");
-
-    fprintf(stdout, " ");
-
-    for (x = 0; (x <= g[0][0])&&(x <= 24); x++) {
-        fprintf(stdout, "|===");
-    }
-    fprintf(stdout, "|\n");
-
-    for (x = 0; x < maxvalence; x++) {
-        fprintf(stdout, " |   ");
-        for (y = 1; (y <= g[0][0])&&(y <= 24); y++) {
-            if (g[y][x] == EMPTY) {
-                fprintf(stdout, "|   ");
-            } else {
-                fprintf(stdout, "|%3d", g[y][x]);
-            }
-        }
-        fprintf(stdout, "|\n");
-    }
-
-    lowerBound = 25;
-    upperBound = 48;
-
-    while (g[0][0] >= lowerBound) {
-        fprintf(stdout, "\n");
-
-        fprintf(stdout, "     ");
-
-        for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
-            fprintf(stdout, "|%3d", x);
-        }
-        fprintf(stdout, "|\n");
-
-        fprintf(stdout, "     ");
-
-        for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
-            fprintf(stdout, "|===");
-        }
-        fprintf(stdout, "|\n");
-
-        for (y = 0; y < maxvalence; y++) {
-            fprintf(stdout, "     ");
-            for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++){
-                if (g[x][y] == EMPTY) {
-                    fprintf(stdout, "|   ");
-                } else {
-                    fprintf(stdout, "|%3d", g[x][y]);
-                }
-            }
-            fprintf(stdout, "|\n");
-        }
-        lowerBound += 24;
-        upperBound += 24;
-    }
+    writeGraph_impl(g, 18, "|%3d", "===", "   ");
 }
 
 void writeGraph4Digits(GRAPH g) {
-    int x, y, lowerBound, upperBound;
-    fprintf(stdout, "\n\n ");
-    
-    fprintf(stdout, "|%4d", g[0][0]);
-
-    for (x = 1; (x <= g[0][0])&&(x <= 19); x++) {
-        fprintf(stdout, "|%4d", x);
-    }
-    fprintf(stdout, "|\n");
-
-    fprintf(stdout, " ");
-
-    for (x = 0; (x <= g[0][0])&&(x <= 19); x++) {
-        fprintf(stdout, "|====");
-    }
-    fprintf(stdout, "|\n");
-
-    for (x = 0; x < maxvalence; x++) {
-        fprintf(stdout, " |    ");
-        for (y = 1; (y <= g[0][0])&&(y <= 19); y++) {
-            if (g[y][x] == EMPTY) {
-                fprintf(stdout, "|    ");
-            } else {
-                fprintf(stdout, "|%4d", g[y][x]);
-            }
-        }
-        fprintf(stdout, "|\n");
-    }
-
-    lowerBound = 20;
-    upperBound = 38;
-
-    while (g[0][0] >= lowerBound) {
-        fprintf(stdout, "\n");
-
-        fprintf(stdout, "      ");
-
-        for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
-            fprintf(stdout, "|%4d", x);
-        }
-        fprintf(stdout, "|\n");
-
-        fprintf(stdout, "      ");
-
-        for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++) {
-            fprintf(stdout, "|====");
-        }
-        fprintf(stdout, "|\n");
-
-        for (y = 0; y < maxvalence; y++) {
-            fprintf(stdout, "      ");
-            for (x = lowerBound; (x <= g[0][0])&&(x <= upperBound); x++)
-                if (g[x][y] == EMPTY) {
-                    fprintf(stdout, "|    ");
-                } else {
-                    fprintf(stdout, "|%4d", g[x][y]);
-                }
-            fprintf(stdout, "|\n");
-        }
-        lowerBound += 19;
-        upperBound += 19;
-    }
+    writeGraph_impl(g, 14, "|%4d", "====", "    ");
 }
 
 void writeGraph(GRAPH g) {
