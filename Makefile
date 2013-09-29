@@ -5,12 +5,20 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
 	  planar/subdivide_vertex.c planar/regular_pl.c\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
           multicode/multiread.c\
+          multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
+          multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
+          multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
+          multicode/multi_add_edges.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
+
+MULTICODE_SHARED = multicode/shared/multicode_base.c\
+                   multicode/shared/multicode_input.c\
+                   multicode/shared/multicode_output.c
 
 all: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
 	build/non_iso_pl build/gconv build/subdivide_vertex \
-	build/regular_pl build/multiread
+	build/regular_pl build/multiread build/multi_add_edges
 
 clean:
 	rm -rf build
@@ -57,6 +65,10 @@ build/subdivide_vertex: planar/subdivide_vertex.c
 build/multiread: multicode/multiread.c
 	mkdir -p build
 	cc -o build/multiread -O4 multicode/multiread.c
+
+build/multi_add_edges: multicode/multi_add_edges.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
 
 build/gconv: conversion/gconv.c
 	cd conversion && make
