@@ -10,6 +10,7 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
           multicode/connect/connect_general.c multicode/connect/connect_general.h\
           multicode/connect/multi_cyclic_connect.c\
+          multicode/connect/multi_complete_connect.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 MULTICODE_SHARED = multicode/shared/multicode_base.c\
@@ -24,7 +25,8 @@ planar: build/stats_pl build/count_pl build/filter_pl \
 
 gconv: build/gconv
 
-multi: build/multiread build/multi_add_edges build/multi_cyclic_connect
+multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
+       build/multi_complete_connect
 
 clean:
 	rm -rf build
@@ -77,6 +79,12 @@ build/multi_add_edges: multicode/multi_add_edges.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 
 build/multi_cyclic_connect: multicode/connect/multi_cyclic_connect.c \
+	                    multicode/connect/connect_general.c \
+	                     $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
+build/multi_complete_connect: multicode/connect/multi_complete_connect.c \
 	                    multicode/connect/connect_general.c \
 	                     $(MULTICODE_SHARED)
 	mkdir -p build
