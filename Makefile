@@ -15,10 +15,15 @@ MULTICODE_SHARED = multicode/shared/multicode_base.c\
                    multicode/shared/multicode_input.c\
                    multicode/shared/multicode_output.c
 
-all: build/stats_pl build/count_pl build/filter_pl \
+all: planar gconv multi
+
+planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
-	build/non_iso_pl build/gconv build/subdivide_vertex \
-	build/regular_pl build/multiread build/multi_add_edges
+	build/non_iso_pl build/subdivide_vertex build/regular_pl
+
+gconv: build/gconv
+
+multi: build/multiread build/multi_add_edges
 
 clean:
 	rm -rf build
