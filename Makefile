@@ -8,6 +8,8 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
           multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
+          multicode/connect/connect_general.c multicode/connect/connect_general.h\
+          multicode/connect/multi_cyclic_connect.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 MULTICODE_SHARED = multicode/shared/multicode_base.c\
