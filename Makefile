@@ -4,11 +4,10 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c\
 	  planar/subdivide_vertex.c planar/regular_pl.c\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
-          multicode/multiread.c\
+          multicode/multiread.c multicode/multi_add_edges.c\
           multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
           multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
-          multicode/multi_add_edges.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 MULTICODE_SHARED = multicode/shared/multicode_base.c\
