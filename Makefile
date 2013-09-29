@@ -23,7 +23,7 @@ planar: build/stats_pl build/count_pl build/filter_pl \
 
 gconv: build/gconv
 
-multi: build/multiread build/multi_add_edges
+multi: build/multiread build/multi_add_edges build/multi_cyclic_connect
 
 clean:
 	rm -rf build
@@ -72,6 +72,12 @@ build/multiread: multicode/multiread.c
 	cc -o build/multiread -O4 multicode/multiread.c
 
 build/multi_add_edges: multicode/multi_add_edges.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
+build/multi_cyclic_connect: multicode/connect/multi_cyclic_connect.c \
+	                    multicode/connect/connect_general.c \
+	                     $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
