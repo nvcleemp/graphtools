@@ -1,8 +1,20 @@
-/* 
- * File:   multi_add_edges.c
- * Author: nvcleemp
- *
- * Created on September 27, 2013, 6:47 PM
+/*
+ * Main developer: Nico Van Cleemput
+ * 
+ * Copyright (C) 2013 Ghent University.
+ * Licensed under the GNU GPL, read the file LICENSE.txt for details.
+ */
+
+/* This program reads a graph in multicode format from standard in,
+ * adds the requested edges and writes the new graph to standard out
+ * in multicode format.   
+ * 
+ * 
+ * Compile with:
+ *     
+ *     cc -o multi_add_edges -O4  multi_add_edges.c shared/multicode_base.c \
+ *     shared/multicode_input.c shared/multicode_output.c
+ * 
  */
 
 #include <stdio.h>
