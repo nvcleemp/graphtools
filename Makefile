@@ -71,9 +71,9 @@ build/subdivide_vertex: planar/subdivide_vertex.c
 	mkdir -p build
 	cc -o build/subdivide_vertex -O4 planar/subdivide_vertex.c
 	
-build/multiread: multicode/multiread.c
+build/multiread: multicode/multiread.c multicode/shared/multicode_base.c multicode/shared/multicode_input.c
 	mkdir -p build
-	cc -o build/multiread -O4 multicode/multiread.c
+	cc -o $@ -O4 $^
 
 build/multi_add_edges: multicode/multi_add_edges.c $(MULTICODE_SHARED)
 	mkdir -p build

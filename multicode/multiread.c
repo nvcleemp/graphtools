@@ -6,17 +6,10 @@
 #include<stdlib.h>
 #include<limits.h>
 
-#define EMPTY USHRT_MAX
+#include "shared/multicode_base.h"
+#include "shared/multicode_input.h"
 
-#define MAXN 4000
-#define MAXVALENCE 100
-
-typedef unsigned short ENTRYTYPE;
-typedef ENTRYTYPE GRAPH[MAXN + 1][MAXVALENCE + 1];
-typedef ENTRYTYPE ADJACENCY[MAXN + 1];
-
-int maxvalence, codeLength;
-ENTRYTYPE vertexCount;
+int maxvalence;
 
 void writeGraph_impl(GRAPH g, int columns, char *numberFormat, char *headerSeparator, char* emptyCell) {
     int x, y, lowerBound, upperBound;
@@ -107,53 +100,12 @@ void writeGraph(GRAPH g) {
 
 }
 
-/* This method adds the edge (v,w) to graph. This assumes that adj contains
- * the current degree of the vertices v and w. This degrees are then updated.
- */
-void addEdge(GRAPH graph, ADJACENCY adj, int v, int w) {
-    graph[v][adj[v]] = w;
-    graph[w][adj[w]] = v;
-    adj[v]++;
-    adj[w]++;
-}
-
-void decode(ENTRYTYPE *code, GRAPH graph, ADJACENCY adj, int codelength) {
-    int i, j;
-    ENTRYTYPE vertexCount;
-
-    graph[0][0] = vertexCount = code[0];
-
-    for (i = 1; i <= vertexCount; i++) {
-        adj[i] = 0;
-        for (j = 0; j <= MAXVALENCE; j++) {
-            graph[i][j] = EMPTY;
-        }
-    }
-    for (j = 1; j <= MAXVALENCE; j++) {
-        graph[0][j] = 0;
-    }
-
-    j = 1;
-
-    for (i = 1; i < codelength; i++) {
-        if (code[i] == 0) {
-            j++;
-        } else {
-            addEdge(graph, adj, j, (int) code[i]);
-        }
-        if ((adj[code[i]] > MAXVALENCE) || (adj[j] > MAXVALENCE)) {
-            fprintf(stderr, "MAXVALENCE too small (%d)!\n", MAXVALENCE);
-            exit(0);
-        }
-    }
-}
-
 main(int argc, char *argv[]) {
     GRAPH graph;
     ADJACENCY adj;
-    int graphCount, i, zeroCount;
-    ENTRYTYPE code[MAXN * MAXVALENCE + MAXN];
-    unsigned char dummy;
+    int graphCount, i;
+    int codeLength;
+    unsigned short code[MAXCODELENGTH];
 
     int filterGraph = 0;
 
@@ -163,44 +115,12 @@ main(int argc, char *argv[]) {
 
     graphCount = 0;
 
-
-    for (; fread(&dummy, sizeof (unsigned char), 1, stdin);) {
-        if (dummy != 0) {
-            vertexCount = code[0] = dummy;
-            zeroCount = 0;
-            codeLength = 1;
-            while (zeroCount < vertexCount - 1) {
-                code[codeLength] = getc(stdin);
-                if (code[codeLength] == 0) {
-                    zeroCount++;
-                }
-                codeLength++;
-            }
-        } else {
-            if (fread(code, sizeof (ENTRYTYPE), 1, stdin)!=1) {
-                fprintf(stderr, "Error while reading graph -- exiting!\n");
-                exit(EXIT_FAILURE);
-            }
-            vertexCount = code[0];
-            zeroCount = 0;
-            codeLength = 1;
-            while (zeroCount < vertexCount - 1) {
-                if (fread(code + codeLength, sizeof (ENTRYTYPE), 1, stdin)!=1) {
-                    fprintf(stderr, "Error while reading graph -- exiting!\n");
-                    exit(EXIT_FAILURE);
-                }
-                if (code[codeLength] == 0) {
-                    zeroCount++;
-                }
-                codeLength++;
-            }
-        }
-
+    while (readMultiCode(code, &codeLength, stdin)){
 
         graphCount++;
         if ((!filterGraph) || (filterGraph == graphCount)) {
-            decode(code, graph, adj, codeLength);
-            for (i = 1, maxvalence = 0; i <= vertexCount; i++) {
+            decodeMultiCode(code, codeLength, graph, adj);
+            for (i = 1, maxvalence = 0; i <= graph[0][0]; i++) {
                 if (adj[i] > maxvalence) {
                     maxvalence = adj[i];
                 }
