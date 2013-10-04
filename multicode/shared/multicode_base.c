@@ -32,4 +32,6 @@ void prepareGraph(GRAPH graph, ADJACENCY adj, int vertexCount) {
     for (j = 1; j <= MAXVAL; j++) {
         graph[0][j] = 0;
     }
+    
+    graph[0][0] = vertexCount;
 }
