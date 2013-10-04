@@ -47,7 +47,7 @@ void writeMultiCodeShort(GRAPH graph, ADJACENCY adj, FILE *f){
                 writeShort(graph[i][j], f);
             }
         }
-        fputc(0, f);
+        writeShort(0, f);
     }
 }
 
