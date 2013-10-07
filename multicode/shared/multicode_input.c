@@ -6,6 +6,7 @@
  */
 
 #include "multicode_input.h"
+#include<string.h>
 
 void decodeMultiCode(unsigned short* code, int length, GRAPH graph, ADJACENCY adj) {
     int i, j, currentVertex;
