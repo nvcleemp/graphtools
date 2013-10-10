@@ -18,7 +18,7 @@ MULTICODE_SHARED = multicode/shared/multicode_base.c\
                    multicode/shared/multicode_input.c\
                    multicode/shared/multicode_output.c
 
-all: planar gconv multi
+all: planar gconv multi visualise
 
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
@@ -28,6 +28,8 @@ gconv: build/gconv
 
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect
+
+visualise: build/writegraph2png
 
 clean:
 	rm -rf build
@@ -96,6 +98,10 @@ build/multi_path_connect: multicode/connect/multi_path_connect.c \
 	                     $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
+	
+build/writegraph2png: visualise/writegraph2png.c visualise/pngtoolkit.c
+	mkdir -p build
+	cc -o $@ -g $^ -lpng -lm
 
 build/gconv: conversion/gconv.c
 	cd conversion && make
