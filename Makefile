@@ -29,7 +29,7 @@ gconv: build/gconv
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect
 
-visualise: build/writegraph2png
+visualise: build/writegraph2png build/writegraph2png.jar
 
 clean:
 	rm -rf build
@@ -102,6 +102,10 @@ build/multi_path_connect: multicode/connect/multi_path_connect.c \
 build/writegraph2png: visualise/writegraph2png.c visualise/pngtoolkit.c
 	mkdir -p build
 	cc -o $@ -g $^ -lpng -lm
+
+build/writegraph2png.jar: visualise/writegraph2png/**/*
+	mkdir -p build
+	cd visualise/writegraph2png && ant -f ant.xml
 
 build/gconv: conversion/gconv.c
 	cd conversion && make

@@ -1,0 +1,21 @@
+<project default="build">
+    <target name="build" depends="jar,-post-jar"/>
+    <target name="compile">
+        <javac srcdir="." includeantruntime="false" />
+    </target>
+    <target name="jar" depends="compile">
+        <jar destfile="../../build/writegraph2png.jar"
+         basedir="."
+         includes="**/*.class">
+            <manifest>
+                <attribute name="Main-Class" value="visualise.Writegraph2Png" />
+            </manifest>
+        </jar>
+    </target>
+    <target name="-post-jar" depends="jar">
+        <echo message="Deleting class files" />
+        <delete>
+            <fileset dir="." includes="**/*.class"/>
+        </delete>
+    </target>
+</project>
