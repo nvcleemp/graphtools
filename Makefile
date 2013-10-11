@@ -28,7 +28,7 @@ gconv: build/gconv
 
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect \
-       build/multi_combine
+       build/multi_combine  build/multi_remove_edges
 
 visualise: build/writegraph2png build/writegraph2png.jar
 
@@ -79,6 +79,10 @@ build/multiread: multicode/multiread.c multicode/shared/multicode_base.c multico
 	cc -o $@ -O4 $^
 
 build/multi_add_edges: multicode/multi_add_edges.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
+build/multi_remove_edges: multicode/multi_remove_edges.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
