@@ -18,7 +18,7 @@ MULTICODE_SHARED = multicode/shared/multicode_base.c\
                    multicode/shared/multicode_input.c\
                    multicode/shared/multicode_output.c
 
-all: planar gconv multi visualise
+all: planar gconv multi visualise embedders
 
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
@@ -31,6 +31,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_combine  build/multi_remove_edges
 
 visualise: build/writegraph2png build/writegraph2png.jar
+
+embedders: build/embed
 
 clean:
 	rm -rf build
@@ -118,6 +120,10 @@ build/writegraph2png.jar: visualise/writegraph2png/**/*
 
 build/gconv: conversion/gconv.c
 	cd conversion && make
+	
+build/embed: embedders/embed.c
+	mkdir -p build
+	cc -o $@ -O4 $^ -lm
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
