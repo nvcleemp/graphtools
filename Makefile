@@ -3,8 +3,11 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           planar/split_pl.c planar/dual_pl.c planar/non_iso_pl/non_iso_pl.c\
           planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c\
 	  planar/subdivide_vertex.c planar/regular_pl.c\
+	  planar/adjlist2planarcode.py\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
           multicode/multiread.c multicode/multi_add_edges.c\
+          multicode/multi_combine.c multicode/multi_remove_edges.c\
+          multicode/multi_non_iso.c\
           multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
           multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
@@ -12,6 +15,9 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           multicode/connect/multi_cyclic_connect.c\
           multicode/connect/multi_complete_connect.c\
           multicode/connect/multi_path_connect.c\
+          embedders/embed.c\
+          visualise/writegraph2png/ant.xml visualise/writegraph2png/visualise/*\
+          visualise/pngtoolkit.c visualise/pngtoolkit.h visualise/writegraph2png.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 MULTICODE_SHARED = multicode/shared/multicode_base.c\
