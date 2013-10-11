@@ -38,6 +38,8 @@ extern "C" {
 
 void addEdge(GRAPH graph, ADJACENCY adj, int v, int w);
 
+void removeEdge(GRAPH graph, ADJACENCY adj, int v, int w, boolean all);
+
 void prepareGraph(GRAPH graph, ADJACENCY adj, int vertexCount);
 
 #ifdef	__cplusplus
