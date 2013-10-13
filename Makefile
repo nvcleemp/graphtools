@@ -118,7 +118,7 @@ build/multi_path_connect: multicode/connect/multi_path_connect.c \
 	
 build/writegraph2png: visualise/writegraph2png.c visualise/pngtoolkit.c
 	mkdir -p build
-	cc -o $@ -g $^ -lpng -lm
+	cc -o $@ -O4 $^ -lpng -lm
 
 build/writegraph2png.jar: visualise/writegraph2png/**/*
 	mkdir -p build
