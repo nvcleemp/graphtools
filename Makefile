@@ -38,7 +38,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
 
 visualise: build/writegraph2png build/writegraph2png.jar
 
-embedders: build/embed
+embedders: build/embed build/tutte
 
 clean:
 	rm -rf build
@@ -128,6 +128,10 @@ build/gconv: conversion/gconv.c
 	cd conversion && make
 	
 build/embed: embedders/embed.c
+	mkdir -p build
+	cc -o $@ -O4 $^ -lm
+
+build/tutte: embedders/tutte.c 
 	mkdir -p build
 	cc -o $@ -O4 $^ -lm
 
