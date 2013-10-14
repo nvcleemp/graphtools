@@ -38,7 +38,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
 
 visualise: build/writegraph2png build/writegraph2png.jar
 
-embedders: build/embed build/tutte
+embedders: build/embed build/tutte build/circular
 
 clean:
 	rm -rf build
@@ -132,6 +132,10 @@ build/embed: embedders/embed.c
 	cc -o $@ -O4 $^ -lm
 
 build/tutte: embedders/tutte.c 
+	mkdir -p build
+	cc -o $@ -O4 $^ -lm
+
+build/circular: embedders/circular.c multicode/shared/multicode_base.c multicode/shared/multicode_input.c
 	mkdir -p build
 	cc -o $@ -O4 $^ -lm
 
