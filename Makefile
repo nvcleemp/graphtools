@@ -36,7 +36,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect \
        build/multi_combine  build/multi_remove_edges
 
-visualise: build/writegraph2png build/writegraph2png.jar
+visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
 embedders: build/embed build/tutte build/circular
 
@@ -119,6 +119,10 @@ build/multi_path_connect: multicode/connect/multi_path_connect.c \
 build/writegraph2png: visualise/writegraph2png.c visualise/pngtoolkit.c
 	mkdir -p build
 	cc -o $@ -O4 $^ -lpng -lm
+	
+build/writegraph2tikz: visualise/writegraph2tikz.c
+	mkdir -p build
+	cc -o $@ -O4 $^
 
 build/writegraph2png.jar: visualise/writegraph2png/**/*
 	mkdir -p build
