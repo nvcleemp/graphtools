@@ -28,7 +28,8 @@ all: planar gconv multi visualise embedders
 
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
-	build/non_iso_pl build/subdivide_vertex build/regular_pl
+	build/non_iso_pl build/subdivide_vertex build/regular_pl \
+	build/random_relabel_pl
 
 gconv: build/gconv
 
@@ -77,6 +78,10 @@ build/regular_pl: planar/regular_pl.c
 build/non_iso_pl: planar/non_iso_pl/non_iso_pl.c planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c
 	mkdir -p build
 	cc -o build/non_iso_pl -O4 planar/non_iso_pl/non_iso_pl.c
+	
+build/random_relabel_pl: planar/random_relabel_pl.c
+	mkdir -p build
+	cc -o $@ -O4 $^
 	
 build/subdivide_vertex: planar/subdivide_vertex.c
 	mkdir -p build
