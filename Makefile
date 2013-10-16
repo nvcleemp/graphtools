@@ -18,13 +18,14 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           embedders/embed.c\
           visualise/writegraph2png/ant.xml visualise/writegraph2png/visualise/*\
           visualise/pngtoolkit.c visualise/pngtoolkit.h visualise/writegraph2png.c\
+          invariants/multi_int_invariant.c invariants/multi_invariant_order.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 MULTICODE_SHARED = multicode/shared/multicode_base.c\
                    multicode/shared/multicode_input.c\
                    multicode/shared/multicode_output.c
 
-all: planar gconv multi visualise embedders
+all: planar gconv multi visualise embedders invariants
 
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
@@ -40,6 +41,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
 embedders: build/embed build/tutte build/circular
+
+invariants: build/multi_invariant_order
 
 clean:
 	rm -rf build
@@ -147,6 +150,13 @@ build/tutte: embedders/tutte.c
 build/circular: embedders/circular.c multicode/shared/multicode_base.c multicode/shared/multicode_input.c
 	mkdir -p build
 	cc -o $@ -O4 $^ -lm
+
+build/multi_invariant_order: invariants/multi_int_invariant.c \
+                             invariants/multi_invariant_order.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DINVARIANT=order $^
+			   
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
