@@ -1,6 +1,8 @@
 package visualise;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -10,6 +12,7 @@ public class GraphPainter {
     
     private static final Color DEFAULT_VERTEX_COLOR = new Color(250, 178, 126);
     private static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
+    private Color DEFAULT_NUMBER_COLOR = new Color(0.25f, 0.25f, 1.0f);
     
     private final int width;
     private final int height;
@@ -17,6 +20,8 @@ public class GraphPainter {
     private final int edgeWidth;
     
     private final int vertexSize;
+    
+    private boolean showVertexNumbers;
     
     private final double rotation;
     private double xMin, xMax, yMin, yMax;
@@ -26,12 +31,13 @@ public class GraphPainter {
     
     private final Graph graph;
 
-    public GraphPainter(int width, int height, int edgeWidth, int vertexSize, double rotation, int margin, Graph graph) {
+    public GraphPainter(int width, int height, int edgeWidth, int vertexSize, double rotation, boolean showVertexNumbers, int margin, Graph graph) {
         this.width = width;
         this.height = height;
         this.edgeWidth = edgeWidth;
         this.vertexSize = vertexSize;
         this.rotation = rotation;
+        this.showVertexNumbers = showVertexNumbers;
         this.graph = graph;
         calculateBoundingBox();
         setPaintArea(margin + (vertexSize - 1) / 2,
@@ -143,10 +149,18 @@ public class GraphPainter {
     }
 
     private void beginVertices(Graphics2D graphics) {
-        //nothing to do
+        if(showVertexNumbers){
+            Font f = determineVertexFont(graphics);
+            if(f==null){
+                System.err.println("WARNING: Vertex size too small to show vertex numbers!");
+                showVertexNumbers = false;
+            } else {
+                graphics.setFont(f);
+            }
+        }
     }
 
-    private void paintVertex(Graphics2D graphics, double x, double y) {
+    private void paintVertex(Graphics2D graphics, int number, double x, double y) {
         int xp = (int) Math.floor(x), yp = (int) Math.floor(y);
         if (edgeWidth > 0) {
             graphics.setColor(DEFAULT_EDGE_COLOR);
@@ -175,6 +189,14 @@ public class GraphPainter {
         graphics.fillOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
         graphics.setColor(Color.BLACK);
         graphics.drawOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
+        if (showVertexNumbers) {
+            String numberString = Integer.toString(number);
+            graphics.setColor(DEFAULT_NUMBER_COLOR);
+            int stringWidth = graphics.getFontMetrics().stringWidth(numberString);
+            graphics.drawString(numberString,
+                    xp - (int) Math.floor(stringWidth * 0.52),
+                    yp + (int) Math.floor(graphics.getFontMetrics().getAscent() * 0.47));
+        }
     }
 
     private void endGraph(Graphics2D graphics) {
@@ -194,9 +216,33 @@ public class GraphPainter {
         }
         beginVertices(graphics);
         for (Vertex v : graph.vertices) {
-            paintVertex(graphics, v.p.x, v.p.y);
+            paintVertex(graphics, v.number, v.p.x, v.p.y);
         }
             
         endGraph(graphics);
+    }
+    
+    private Font determineVertexFont(Graphics2D graphics) {
+        Font vertexFont = graphics.getFont();
+        int fontSize = getVertexFontSize(graphics);
+        return new Font(
+                vertexFont.getName(),
+                vertexFont.getStyle() & Font.BOLD,
+                fontSize);
+    }
+
+    private int getVertexFontSize(Graphics2D graphics) {
+        Font vertexFont = graphics.getFont();
+        FontMetrics fm = graphics.getFontMetrics(vertexFont);
+        int w = fm.stringWidth(Integer.toString(graph.vertices.size()));
+        int h = fm.getAscent();
+        int fontSize;
+        double factor = vertexSize * 0.85 / Math.sqrt(w * w + h * h);
+        if (h * factor < 7.5) {
+            fontSize = 0;
+        } else {
+            fontSize = (int) Math.round(vertexFont.getSize() * factor);
+        }
+        return fontSize;
     }
 }

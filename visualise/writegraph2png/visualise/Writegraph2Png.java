@@ -18,6 +18,7 @@ public class Writegraph2Png {
     private static int edgeWidth = 3;
     private static int vertexSize = 8;
     private static double rotation = 0.0;
+    private static boolean showVertexNumbers = false;
     
     private static void saveFile(File file, GraphPainter painter) {
         BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -48,6 +49,10 @@ public class Writegraph2Png {
         }
     }
     
+    private static boolean detectProperty(String key){
+        return System.getProperties().containsKey(key);
+    }
+    
     private static void readProperties(){
         if(System.getProperties().containsKey("help")){
             System.err.println("HELP!");
@@ -57,13 +62,14 @@ public class Writegraph2Png {
         edgeWidth = readIntProperty("edgeWidth", edgeWidth);
         vertexSize = readIntProperty("vertexSize", vertexSize);
         rotation = readDoubleProperty("rotation", rotation);
+        showVertexNumbers = detectProperty("numbers");
     }
 
     public static void main(String[] args) {
         readProperties();
         try {
             Graph graph = WritegraphReader.readGraph(System.in);
-            GraphPainter painter = new GraphPainter(width, height, edgeWidth, vertexSize, rotation, 5, graph);
+            GraphPainter painter = new GraphPainter(width, height, edgeWidth, vertexSize, rotation, showVertexNumbers, 5, graph);
             saveFile(new File(args.length == 0 ? "image.png" : args[0]), painter);
         } catch (IOException ex) {
             Logger.getLogger(Writegraph2Png.class.getName()).log(Level.SEVERE, null, ex);
