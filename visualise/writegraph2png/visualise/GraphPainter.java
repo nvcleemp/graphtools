@@ -23,6 +23,11 @@ public class GraphPainter {
     
     private boolean showVertexNumbers;
     
+    private Color vertexColor = DEFAULT_VERTEX_COLOR;
+    private Color edgeColor = DEFAULT_EDGE_COLOR;
+    private Color numberColor = DEFAULT_NUMBER_COLOR;
+    
+    
     private final double rotation;
     private double xMin, xMax, yMin, yMax;
     private double scale, delta, horOffset, verOffset;
@@ -117,7 +122,7 @@ public class GraphPainter {
     }
 
     private void beginEdges(Graphics2D graphics) {
-        graphics.setColor(DEFAULT_EDGE_COLOR);
+        graphics.setColor(edgeColor);
     }
 
     private void paintEdge(Graphics2D graphics, double x1, double y1, double x2, double y2) {
@@ -163,7 +168,7 @@ public class GraphPainter {
     private void paintVertex(Graphics2D graphics, int number, double x, double y) {
         int xp = (int) Math.floor(x), yp = (int) Math.floor(y);
         if (edgeWidth > 0) {
-            graphics.setColor(DEFAULT_EDGE_COLOR);
+            graphics.setColor(edgeColor);
             graphics.fillOval(xp - (edgeWidth - 1) / 2, yp - (edgeWidth - 1) / 2, edgeWidth, edgeWidth);
         }
         
@@ -173,13 +178,13 @@ public class GraphPainter {
         
         //calculate the two endpoints of the gradient
         final Color colorA = new Color(
-                Math.min(DEFAULT_VERTEX_COLOR.getRed() + 4, 255),
-                Math.max(DEFAULT_VERTEX_COLOR.getGreen() - 14, 0),
-                Math.max(DEFAULT_VERTEX_COLOR.getBlue() - 26, 0));
+                Math.min(vertexColor.getRed() + 4, 255),
+                Math.max(vertexColor.getGreen() - 14, 0),
+                Math.max(vertexColor.getBlue() - 26, 0));
         final Color colorB = new Color(
-                Math.max(DEFAULT_VERTEX_COLOR.getRed() - 4, 0),
-                Math.min(DEFAULT_VERTEX_COLOR.getGreen() + 14, 255),
-                Math.min(DEFAULT_VERTEX_COLOR.getBlue() + 26, 255));
+                Math.max(vertexColor.getRed() - 4, 0),
+                Math.min(vertexColor.getGreen() + 14, 255),
+                Math.min(vertexColor.getBlue() + 26, 255));
         
         ((Graphics2D)graphics).setPaint(
                 new GradientPaint(
@@ -191,7 +196,7 @@ public class GraphPainter {
         graphics.drawOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
         if (showVertexNumbers) {
             String numberString = Integer.toString(number);
-            graphics.setColor(DEFAULT_NUMBER_COLOR);
+            graphics.setColor(numberColor);
             int stringWidth = graphics.getFontMetrics().stringWidth(numberString);
             graphics.drawString(numberString,
                     xp - (int) Math.floor(stringWidth * 0.52),
