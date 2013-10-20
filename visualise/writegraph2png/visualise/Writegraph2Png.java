@@ -1,5 +1,6 @@
 package visualise;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,26 @@ public class Writegraph2Png {
             return Integer.parseInt(System.getProperties().getProperty(key));
         } else {
             return defaultValue;
+        }
+    }
+    
+    private static int getValidColorComponent(String s){
+        return Math.max(Math.min(Integer.parseInt(s),255), 0);
+    } 
+    
+    private static Color readColorProperty(String key){
+        if(System.getProperties().containsKey(key)){
+            String color = System.getProperties().getProperty(key);
+            String[] parts = color.split(",");
+            if(parts.length==3){
+                return new Color(getValidColorComponent(parts[0]), 
+                                 getValidColorComponent(parts[1]), 
+                                 getValidColorComponent(parts[2]));
+            } else {
+                return null;
+            }
+        } else {
+            return null;
         }
     }
     
