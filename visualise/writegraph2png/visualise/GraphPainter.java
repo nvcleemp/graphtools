@@ -36,6 +36,24 @@ public class GraphPainter {
     
     private final Graph graph;
 
+    public void setVertexColor(Color vertexColor) {
+        if(vertexColor!=null){
+            this.vertexColor = vertexColor;
+        }
+    }
+
+    public void setEdgeColor(Color edgeColor) {
+        if(edgeColor!=null){
+            this.edgeColor = edgeColor;
+        }
+    }
+
+    public void setNumberColor(Color numberColor) {
+        if(numberColor!=null){
+            this.numberColor = numberColor;
+        }
+    }
+    
     public GraphPainter(int width, int height, int edgeWidth, int vertexSize, double rotation, boolean showVertexNumbers, int margin, Graph graph) {
         this.width = width;
         this.height = height;
