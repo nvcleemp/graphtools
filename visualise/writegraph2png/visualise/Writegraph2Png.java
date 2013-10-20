@@ -54,7 +54,7 @@ public class Writegraph2Png {
     }
     
     private static void readProperties(){
-        if(System.getProperties().containsKey("help")){
+        if(detectProperty("help")){
             System.err.println("HELP!");
         }
         width = readIntProperty("width", width);
