@@ -20,6 +20,9 @@ public class Writegraph2Png {
     private static int vertexSize = 8;
     private static double rotation = 0.0;
     private static boolean showVertexNumbers = false;
+    private static Color vertexColor = null;
+    private static Color edgeColor = null;
+    private static Color numberColor = null;
     
     private static void saveFile(File file, GraphPainter painter) {
         BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -85,6 +88,9 @@ public class Writegraph2Png {
         vertexSize = readIntProperty("vertexSize", vertexSize);
         rotation = readDoubleProperty("rotation", rotation);
         showVertexNumbers = detectProperty("numbers");
+        vertexColor = readColorProperty("vertex-color");
+        edgeColor = readColorProperty("edge-color");
+        numberColor = readColorProperty("number-color");
     }
     
     private static void printHelp(){
@@ -111,7 +117,13 @@ public class Writegraph2Png {
 "       Rotate the image by # degrees.\n" +
 "    -Dnumbers\n" +
 "       Show vertex numbers. If the vertices are too small, the numbers are not\n" +
-"       shown and a warning is printed.\n";
+"       shown and a warning is printed.\n" +
+"    -Dvertex-color=#,#,#\n" +
+"       Set the color of the vertices as RGB values in the range [0,255].\n" +
+"    -Dedge-color=#,#,#\n" +
+"       Set the color of the edges as RGB values in the range [0,255].\n" +
+"    -Dnumber-color=#,#,#\n" +
+"       Set the color of the vertex numbers as RGB values in the range [0,255].\n";
         System.err.println(message);
     }
 
@@ -120,6 +132,9 @@ public class Writegraph2Png {
         try {
             Graph graph = WritegraphReader.readGraph(System.in);
             GraphPainter painter = new GraphPainter(width, height, edgeWidth, vertexSize, rotation, showVertexNumbers, 5, graph);
+            painter.setVertexColor(vertexColor);
+            painter.setEdgeColor(edgeColor);
+            painter.setNumberColor(numberColor);
             saveFile(new File(args.length == 0 ? "image.png" : args[0]), painter);
         } catch (IOException ex) {
             Logger.getLogger(Writegraph2Png.class.getName()).log(Level.SEVERE, null, ex);
