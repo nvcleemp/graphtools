@@ -23,6 +23,7 @@ public class Writegraph2Png {
     private static Color vertexColor = null;
     private static Color edgeColor = null;
     private static Color numberColor = null;
+    private static String fileName = "image.png";
     
     private static void saveFile(File file, GraphPainter painter) {
         BufferedImage im = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -34,6 +35,14 @@ public class Writegraph2Png {
         } catch (IOException ex) {
             Logger.getLogger(Writegraph2Png.class.getName()).log(Level.SEVERE, 
                     "Error while writing file", ex);
+        }
+    }
+    
+    private static String readStringProperty(String key, String defaultValue){
+        if(System.getProperties().containsKey(key)){
+            return System.getProperties().getProperty(key);
+        } else {
+            return defaultValue;
         }
     }
     
@@ -91,16 +100,15 @@ public class Writegraph2Png {
         vertexColor = readColorProperty("vertex-color");
         edgeColor = readColorProperty("edge-color");
         numberColor = readColorProperty("number-color");
+        fileName = readStringProperty("file", fileName);
     }
     
     private static void printHelp(){
         String message =
 "This program reads a graph in writegraph2d format and writes a PNG image.\n\n" +
 "Usage\n=====\n" +
-"java [options] -jar writegraph2png.jar [name.png]\n\n" +
-"If no filename is given, then image.png is used. The graph is always read from\n" +
-"standard in. Make sure that you place the options at the right position, i.e.,\n" +
-"before the -jar option. At the moment this is import.\n\n" +
+"java [options] -jar writegraph2png.jar\n\n" +
+"The graph is always read from standard in.\n\n" +
 "Valid options\n=============\n" +
 "All options always start with -D!\n" +
 "    -Dhelp\n" +
@@ -123,7 +131,9 @@ public class Writegraph2Png {
 "    -Dedge-color=#,#,#\n" +
 "       Set the color of the edges as RGB values in the range [0,255].\n" +
 "    -Dnumber-color=#,#,#\n" +
-"       Set the color of the vertex numbers as RGB values in the range [0,255].\n";
+"       Set the color of the vertex numbers as RGB values in the range [0,255].\n" +
+"    -Dfile=name\n" +
+"       Set the file name for the PNG image.\n";
         System.err.println(message);
     }
 
@@ -135,7 +145,7 @@ public class Writegraph2Png {
             painter.setVertexColor(vertexColor);
             painter.setEdgeColor(edgeColor);
             painter.setNumberColor(numberColor);
-            saveFile(new File(args.length == 0 ? "image.png" : args[0]), painter);
+            saveFile(new File(fileName), painter);
         } catch (IOException ex) {
             Logger.getLogger(Writegraph2Png.class.getName()).log(Level.SEVERE, null, ex);
         }
