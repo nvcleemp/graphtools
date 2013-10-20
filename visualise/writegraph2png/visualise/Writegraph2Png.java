@@ -55,7 +55,8 @@ public class Writegraph2Png {
     
     private static void readProperties(){
         if(detectProperty("help")){
-            System.err.println("HELP!");
+            printHelp();
+            System.exit(0);
         }
         width = readIntProperty("width", width);
         height = readIntProperty("height", height);
@@ -63,6 +64,34 @@ public class Writegraph2Png {
         vertexSize = readIntProperty("vertexSize", vertexSize);
         rotation = readDoubleProperty("rotation", rotation);
         showVertexNumbers = detectProperty("numbers");
+    }
+    
+    private static void printHelp(){
+        String message =
+"This program reads a graph in writegraph2d format and writes a PNG image.\n\n" +
+"Usage\n=====\n" +
+"java [options] -jar writegraph2png.jar [name.png]\n\n" +
+"If no filename is given, then image.png is used. The graph is always read from\n" +
+"standard in. Make sure that you place the options at the right position, i.e.,\n" +
+"before the -jar option. At the moment this is import.\n\n" +
+"Valid options\n=============\n" +
+"All options always start with -D!\n" +
+"    -Dhelp\n" +
+"       Print this help and return.\n" +
+"    -Dwidth=#\n" +
+"       Set the width of the image to #.\n" +
+"    -Dheight=#\n" +
+"       Set the height of the image to #.\n" +
+"    -DedgeWidth=#\n" +
+"       Set the thickness of the lines representing the edges to #.\n" +
+"    -DvertexSize=#\n" +
+"       Set the diameter of the circles representing the vertices to #.\n" +
+"    -Drotation=#\n" +
+"       Rotate the image by # degrees.\n" +
+"    -Dnumbers\n" +
+"       Show vertex numbers. If the vertices are too small, the numbers are not\n" +
+"       shown and a warning is printed.\n";
+        System.err.println(message);
     }
 
     public static void main(String[] args) {
