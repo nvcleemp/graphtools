@@ -84,8 +84,8 @@ public class Writegraph2Png {
         }
         width = readIntProperty("width", width);
         height = readIntProperty("height", height);
-        edgeWidth = readIntProperty("edgeWidth", edgeWidth);
-        vertexSize = readIntProperty("vertexSize", vertexSize);
+        edgeWidth = readIntProperty("edge-width", edgeWidth);
+        vertexSize = readIntProperty("vertex-size", vertexSize);
         rotation = readDoubleProperty("rotation", rotation);
         showVertexNumbers = detectProperty("numbers");
         vertexColor = readColorProperty("vertex-color");
@@ -109,9 +109,9 @@ public class Writegraph2Png {
 "       Set the width of the image to #.\n" +
 "    -Dheight=#\n" +
 "       Set the height of the image to #.\n" +
-"    -DedgeWidth=#\n" +
+"    -Dedge-width=#\n" +
 "       Set the thickness of the lines representing the edges to #.\n" +
-"    -DvertexSize=#\n" +
+"    -Dvertex-size=#\n" +
 "       Set the diameter of the circles representing the vertices to #.\n" +
 "    -Drotation=#\n" +
 "       Rotate the image by # degrees.\n" +
