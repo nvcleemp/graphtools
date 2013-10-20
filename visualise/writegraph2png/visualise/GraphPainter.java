@@ -12,7 +12,7 @@ public class GraphPainter {
     
     private static final Color DEFAULT_VERTEX_COLOR = new Color(250, 178, 126);
     private static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
-    private static final Color DEFAULT_NUMBER_COLOR = new Color(0.25f, 0.25f, 1.0f);
+    private static final Color DEFAULT_NUMBER_COLOR = new Color(64, 64, 255);
     
     private final int width;
     private final int height;
