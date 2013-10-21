@@ -21,6 +21,8 @@ public class Writegraph2Png {
     private static double rotation = 0.0;
     private static boolean showVertexNumbers = false;
     private static Color vertexColor = null;
+    private static Color gradient1Color = null;
+    private static Color gradient2Color = null;
     private static Color edgeColor = null;
     private static Color numberColor = null;
     private static String fileName = "image.png";
@@ -98,6 +100,8 @@ public class Writegraph2Png {
         rotation = readDoubleProperty("rotation", rotation);
         showVertexNumbers = detectProperty("numbers");
         vertexColor = readColorProperty("vertex-color");
+        gradient1Color = readColorProperty("gradient1-color");
+        gradient2Color = readColorProperty("gradient2-color");
         edgeColor = readColorProperty("edge-color");
         numberColor = readColorProperty("number-color");
         fileName = readStringProperty("file", fileName);
@@ -128,6 +132,12 @@ public class Writegraph2Png {
 "       shown and a warning is printed.\n" +
 "    -Dvertex-color=#,#,#\n" +
 "       Set the color of the vertices as RGB values in the range [0,255].\n" +
+"    -Dgradient1-color=#,#,#\n" +
+"       Set the color of the top left corner of the gradient used for the\n" +
+"       vertices as RGB values in the range [0,255].\n" +
+"    -Dgradient2-color=#,#,#\n" +
+"       Set the color of the bottom right corner of the gradient used for the\n" +
+"       vertices as RGB values in the range [0,255].\n" +
 "    -Dedge-color=#,#,#\n" +
 "       Set the color of the edges as RGB values in the range [0,255].\n" +
 "    -Dnumber-color=#,#,#\n" +
@@ -143,6 +153,8 @@ public class Writegraph2Png {
             Graph graph = WritegraphReader.readGraph(System.in);
             GraphPainter painter = new GraphPainter(width, height, edgeWidth, vertexSize, rotation, showVertexNumbers, 5, graph);
             painter.setVertexColor(vertexColor);
+            painter.setGradient1Color(gradient1Color);
+            painter.setGradient2Color(gradient2Color);
             painter.setEdgeColor(edgeColor);
             painter.setNumberColor(numberColor);
             saveFile(new File(fileName), painter);

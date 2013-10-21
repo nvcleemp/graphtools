@@ -11,6 +11,8 @@ public class GraphPainter {
     
     
     private static final Color DEFAULT_VERTEX_COLOR = new Color(250, 178, 126);
+    private static final Color DEFAULT_GRADIENT1_COLOR = new Color(254, 164, 100);
+    private static final Color DEFAULT_GRADIENT2_COLOR = new Color(246, 192, 152);
     private static final Color DEFAULT_EDGE_COLOR = Color.BLACK;
     private static final Color DEFAULT_NUMBER_COLOR = new Color(64, 64, 255);
     
@@ -24,6 +26,8 @@ public class GraphPainter {
     private boolean showVertexNumbers;
     
     private Color vertexColor = DEFAULT_VERTEX_COLOR;
+    private Color gradient1Color = DEFAULT_GRADIENT1_COLOR;
+    private Color gradient2Color = DEFAULT_GRADIENT2_COLOR;
     private Color edgeColor = DEFAULT_EDGE_COLOR;
     private Color numberColor = DEFAULT_NUMBER_COLOR;
     
@@ -39,6 +43,18 @@ public class GraphPainter {
     public void setVertexColor(Color vertexColor) {
         if(vertexColor!=null){
             this.vertexColor = vertexColor;
+        }
+    }
+
+    public void setGradient1Color(Color gradient1Color) {
+        if(gradient1Color!=null){
+            this.gradient1Color = gradient1Color;
+        }
+    }
+
+    public void setGradient2Color(Color gradient2Color) {
+        if(gradient2Color!=null){
+            this.gradient2Color = gradient2Color;
         }
     }
 
@@ -194,20 +210,10 @@ public class GraphPainter {
         final int vertexCornerX = xp - vertexDiameter/2;
         final int vertexCornerY = yp - vertexDiameter/2;
         
-        //calculate the two endpoints of the gradient
-        final Color colorA = new Color(
-                Math.min(vertexColor.getRed() + 4, 255),
-                Math.max(vertexColor.getGreen() - 14, 0),
-                Math.max(vertexColor.getBlue() - 26, 0));
-        final Color colorB = new Color(
-                Math.max(vertexColor.getRed() - 4, 0),
-                Math.min(vertexColor.getGreen() + 14, 255),
-                Math.min(vertexColor.getBlue() + 26, 255));
-        
         graphics.setPaint(
                 new GradientPaint(
-                        vertexCornerX, vertexCornerY, colorA, //from color A in upper left corner
-                        vertexCornerX + vertexDiameter, vertexCornerY+vertexDiameter, colorB)); //to color B in lower right corner
+                        vertexCornerX, vertexCornerY, gradient1Color, //from color 1 in upper left corner
+                        vertexCornerX + vertexDiameter, vertexCornerY+vertexDiameter, gradient2Color)); //to color 2 in lower right corner
         
         graphics.fillOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
         graphics.setColor(Color.BLACK);
