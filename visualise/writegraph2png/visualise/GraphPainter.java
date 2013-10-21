@@ -24,6 +24,7 @@ public class GraphPainter {
     private final int vertexSize;
     
     private boolean showVertexNumbers;
+    private boolean useGradient = true;
     
     private Color vertexColor = DEFAULT_VERTEX_COLOR;
     private Color gradient1Color = DEFAULT_GRADIENT1_COLOR;
@@ -68,6 +69,10 @@ public class GraphPainter {
         if(numberColor!=null){
             this.numberColor = numberColor;
         }
+    }
+
+    public void setUseGradient(boolean useGradient) {
+        this.useGradient = useGradient;
     }
     
     public GraphPainter(int width, int height, int edgeWidth, int vertexSize, double rotation, boolean showVertexNumbers, int margin, Graph graph) {
@@ -210,10 +215,14 @@ public class GraphPainter {
         final int vertexCornerX = xp - vertexDiameter/2;
         final int vertexCornerY = yp - vertexDiameter/2;
         
-        graphics.setPaint(
-                new GradientPaint(
-                        vertexCornerX, vertexCornerY, gradient1Color, //from color 1 in upper left corner
-                        vertexCornerX + vertexDiameter, vertexCornerY+vertexDiameter, gradient2Color)); //to color 2 in lower right corner
+        if(useGradient){
+            graphics.setPaint(
+                    new GradientPaint(
+                            vertexCornerX, vertexCornerY, gradient1Color, //from color 1 in upper left corner
+                            vertexCornerX + vertexDiameter, vertexCornerY+vertexDiameter, gradient2Color)); //to color 2 in lower right corner
+        } else {
+            graphics.setColor(vertexColor);
+        }
         
         graphics.fillOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
         graphics.setColor(Color.BLACK);

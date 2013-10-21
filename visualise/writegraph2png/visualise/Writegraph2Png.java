@@ -20,6 +20,7 @@ public class Writegraph2Png {
     private static int vertexSize = 8;
     private static double rotation = 0.0;
     private static boolean showVertexNumbers = false;
+    private static boolean noGradient = false;
     private static Color vertexColor = null;
     private static Color gradient1Color = null;
     private static Color gradient2Color = null;
@@ -99,6 +100,7 @@ public class Writegraph2Png {
         vertexSize = readIntProperty("vertex-size", vertexSize);
         rotation = readDoubleProperty("rotation", rotation);
         showVertexNumbers = detectProperty("numbers");
+        noGradient = detectProperty("no-gradient");
         vertexColor = readColorProperty("vertex-color");
         gradient1Color = readColorProperty("gradient1-color");
         gradient2Color = readColorProperty("gradient2-color");
@@ -130,6 +132,8 @@ public class Writegraph2Png {
 "    -Dnumbers\n" +
 "       Show vertex numbers. If the vertices are too small, the numbers are not\n" +
 "       shown and a warning is printed.\n" +
+"    -Dno-gradient\n" +
+"       Don't use a gradient to fill the vertices.\n" +
 "    -Dvertex-color=#,#,#\n" +
 "       Set the color of the vertices as RGB values in the range [0,255].\n" +
 "    -Dgradient1-color=#,#,#\n" +
@@ -155,6 +159,7 @@ public class Writegraph2Png {
             painter.setVertexColor(vertexColor);
             painter.setGradient1Color(gradient1Color);
             painter.setGradient2Color(gradient2Color);
+            painter.setUseGradient(!noGradient);
             painter.setEdgeColor(edgeColor);
             painter.setNumberColor(numberColor);
             saveFile(new File(fileName), painter);
