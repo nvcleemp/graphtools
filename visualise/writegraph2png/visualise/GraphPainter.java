@@ -204,7 +204,7 @@ public class GraphPainter {
                 Math.min(vertexColor.getGreen() + 14, 255),
                 Math.min(vertexColor.getBlue() + 26, 255));
         
-        ((Graphics2D)graphics).setPaint(
+        graphics.setPaint(
                 new GradientPaint(
                         vertexCornerX, vertexCornerY, colorA, //from color A in upper left corner
                         vertexCornerX + vertexDiameter, vertexCornerY+vertexDiameter, colorB)); //to color B in lower right corner
