@@ -29,6 +29,7 @@ public class GraphPainter {
     private Color vertexColor = DEFAULT_VERTEX_COLOR;
     private Color gradient1Color = DEFAULT_GRADIENT1_COLOR;
     private Color gradient2Color = DEFAULT_GRADIENT2_COLOR;
+    private Color vertexOuterColor = null;
     private Color edgeColor = DEFAULT_EDGE_COLOR;
     private Color numberColor = DEFAULT_NUMBER_COLOR;
     
@@ -57,6 +58,10 @@ public class GraphPainter {
         if(gradient2Color!=null){
             this.gradient2Color = gradient2Color;
         }
+    }
+
+    public void setVertexOuterColor(Color vertexOuterColor) {
+        this.vertexOuterColor = vertexOuterColor;
     }
 
     public void setEdgeColor(Color edgeColor) {
@@ -225,7 +230,7 @@ public class GraphPainter {
         }
         
         graphics.fillOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
-        graphics.setColor(Color.BLACK);
+        graphics.setColor(vertexOuterColor == null ? edgeColor : vertexOuterColor);
         graphics.drawOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
         if (showVertexNumbers) {
             String numberString = Integer.toString(number);

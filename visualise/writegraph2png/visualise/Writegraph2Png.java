@@ -24,6 +24,7 @@ public class Writegraph2Png {
     private static Color vertexColor = null;
     private static Color gradient1Color = null;
     private static Color gradient2Color = null;
+    private static Color vertexOuterColor = null;
     private static Color edgeColor = null;
     private static Color numberColor = null;
     private static String fileName = "image.png";
@@ -104,6 +105,7 @@ public class Writegraph2Png {
         vertexColor = readColorProperty("vertex-color");
         gradient1Color = readColorProperty("gradient1-color");
         gradient2Color = readColorProperty("gradient2-color");
+        vertexOuterColor = readColorProperty("vertex-outer-color");
         edgeColor = readColorProperty("edge-color");
         numberColor = readColorProperty("number-color");
         fileName = readStringProperty("file", fileName);
@@ -142,6 +144,9 @@ public class Writegraph2Png {
 "    -Dgradient2-color=#,#,#\n" +
 "       Set the color of the bottom right corner of the gradient used for the\n" +
 "       vertices as RGB values in the range [0,255].\n" +
+"    -Dvertex-outer-color=#,#,#\n" +
+"       Set the color of the outer edge of the vertices as RGB values in the\n" +
+"       range [0,255]. This defaults to the edge color.\n" +
 "    -Dedge-color=#,#,#\n" +
 "       Set the color of the edges as RGB values in the range [0,255].\n" +
 "    -Dnumber-color=#,#,#\n" +
@@ -160,6 +165,7 @@ public class Writegraph2Png {
             painter.setGradient1Color(gradient1Color);
             painter.setGradient2Color(gradient2Color);
             painter.setUseGradient(!noGradient);
+            painter.setVertexOuterColor(vertexOuterColor);
             painter.setEdgeColor(edgeColor);
             painter.setNumberColor(numberColor);
             saveFile(new File(fileName), painter);
