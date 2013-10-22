@@ -21,6 +21,7 @@ public class Writegraph2Png {
     private static double rotation = 0.0;
     private static boolean showVertexNumbers = false;
     private static boolean noGradient = false;
+    private static boolean zeroBased = false;
     private static Color vertexColor = null;
     private static Color gradient1Color = null;
     private static Color gradient2Color = null;
@@ -102,6 +103,7 @@ public class Writegraph2Png {
         rotation = readDoubleProperty("rotation", rotation);
         showVertexNumbers = detectProperty("numbers");
         noGradient = detectProperty("no-gradient");
+        zeroBased = detectProperty("zero");
         vertexColor = readColorProperty("vertex-color");
         gradient1Color = readColorProperty("gradient1-color");
         gradient2Color = readColorProperty("gradient2-color");
@@ -134,6 +136,8 @@ public class Writegraph2Png {
 "    -Dnumbers\n" +
 "       Show vertex numbers. If the vertices are too small, the numbers are not\n" +
 "       shown and a warning is printed.\n" +
+"    -Dzero\n" +
+"       Start numbering vertices from zero instead of one.\n" +
 "    -Dno-gradient\n" +
 "       Don't use a gradient to fill the vertices.\n" +
 "    -Dvertex-color=#,#,#\n" +
@@ -168,6 +172,7 @@ public class Writegraph2Png {
             painter.setVertexOuterColor(vertexOuterColor);
             painter.setEdgeColor(edgeColor);
             painter.setNumberColor(numberColor);
+            painter.setZeroBased(zeroBased);
             saveFile(new File(fileName), painter);
         } catch (IOException ex) {
             Logger.getLogger(Writegraph2Png.class.getName()).log(Level.SEVERE, null, ex);

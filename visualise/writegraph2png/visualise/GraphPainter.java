@@ -25,6 +25,7 @@ public class GraphPainter {
     
     private boolean showVertexNumbers;
     private boolean useGradient = true;
+    private boolean zeroBased = false;
     
     private Color vertexColor = DEFAULT_VERTEX_COLOR;
     private Color gradient1Color = DEFAULT_GRADIENT1_COLOR;
@@ -78,6 +79,10 @@ public class GraphPainter {
 
     public void setUseGradient(boolean useGradient) {
         this.useGradient = useGradient;
+    }
+
+    public void setZeroBased(boolean zeroBased) {
+        this.zeroBased = zeroBased;
     }
     
     public GraphPainter(int width, int height, int edgeWidth, int vertexSize, double rotation, boolean showVertexNumbers, int margin, Graph graph) {
@@ -233,7 +238,7 @@ public class GraphPainter {
         graphics.setColor(vertexOuterColor == null ? edgeColor : vertexOuterColor);
         graphics.drawOval(vertexCornerX, vertexCornerY, vertexDiameter, vertexDiameter);
         if (showVertexNumbers) {
-            String numberString = Integer.toString(number);
+            String numberString = Integer.toString(zeroBased ? number - 1 : number);
             graphics.setColor(numberColor);
             int stringWidth = graphics.getFontMetrics().stringWidth(numberString);
             graphics.drawString(numberString,
