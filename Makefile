@@ -36,7 +36,7 @@ gconv: build/gconv
 
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect \
-       build/multi_combine  build/multi_remove_edges
+       build/multi_combine  build/multi_remove_edges build/multi_corona
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -103,6 +103,10 @@ build/multi_remove_edges: multicode/multi_remove_edges.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 	
 build/multi_combine: multicode/multi_combine.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multi_corona: multicode/multi_corona.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
