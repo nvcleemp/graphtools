@@ -42,7 +42,7 @@ visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
 embedders: build/embed build/tutte build/circular
 
-invariants: build/multi_invariant_order
+invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity
 
 clean:
 	rm -rf build
@@ -160,6 +160,13 @@ build/multi_invariant_order: invariants/multi_int_invariant.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=order $^
+
+build/multi_invariant_edge_connectivity: invariants/multi_int_invariant.c \
+                             invariants/connectivity/multi_connectivity.c \
+                             invariants/multi_invariant_edge_connectivity.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -g -DINVARIANT=edge_connectivity $^
 			   
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
