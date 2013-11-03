@@ -57,6 +57,7 @@ enum err_stat
 
 extern int status;
 
+int horizontal_polygons = 0;
 
 /* --- function prototypes -------------------------------------------- */
 
@@ -2439,7 +2440,11 @@ init_positions(GRAPH *G, POSITIONING *P, EDGE *start, int at_face,
     else
       arg = 0.0;
     rot -= arg * k / 2;
-
+    
+    if(horizontal_polygons){
+        rot = (.5*(2.0-m)/m)*PI;
+    }
+    
     if (dim < 3)
       radius = 1 - (double)(d+1) / (maxd+1);
     else if (tubular) {
@@ -2831,6 +2836,7 @@ usage(void)
     "              p     planar code (binary, no coordinates)",
     "              v     writegraph format",
     "  -x          helix mode",
+    "  -h          for dimension 2 only: create horizontal outer faces",
     "",
     "default is '-a+ -d2 -pa -s+ -wv',",
     "with force model other than 'a', the option '-s-' is recommended.",
@@ -2931,7 +2937,7 @@ main(int argc, char *argv[])
 
   /* --- Parse the command line --- */
 
-  while ((c = getopt(argc, argv, "ASa:b:c:d:f:hi:p:rs:tvw:x:z")) != EOF) {
+  while ((c = getopt(argc, argv, "ASa:b:c:d:f:hi:p:rs:tvw:x:zh")) != EOF) {
     switch (c) {
     case 'A':
       output_augmented = 1;
@@ -3043,6 +3049,9 @@ main(int argc, char *argv[])
       break;
     case 'z':
       fprintf(stdout,"%d\n",getpid());  fflush(stdout);
+      break;
+    case 'h':
+      horizontal_polygons = 1;
       break;
     default:
       usage();
