@@ -2836,7 +2836,7 @@ usage(void)
     "              p     planar code (binary, no coordinates)",
     "              v     writegraph format",
     "  -x          helix mode",
-    "  -h          for dimension 2 only: create horizontal outer faces",
+    "  -H          for dimension 2 only: create horizontal outer faces",
     "",
     "default is '-a+ -d2 -pa -s+ -wv',",
     "with force model other than 'a', the option '-s-' is recommended.",
@@ -2937,7 +2937,7 @@ main(int argc, char *argv[])
 
   /* --- Parse the command line --- */
 
-  while ((c = getopt(argc, argv, "ASa:b:c:d:f:hi:p:rs:tvw:x:zh")) != EOF) {
+  while ((c = getopt(argc, argv, "ASa:b:c:d:f:hi:p:rs:tvw:x:zH")) != EOF) {
     switch (c) {
     case 'A':
       output_augmented = 1;
@@ -3050,7 +3050,7 @@ main(int argc, char *argv[])
     case 'z':
       fprintf(stdout,"%d\n",getpid());  fflush(stdout);
       break;
-    case 'h':
+    case 'H':
       horizontal_polygons = 1;
       break;
     default:
