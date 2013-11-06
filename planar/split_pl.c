@@ -41,6 +41,8 @@ int numberOfGraphs = 0;
 
 boolean onePerFile = FALSE;
 
+char *extension = "code";
+
 //=============== Reading and decoding planarcode ===========================
 
 /**
@@ -206,6 +208,8 @@ void help(char *name) {
     fprintf(stderr, "    Print this help and return.\n");
     fprintf(stderr, " -1, --one-per-file\n");
     fprintf(stderr, "    Split this file such that each file contains only one graph.\n");
+    fprintf(stderr, " -e, --extension\n");
+    fprintf(stderr, "    Specify the extension of the new files. Defaults to code.\n");
 }
 
 void usage(char *name) {
@@ -222,11 +226,12 @@ int main(int argc, char *argv[]) {
     char *name = argv[0];
     static struct option long_options[] = {
         {"one-per-file", no_argument, NULL, '1'},
+        {"extension", required_argument, NULL, 'e'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h1", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "h1e:", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -235,6 +240,9 @@ int main(int argc, char *argv[]) {
                 return EXIT_SUCCESS;
             case '1':
                 onePerFile = TRUE;
+                break;
+            case 'e':
+                extension = optarg;
                 break;
             case '?':
                 usage(name);
@@ -269,7 +277,7 @@ int main(int argc, char *argv[]) {
         int length;
         while (readPlanarCode(code, &length, stdin)) {
             numberOfGraphs++;
-            int n = snprintf(fileName, 100, "%s-%d.code", fileNameBase, numberOfGraphs);
+            int n = snprintf(fileName, 100, "%s-%d.%s", fileNameBase, numberOfGraphs, extension);
             if (n<0 || n>=100){
                 fprintf(stderr, "Filename could not be constructed -- exiting.\n");
                 return EXIT_FAILURE;
@@ -287,7 +295,7 @@ int main(int argc, char *argv[]) {
         char fileName[100];
         FILE* files[fileCount];
         for (i = 0; i < fileCount; i++){
-            int n = snprintf(fileName, 100, "%s-%d.code", fileNameBase, i);
+            int n = snprintf(fileName, 100, "%s-%d.%s", fileNameBase, i, extension);
             if (n<0 || n>=100){
                 fprintf(stderr, "Filename could not be constructed -- exiting.\n");
                 return EXIT_FAILURE;
