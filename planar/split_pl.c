@@ -39,6 +39,8 @@ typedef int boolean;
 
 int numberOfGraphs = 0;
 
+boolean onePerFile = FALSE;
+
 //=============== Reading and decoding planarcode ===========================
 
 /**
@@ -48,7 +50,7 @@ int numberOfGraphs = 0;
  * @param file
  * @return returns 1 if a code was read and 0 otherwise. Exits in case of error.
  */
-int readPlanarCode(unsigned short code[], int *length, FILE *file, FILE *outFile) {
+int readPlanarCode(unsigned short code[], int *length, FILE *file) {
     static int first = 1;
     unsigned char c;
     char testheader[20];
@@ -126,21 +128,17 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, FILE *outFile
 
     if (c != 0) /* unsigned chars would be sufficient */ {
         code[0] = c;
-        fputc(c, outFile);
         if (code[0] > MAXN) {
             fprintf(stderr, "Constant N too small %d > %d \n", code[0], MAXN);
             exit(1);
         }
         while (zeroCounter < code[0]) {
             code[bufferSize] = (unsigned short) getc(file);
-            fputc(code[bufferSize], outFile);
             if (code[bufferSize] == 0) zeroCounter++;
             bufferSize++;
         }
     } else {
-        fputc(0, outFile);
         readCount = fread(code, sizeof (unsigned short), 1, file);
-        fwrite(code, sizeof (unsigned short), 1, outFile);
         if(!readCount){
             fprintf(stderr, "Unexpected EOF.\n");
             exit(1);
@@ -153,7 +151,6 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, FILE *outFile
         zeroCounter = 0;
         while (zeroCounter < code[0]) {
             readCount = fread(code + bufferSize, sizeof (unsigned short), 1, file);
-            fwrite(code + bufferSize, sizeof (unsigned short), 1, outFile);
             if(!readCount){
                 fprintf(stderr, "Unexpected EOF.\n");
                 exit(1);
@@ -172,6 +169,30 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, FILE *outFile
 
 }
 
+void writePlanarCode(unsigned short code[], int length, FILE *outFile, boolean withHeader){
+    int i;
+    if(withHeader){
+        fprintf(outFile, ">>planar_code<<");
+    }
+    
+    if(code[0]+1 <= 255) {
+        for(i=0; i<length; i++){
+             fputc(code[i], outFile);
+        }
+    } else if(code[0]+1 <= 65535) {
+        fputc(0, outFile);
+        for(i=0; i<length; i++){
+             if (fwrite(code+i, sizeof (unsigned short), 1, outFile) != 1) {
+                fprintf(stderr, "fwrite() failed -- exiting!\n");
+                exit(-1);
+            }
+        }
+    } else {
+        fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+        exit(-1);
+    }
+}
+
 //====================== USAGE =======================
 
 void help(char *name) {
@@ -183,10 +204,13 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, " -h, --help\n");
     fprintf(stderr, "    Print this help and return.\n");
+    fprintf(stderr, " -1, --one-per-file\n");
+    fprintf(stderr, "    Split this file such that each file contains only one graph.\n");
 }
 
 void usage(char *name) {
     fprintf(stderr, "Usage: %s [options] n file\n", name);
+    fprintf(stderr, "   or: %s [options] -1 file\n", name);
     fprintf(stderr, "For more information type: %s -h \n\n", name);
 }
 
@@ -197,17 +221,21 @@ int main(int argc, char *argv[]) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"one-per-file", no_argument, NULL, '1'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "h1", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
+            case '1':
+                onePerFile = TRUE;
+                break;
             case '?':
                 usage(name);
                 return EXIT_FAILURE;
@@ -218,37 +246,68 @@ int main(int argc, char *argv[]) {
         }
     }
     
-    if (argc - optind != 2) {
-        usage(name);
-        return EXIT_FAILURE;
-    }
-    
-    int i;
-    
-    int fileCount = atoi(argv[optind]);
-    char *fileNameBase = argv[optind+1];
-    char fileName[100];
-    FILE* files[fileCount];
-    for (i = 0; i < fileCount; i++){
-        int n = snprintf(fileName, 100, "%s-%d.code", fileNameBase, i);
-        if (n<0 || n>=100){
-            fprintf(stderr, "Filename could not be constructed -- exiting.\n");
+    if(onePerFile){
+        if (argc - optind != 1) {
+            usage(name);
             return EXIT_FAILURE;
         }
-        FILE *f = fopen(fileName, "w");
-        fprintf(f, ">>planar_code<<");
-        files[i] = f;
-    }
-
-    /*=========== read planar graphs ===========*/
-
-    unsigned short code[MAXCODELENGTH];
-    int length;
-    while (readPlanarCode(code, &length, stdin, files[numberOfGraphs%fileCount])) {
-        numberOfGraphs++;
+    } else {
+        if (argc - optind != 2) {
+            usage(name);
+            return EXIT_FAILURE;
+        }
     }
     
-    for (i = 0; i < fileCount; i++){
-        fclose(files[i]);
+    if(onePerFile){
+        char *fileNameBase = argv[optind];
+        char fileName[100];
+        
+
+        /*=========== read planar graphs ===========*/
+
+        unsigned short code[MAXCODELENGTH];
+        int length;
+        while (readPlanarCode(code, &length, stdin)) {
+            numberOfGraphs++;
+            int n = snprintf(fileName, 100, "%s-%d.code", fileNameBase, numberOfGraphs);
+            if (n<0 || n>=100){
+                fprintf(stderr, "Filename could not be constructed -- exiting.\n");
+                return EXIT_FAILURE;
+            }
+            FILE *f = fopen(fileName, "w");
+            writePlanarCode(code, length, f, TRUE);
+            
+            fclose(f);
+        }
+    } else {
+        int i;
+        
+        int fileCount = atoi(argv[optind]);
+        char *fileNameBase = argv[optind+1];
+        char fileName[100];
+        FILE* files[fileCount];
+        for (i = 0; i < fileCount; i++){
+            int n = snprintf(fileName, 100, "%s-%d.code", fileNameBase, i);
+            if (n<0 || n>=100){
+                fprintf(stderr, "Filename could not be constructed -- exiting.\n");
+                return EXIT_FAILURE;
+            }
+            FILE *f = fopen(fileName, "w");
+            fprintf(f, ">>planar_code<<");
+            files[i] = f;
+        }
+
+        /*=========== read planar graphs ===========*/
+
+        unsigned short code[MAXCODELENGTH];
+        int length;
+        while (readPlanarCode(code, &length, stdin)) {
+            writePlanarCode(code, length, files[numberOfGraphs%fileCount], FALSE);
+            numberOfGraphs++;
+        }
+
+        for (i = 0; i < fileCount; i++){
+            fclose(files[i]);
+        }
     }
 }
