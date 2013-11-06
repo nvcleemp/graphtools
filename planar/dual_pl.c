@@ -77,6 +77,7 @@ int filterEnabled = FALSE;
 int filterOnly = 0;
 
 int edgecode = FALSE;
+int writeOriginal = FALSE;
 
 int numberOfGraphs = 0;
 int reportsWritten = 0;
@@ -225,6 +226,145 @@ void writeDualPlanarCode(){
     }
     
 }
+
+//=============== Writing edgecode of graph ===========================
+
+void writeEdgeCodeSmall(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the length of the body
+    fputc(ne + nv - 1, stdout);
+    
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            fputc(e->index, stdout);
+            e = e->next;
+        } while (e != elast);
+        if(i < nv - 1){
+            fputc(255, stdout);
+        }
+    }
+}
+
+void writeEdgeCodeLarge(){
+    int i;
+    EDGE *e, *elast;
+    
+    fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+    exit(-1);
+}
+
+void writeEdgeCode(){
+    static int first = TRUE;
+    int i, counter=0;
+    EDGE *e, *elast;
+    
+    if(first){
+        first = FALSE;
+        
+        fprintf(stdout, ">>edge_code<<");
+    }
+    
+    //label the edges
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            e->index = -1;
+            e = e->next;
+        } while (e != elast);
+    }
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            if(e->index == -1){
+                e->index = counter;
+                e->inverse->index = counter;
+                counter++;
+            }
+            e = e->next;
+        } while (e != elast);
+    }
+    
+    if (ne + nv - 1 <= 255) {
+        writeEdgeCodeSmall();
+    } else {
+        writeEdgeCodeLarge();
+    }
+    
+}
+
+//=============== Writing planarcode of original graph ===========================
+
+void writePlanarCodeChar(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the number of vertices
+    fputc(nv, stdout);
+    
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            fputc(e->end + 1, stdout);
+            e = e->next;
+        } while (e != elast);
+        fputc(0, stdout);
+    }
+}
+
+void writePlanarCodeShort(){
+    int i;
+    EDGE *e, *elast;
+    unsigned short temp;
+    
+    //write the number of vertices
+    fputc(0, stdout);
+    temp = nv;
+    if (fwrite(&temp, sizeof (unsigned short), 1, stdout) != 1) {
+        fprintf(stderr, "fwrite() failed -- exiting!\n");
+        exit(-1);
+    }
+    
+    for(i=0; i<nf; i++){
+        e = elast = firstedge[i];
+        do {
+            temp = e->end + 1;
+            if (fwrite(&temp, sizeof (unsigned short), 1, stdout) != 1) {
+                fprintf(stderr, "fwrite() failed -- exiting!\n");
+                exit(-1);
+            }
+            e = e->next;
+        } while (e != elast);
+        temp = 0;
+        if (fwrite(&temp, sizeof (unsigned short), 1, stdout) != 1) {
+            fprintf(stderr, "fwrite() failed -- exiting!\n");
+            exit(-1);
+        }
+    }
+}
+
+void writePlanarCode(){
+    static int first = TRUE;
+    
+    if(first){
+        first = FALSE;
+        
+        fprintf(stdout, ">>planar_code<<");
+    }
+    
+    if (nv + 1 <= 255) {
+        writePlanarCodeChar();
+    } else if (nv + 1 <= 65535) {
+        writePlanarCodeShort();
+    } else {
+        fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+        exit(-1);
+    }
+    
+}
+
 
 //=============== Reading and decoding planarcode ===========================
 
@@ -468,6 +608,8 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -E, --edgecode\n");
     fprintf(stderr, "       Write edge code instead of planar code.\n");
+    fprintf(stderr, "    -o, --original\n");
+    fprintf(stderr, "       Write the original graph to stdout as well.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -484,14 +626,18 @@ int main(int argc, char *argv[]) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"original", no_argument, NULL, 'o'},
         {"edgecode", no_argument, NULL, 'E'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hE", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hEo", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
+                break;
+            case 'o':
+                writeOriginal = TRUE;
                 break;
             case 'E':
                 edgecode = TRUE;
@@ -515,6 +661,13 @@ int main(int argc, char *argv[]) {
     int length;
     while (readPlanarCode(code, &length, stdin)) {
         decodePlanarCode(code);
+        if(writeOriginal){
+            if(edgecode){
+                writeEdgeCode();
+            } else {
+                writePlanarCode();
+            }
+        }
         if(edgecode){
             writeDualEdgeCode();
         } else {
