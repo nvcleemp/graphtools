@@ -131,9 +131,9 @@ void writeSubdividedPlanarCode(){
         fprintf(stdout, ">>planar_code<<");
     }
     
-    if (nf + 1 <= 255) {
+    if (nv + nf + 1 <= 255) {
         writeSubdividedPlanarCodeChar();
-    } else if (nf + 1 <= 65535) {
+    } else if (nv + nf + 1 <= 65535) {
         writeSubdividedPlanarCodeShort();
     } else {
         fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
