@@ -419,14 +419,14 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s generates the duals of planar graphs.\n\n", name);
+    fprintf(stderr, "The program %s filters out those plane graphs that are regular.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options]\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
-    fprintf(stderr, "    -E, --edgecode\n");
-    fprintf(stderr, "       Write edge code instead of planar code.\n");
+    fprintf(stderr, "    -f, --faces\n");
+    fprintf(stderr, "       Checks the duals of the graphs instead of the graphs.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
