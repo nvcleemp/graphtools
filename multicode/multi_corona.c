@@ -65,7 +65,6 @@ void usage(char *name) {
  * 
  */
 int main(int argc, char** argv) {
-    int i;
     
     GRAPH graph;
     ADJACENCY adj;
@@ -83,8 +82,6 @@ int main(int argc, char** argv) {
 
     while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
         switch (c) {
-            case 0:
-                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
@@ -95,18 +92,6 @@ int main(int argc, char** argv) {
                 fprintf(stderr, "Illegal option %c.\n", c);
                 usage(name);
                 return EXIT_FAILURE;
-        }
-    }
-    
-    int connectionCount = argc - optind;
-    
-    int connections[connectionCount][2];
-    
-    for (i = 0; i < connectionCount; i++){
-        if(sscanf(argv[optind + i], "%d,%d", connections[i], connections[i]+1)!=2){
-            fprintf(stderr, "Error while reading edges to be added.\n", c);
-            usage(name);
-            return EXIT_FAILURE;
         }
     }
     
