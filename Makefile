@@ -7,7 +7,8 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
           multicode/multiread.c multicode/multi_add_edges.c\
           multicode/multi_combine.c multicode/multi_remove_edges.c\
-          multicode/multi_non_iso.c\
+          multicode/multi_non_iso.c multicode/multi_filter_regular.c\
+          multicode/multi_filter_snark.c multicode/multi_corona.c\
           multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
           multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
