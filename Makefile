@@ -9,6 +9,7 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           multicode/multi_combine.c multicode/multi_remove_edges.c\
           multicode/multi_non_iso.c multicode/multi_filter_regular.c\
           multicode/multi_filter_snark.c multicode/multi_corona.c\
+          multicode/multi_induced_subgraph.c \
           multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
           multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
@@ -38,7 +39,8 @@ gconv: build/gconv
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect \
        build/multi_combine  build/multi_remove_edges build/multi_corona \
-       build/multi_filter_regular build/multi_filter_snark
+       build/multi_filter_regular build/multi_filter_snark \
+       build/multi_induced_subgraph
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -110,6 +112,10 @@ build/multi_combine: multicode/multi_combine.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 	
 build/multi_corona: multicode/multi_corona.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multi_induced_subgraph: multicode/multi_induced_subgraph.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
