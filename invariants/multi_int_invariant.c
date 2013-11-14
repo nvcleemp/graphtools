@@ -68,6 +68,12 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -f #, --filter #\n");
     fprintf(stderr, "       Filter graphs that have the specified value for the invariant.\n");
+    fprintf(stderr, "    -l, --less\n");
+    fprintf(stderr, "       Filter allows graphs with value less than the specified value.\n");
+    fprintf(stderr, "    -g, --greater\n");
+    fprintf(stderr, "       Filter allows graphs with value greater than the specified value.\n");
+    fprintf(stderr, "    -n, --not-equal\n");
+    fprintf(stderr, "       Filter does not allow graphs with value equal to specified value.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -87,19 +93,35 @@ int main(int argc, char** argv) {
     
     int filterValue;
     boolean doFiltering = FALSE;
+    
+    boolean allowEqual = TRUE;
+    boolean allowLess = FALSE;
+    boolean allowGreater = FALSE;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"not-equal", no_argument, NULL, 'n'},
+        {"less", no_argument, NULL, 'l'},
+        {"greater", no_argument, NULL, 'g'},
         {"filter", required_argument, NULL, 'f'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hf:", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hf:lgn", long_options, &option_index)) != -1) {
         switch (c) {
+            case 'n':
+                allowEqual = FALSE;
+                break;
+            case 'l':
+                allowLess = TRUE;
+                break;
+            case 'g':
+                allowGreater = TRUE;
+                break;
             case 'f':
                 doFiltering = TRUE;
                 filterValue = atoi(optarg);
@@ -125,7 +147,13 @@ int main(int argc, char** argv) {
         
         int value = INVARIANT(graph, adj);
         if(doFiltering){
-            if(filterValue == value){
+            if(allowEqual && filterValue == value){
+                graphsFiltered++;
+                writeMultiCode(graph, adj, stdout);
+            } else if(allowLess && filterValue > value){
+                graphsFiltered++;
+                writeMultiCode(graph, adj, stdout);
+            } else if(allowGreater && filterValue < value){
                 graphsFiltered++;
                 writeMultiCode(graph, adj, stdout);
             }
