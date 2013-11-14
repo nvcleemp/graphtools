@@ -21,13 +21,20 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           visualise/writegraph2png/ant.xml visualise/writegraph2png/visualise/*\
           visualise/pngtoolkit.c visualise/pngtoolkit.h visualise/writegraph2png.c\
           invariants/multi_int_invariant.c invariants/multi_invariant_order.c\
+          cubic/shared/cubic_base.c cubic/shared/cubic_base.h\
+          cubic/shared/cubic.c cubic/shared/cubic_input.h\
+          cubic/shared/cubic_output.c cubic/shared/cubic_output.h\
+          cubic/cubic_is_odd_2_factored.c\
           Makefile COPYRIGHT.txt LICENSE.txt README.md
 
 MULTICODE_SHARED = multicode/shared/multicode_base.c\
                    multicode/shared/multicode_input.c\
                    multicode/shared/multicode_output.c
 
-all: planar gconv multi visualise embedders invariants
+CUBIC_SHARED = cubic/shared/cubic_base.c cubic/shared/cubic_input.c\
+               cubic/shared/cubic_output.c
+
+all: planar gconv multi visualise embedders invariants cubic
 
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
@@ -48,6 +55,8 @@ embedders: build/embed build/tutte build/circular
 
 invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity \
             build/multi_invariant_girth
+
+cubic: build/cubic_is_odd_2_factored
 
 clean:
 	rm -rf build
@@ -190,6 +199,10 @@ build/multi_invariant_girth: invariants/multi_int_invariant.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=girth $^
+
+build/cubic_is_odd_2_factored: cubic/cubic_is_odd_2_factored.c $(CUBIC_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
