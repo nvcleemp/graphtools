@@ -14,16 +14,16 @@
 #include "../../multicode/shared/multicode_base.h"
     
 //try to find a path from the current vertex to the target
-boolean findPath(GRAPH graph, ADJACENCY adj, int currentVertex, int target, int *paths, int order, boolean* currentPath) {
+boolean findPath(GRAPH graph, ADJACENCY adj, int currentVertex, int target, int *paths, int order, boolean* currentPath, int *capacity) {
     int i;
     if(currentVertex==target)
         return TRUE;
     currentPath[currentVertex]=TRUE;
     for(i=0; i < adj[currentVertex]; i++){
         int nextVertex = graph[currentVertex][i];
-        if(paths[currentVertex*(order+1) + nextVertex]-paths[nextVertex*(order+1) + currentVertex]<=0 && !currentPath[nextVertex]){
+        if(paths[currentVertex*(order+1) + nextVertex]-paths[nextVertex*(order+1) + currentVertex]<=capacity[currentVertex*(order+1) + nextVertex]-1 && !currentPath[nextVertex]){
             paths[currentVertex*(order+1) + nextVertex]++;
-            if(findPath(graph, adj, nextVertex, target, paths, order, currentPath))
+            if(findPath(graph, adj, nextVertex, target, paths, order, currentPath, capacity))
                 return TRUE;
             else
                 paths[currentVertex*(order+1) + nextVertex]--;
@@ -35,12 +35,19 @@ boolean findPath(GRAPH graph, ADJACENCY adj, int currentVertex, int target, int 
 
 //returns the minimum of the maxflow of the st-network and maxValue
 int findMaxFlowInSTNetwork(GRAPH graph, ADJACENCY adj, int source, int target, int maxValue){
-    int i;
+    int i, j;
 
     int order = graph[0][0];
     int paths[(order+1)*(order+1)];
+    int capacity[(order+1)*(order+1)];
     for(i=0; i<(order+1)*(order+1); i++){
         paths[i] = 0;
+        capacity[i] = 0;
+    }
+    for(i = 1; i <= order; i++){
+        for(j = 0; j < adj[i]; j++){
+            capacity[i*(order+1) + graph[i][j]]++;
+        }
     }
     
     int pathCount = 0;
@@ -48,7 +55,7 @@ int findMaxFlowInSTNetwork(GRAPH graph, ADJACENCY adj, int source, int target, i
     for(i=0; i<(order+1); i++){
         currentPath[i] = FALSE;
     }
-    while(findPath(graph, adj, source, target, paths, order, currentPath) && pathCount < maxValue){
+    while(findPath(graph, adj, source, target, paths, order, currentPath, capacity) && pathCount < maxValue){
         pathCount++;
         for(i=0; i<(order+1); i++){
             currentPath[i] = FALSE;
