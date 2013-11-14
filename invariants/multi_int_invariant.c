@@ -81,7 +81,6 @@ void usage(char *name) {
  * 
  */
 int main(int argc, char** argv) {
-    int i;
     
     GRAPH graph;
     ADJACENCY adj;
