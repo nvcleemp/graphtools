@@ -55,6 +55,7 @@
 int INVARIANT(GRAPH graph, ADJACENCY adj);
 
 int graphCount = 0;
+int graphsFiltered = 0;
 
 //====================== USAGE =======================
 
@@ -126,11 +127,17 @@ int main(int argc, char** argv) {
         int value = INVARIANT(graph, adj);
         if(doFiltering){
             if(filterValue == value){
+                graphsFiltered++;
                 writeMultiCode(graph, adj, stdout);
             }
         } else {
             fprintf(stdout, "Graph %d has " XSTR(INVARIANTNAME) " equal to %d.\n", graphCount, value);
         }
+    }
+    
+    fprintf(stderr, "Read %d graph%s.\n", graphCount, graphCount==1 ? "" : "s");
+    if(doFiltering){
+        fprintf(stderr, "Filtered %d graph%s.\n", graphsFiltered, graphsFiltered==1 ? "" : "s");
     }
 
     return (EXIT_SUCCESS);
