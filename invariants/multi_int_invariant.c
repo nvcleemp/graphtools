@@ -65,6 +65,8 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -f #, --filter #\n");
+    fprintf(stderr, "       Filter graphs that have the specified value for the invariant.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -82,18 +84,26 @@ int main(int argc, char** argv) {
     
     GRAPH graph;
     ADJACENCY adj;
+    
+    int filterValue;
+    boolean doFiltering = FALSE;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"filter", required_argument, NULL, 'f'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hf:", long_options, &option_index)) != -1) {
         switch (c) {
+            case 'f':
+                doFiltering = TRUE;
+                filterValue = atoi(optarg);
+                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
@@ -114,7 +124,13 @@ int main(int argc, char** argv) {
         graphCount++;
         
         int value = INVARIANT(graph, adj);
-        fprintf(stdout, "Graph %d has " XSTR(INVARIANTNAME) " equal to %d.\n", graphCount, value);
+        if(doFiltering){
+            if(filterValue == value){
+                writeMultiCode(graph, adj, stdout);
+            }
+        } else {
+            fprintf(stdout, "Graph %d has " XSTR(INVARIANTNAME) " equal to %d.\n", graphCount, value);
+        }
     }
 
     return (EXIT_SUCCESS);
