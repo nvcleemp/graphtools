@@ -120,7 +120,7 @@ boolean haveCommonNeighbour(GRAPH graph, int v1, int v2){
     return FALSE;
 }
 
-boolean areAdjacent(GRAPH graph, int v1, int v2){
+boolean areAdjacent_3regular(GRAPH graph, int v1, int v2){
     int i;
     for(i = 0; i < 3; i++){
         if(graph[v1][i]==v2) return TRUE;
@@ -144,7 +144,7 @@ int has_nontrivial_threecut(GRAPH graph) {
                 //Don't continue if there is a common neighbour: if common neighbour, there will be a trivial threecut
                 //Don't test connectivity if i and j are neighbours, because if it's not twoconnected after
                 //the removal of i and j, there will also be other nonadjacent cutvertices which will yield a bridge
-                if(!areAdjacent(graph, i, j)&& !is_twoconnected(graph, i, j)) {
+                if(!areAdjacent_3regular(graph, i, j)&& !is_twoconnected(graph, i, j)) {
                     return TRUE;
                 }
             }
