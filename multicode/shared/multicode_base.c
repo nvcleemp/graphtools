@@ -76,3 +76,13 @@ void prepareGraph(GRAPH graph, ADJACENCY adj, int vertexCount) {
     
     graph[0][0] = vertexCount;
 }
+
+boolean areAdjacent(GRAPH graph, ADJACENCY adj, int v, int w){
+    int i;
+    
+    for(i = 0; i < adj[v]; i++){
+        if(graph[v][i]==w) return TRUE;
+    }
+    
+    return FALSE;
+}

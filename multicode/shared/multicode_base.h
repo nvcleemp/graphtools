@@ -42,6 +42,8 @@ void removeEdge(GRAPH graph, ADJACENCY adj, int v, int w, boolean all);
 
 void prepareGraph(GRAPH graph, ADJACENCY adj, int vertexCount);
 
+boolean areAdjacent(GRAPH graph, ADJACENCY adj, int v, int w);
+
 #ifdef	__cplusplus
 }
 #endif
