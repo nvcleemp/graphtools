@@ -2,7 +2,7 @@
 SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           planar/split_pl.c planar/dual_pl.c planar/non_iso_pl/non_iso_pl.c\
           planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c\
-	  planar/subdivide_vertex.c planar/regular_pl.c\
+	  planar/subdivide_vertex.c planar/regular_pl.c planar/bipartite_pl.c\
 	  planar/adjlist2planarcode.py\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
           multicode/multiread.c multicode/multi_add_edges.c\
@@ -40,7 +40,7 @@ all: planar gconv multi visualise embedders invariants cubic
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
 	build/non_iso_pl build/subdivide_vertex build/regular_pl \
-	build/random_relabel_pl
+	build/random_relabel_pl build/bipartite_pl
 
 gconv: build/gconv
 
@@ -99,6 +99,10 @@ build/non_iso_pl: planar/non_iso_pl/non_iso_pl.c planar/non_iso_pl/hashfunction.
 	cc -o build/non_iso_pl -O4 planar/non_iso_pl/non_iso_pl.c
 	
 build/random_relabel_pl: planar/random_relabel_pl.c
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/bipartite_pl: planar/bipartite_pl.c
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
