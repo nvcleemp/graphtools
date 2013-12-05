@@ -3,6 +3,7 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           planar/split_pl.c planar/dual_pl.c planar/non_iso_pl/non_iso_pl.c\
           planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c\
 	  planar/subdivide_vertex.c planar/regular_pl.c planar/bipartite_pl.c\
+	  planar/random_relabel_pl.c\
 	  planar/adjlist2planarcode.py\
           conversion/gconv.c conversion/gconvman.txt conversion/Makefile\
           multicode/multiread.c multicode/multi_add_edges.c\
