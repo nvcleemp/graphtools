@@ -10,6 +10,7 @@ SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
           multicode/multi_non_iso.c multicode/multi_filter_regular.c\
           multicode/multi_filter_snark.c multicode/multi_corona.c\
           multicode/multi_induced_subgraph.c multicode/multi_mycielski.c\
+          multicode/multi_identify.c\
           multicode/shared/multicode_base.c multicode/shared/multicode_base.h\
           multicode/shared/multicode_input.c multicode/shared/multicode_input.h\
           multicode/shared/multicode_output.c multicode/shared/multicode_output.h\
