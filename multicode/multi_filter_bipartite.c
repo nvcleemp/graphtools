@@ -31,7 +31,7 @@ boolean onlyCount = FALSE;
 
 boolean isBipartite(GRAPH graph, ADJACENCY adj){
     int i;
-    int colours[MAXN];
+    int colours[MAXN+1];
     for(i = 0; i < MAXN + 1; i++) {
         colours[i] = GRAY;
     }
