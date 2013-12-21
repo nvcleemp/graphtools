@@ -50,7 +50,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_combine  build/multi_remove_edges build/multi_corona \
        build/multi_filter_regular build/multi_filter_snark \
        build/multi_induced_subgraph build/multi_identify build/multi_mycielski\
-       build/multi_filter_bipartite
+       build/multi_filter_bipartite build/multi_non_iso
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -172,6 +172,10 @@ build/multi_path_connect: multicode/connect/multi_path_connect.c \
 	                     $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
+
+build/multi_non_iso:multicode/multi_non_iso.c nauty/nautil.c nauty/nauty.c nauty/naugraph.c
+	mkdir -p build
+	cc -O4 -o $@ $^
 	
 build/writegraph2png: visualise/writegraph2png.c visualise/pngtoolkit.c
 	mkdir -p build
