@@ -57,7 +57,8 @@ visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 embedders: build/embed build/tutte build/circular
 
 invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity \
-            build/multi_invariant_girth build/multi_invariant_essential_edge_connectivity
+            build/multi_invariant_girth build/multi_invariant_essential_edge_connectivity\
+            build/multi_invariant_hamiltonian_cycles
 
 cubic: build/cubic_is_odd_2_factored
 
@@ -229,6 +230,12 @@ build/multi_invariant_girth: invariants/multi_int_invariant.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=girth $^
+
+build/multi_invariant_hamiltonian_cycles: invariants/multi_int_invariant.c \
+                             invariants/multi_invariant_hamiltonian_cycles.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DINVARIANT=hamiltonianCycles -DINVARIANTNAME="number of hamiltonian cycles" $^
 
 build/cubic_is_odd_2_factored: cubic/cubic_is_odd_2_factored.c $(CUBIC_SHARED)
 	mkdir -p build
