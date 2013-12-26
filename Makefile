@@ -36,14 +36,14 @@ MULTICODE_SHARED = multicode/shared/multicode_base.c\
 CUBIC_SHARED = cubic/shared/cubic_base.c cubic/shared/cubic_input.c\
                cubic/shared/cubic_output.c
 
-all: planar gconv multi visualise embedders invariants cubic
+all: planar conversion multi visualise embedders invariants cubic
 
 planar: build/stats_pl build/count_pl build/filter_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
 	build/non_iso_pl build/subdivide_vertex build/regular_pl \
 	build/random_relabel_pl build/bipartite_pl
 
-gconv: build/gconv
+conversion: build/gconv
 
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect \
