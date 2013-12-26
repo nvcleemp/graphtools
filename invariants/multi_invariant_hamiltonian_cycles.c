@@ -19,16 +19,58 @@
  */
 
 #include "../multicode/shared/multicode_base.h"
+#include <stdio.h>
 
-unsigned int cycleCount;
-boolean currentCycle[MAXN+1];
+#if INVARIANT == hamiltonianCyclesEdgeIncidence
+#define CONSTRUCT_CYCLE
+#define HANDLE_CYCLE countCycleEdgeIncidence
+#endif
 
 #ifndef HANDLE_CYCLE
 #define HANDLE_CYCLE countCycle
 #endif
 
-void countCycle(){
+unsigned int cycleCount;
+boolean currentCycle[MAXN+1];
+
+//this array will only be filled if the macro CONSTRUCT_CYCLE is defined
+int currentCycleVertexOrder[MAXN];
+
+int cycleEdgeIncidence[MAXN][MAXN];
+
+void countCycle(GRAPH graph, ADJACENCY adj){
     cycleCount++;
+}
+
+void countCycleEdgeIncidence(GRAPH graph, ADJACENCY adj){
+    int i;
+    
+    cycleCount++;
+    
+    for(i = 1; i < graph[0][0]; i++){
+        cycleEdgeIncidence[currentCycleVertexOrder[i-1]][currentCycleVertexOrder[i]]++;
+        cycleEdgeIncidence[currentCycleVertexOrder[i]][currentCycleVertexOrder[i-1]]++;
+    }
+    cycleEdgeIncidence[currentCycleVertexOrder[0]][currentCycleVertexOrder[graph[0][0]-1]]++;
+    cycleEdgeIncidence[currentCycleVertexOrder[graph[0][0]-1]][currentCycleVertexOrder[0]]++;
+    
+}
+
+double processCycleEdgeIncidence(GRAPH graph, ADJACENCY adj){
+    int i, j;
+    int a = 0, b = 0;
+    
+    for(i = 1; i <= graph[0][0]; i++){
+        for(j = 0; j < adj[i]; j++){
+            if(cycleEdgeIncidence[i][graph[i][j]] == cycleCount){
+                a++;
+            } else if(cycleEdgeIncidence[i][graph[i][j]] == 0){
+                b++;
+            }
+        }
+    }
+    
+    return 1.0*b/a;
 }
 
 /**
@@ -39,10 +81,14 @@ void continueCycle(GRAPH graph, ADJACENCY adj, int target, int next, int remaini
     
     if(target==next){
         if(remaining==0){
-            HANDLE_CYCLE();
+            HANDLE_CYCLE(graph, adj);
         }
         return;
     }
+    
+#ifdef CONSTRUCT_CYCLE
+    currentCycleVertexOrder[graph[0][0]-remaining] = next;
+#endif
     
     for(i = 0; i < adj[next]; i++){
         if(!currentCycle[graph[next][i]]){
@@ -57,15 +103,23 @@ void continueCycle(GRAPH graph, ADJACENCY adj, int target, int next, int remaini
 int hamiltonianCycles(GRAPH graph, ADJACENCY adj){
     int i, j;
     int order = graph[0][0];
+    cycleCount = 0;
     
     for(i=0; i<=MAXN; i++){
         currentCycle[i] = FALSE;
     }
     
+#ifdef CONSTRUCT_CYCLE
+    currentCycleVertexOrder[1] = 1;
+#endif
+    
     currentCycle[1] = TRUE;
-    for(i = 0; i < adj[1]; i++){
+    for(i = 1; i < adj[1]; i++){
         currentCycle[graph[1][i]]=TRUE;
         for(j = 0; j < i; j++){
+#ifdef CONSTRUCT_CYCLE
+            currentCycleVertexOrder[0] = graph[1][j];
+#endif
             //search for cycle containing graph[1][i], 1,  graph[1][j]
             continueCycle(graph, adj, graph[1][j], graph[1][i], order - 2);
         }
@@ -73,4 +127,36 @@ int hamiltonianCycles(GRAPH graph, ADJACENCY adj){
     }
     
     return cycleCount;
+}
+
+double hamiltonianCyclesEdgeIncidence(GRAPH graph, ADJACENCY adj){
+    int i, j;
+    int order = graph[0][0];
+    cycleCount = 0;
+    
+    for(i=0; i<=MAXN; i++){
+        currentCycle[i] = FALSE;
+        for(j = 0; j <= MAXN; j++){
+            cycleEdgeIncidence[i][j] = 0;
+        }
+    }
+    
+    currentCycleVertexOrder[1] = 1;
+    
+    currentCycle[1] = TRUE;
+    for(i = 1; i < adj[1]; i++){
+        currentCycle[graph[1][i]]=TRUE;
+        for(j = 0; j < i; j++){
+            currentCycleVertexOrder[0] = graph[1][j];
+            //search for cycle containing graph[1][i], 1,  graph[1][j]
+            continueCycle(graph, adj, graph[1][j], graph[1][i], order - 2);
+        }
+        currentCycle[graph[1][i]]=FALSE;
+    }
+    
+    if(cycleCount>0){
+        return processCycleEdgeIncidence(graph, adj);
+    } else {
+        return 0;
+    }
 }
