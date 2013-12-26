@@ -6,8 +6,8 @@
  */
 
 /* This program reads a graph in multicode format from standard in,
- * adds the requested edges and writes the new graph to standard out
- * in multicode format.   
+ * computes the specified invariant and writes the result to standard 
+ * out.
  * 
  * 
  * Compile with:
