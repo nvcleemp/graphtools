@@ -26,6 +26,16 @@
 #define HANDLE_CYCLE countCycleEdgeIncidence
 #endif
 
+#if INVARIANT == hamiltonianCyclesUniversalEdges
+#define CONSTRUCT_CYCLE
+#define HANDLE_CYCLE countCycleEdgeIncidence
+#endif
+
+#if INVARIANT == hamiltonianCyclesUncoveredEdges
+#define CONSTRUCT_CYCLE
+#define HANDLE_CYCLE countCycleEdgeIncidence
+#endif
+
 #ifndef HANDLE_CYCLE
 #define HANDLE_CYCLE countCycle
 #endif
@@ -71,6 +81,36 @@ double processCycleEdgeIncidence(GRAPH graph, ADJACENCY adj){
     }
     
     return 1.0*b/a;
+}
+
+int processCycleUniversalEdges(GRAPH graph, ADJACENCY adj){
+    int i, j;
+    int a = 0;
+    
+    for(i = 1; i <= graph[0][0]; i++){
+        for(j = 0; j < adj[i]; j++){
+            if(cycleEdgeIncidence[i][graph[i][j]] == cycleCount){
+                a++;
+            }
+        }
+    }
+    
+    return a/2;
+}
+
+int processCycleUncoveredEdges(GRAPH graph, ADJACENCY adj){
+    int i, j;
+    int b = 0;
+    
+    for(i = 1; i <= graph[0][0]; i++){
+        for(j = 0; j < adj[i]; j++){
+            if(cycleEdgeIncidence[i][graph[i][j]] == 0){
+                b++;
+            }
+        }
+    }
+    
+    return b/2;
 }
 
 /**
@@ -158,5 +198,73 @@ double hamiltonianCyclesEdgeIncidence(GRAPH graph, ADJACENCY adj){
         return processCycleEdgeIncidence(graph, adj);
     } else {
         return 0;
+    }
+}
+
+int hamiltonianCyclesUniversalEdges(GRAPH graph, ADJACENCY adj){
+    int i, j;
+    int order = graph[0][0];
+    cycleCount = 0;
+    
+    for(i=0; i<=MAXN; i++){
+        currentCycle[i] = FALSE;
+        for(j = 0; j <= MAXN; j++){
+            cycleEdgeIncidence[i][j] = 0;
+        }
+    }
+    
+    currentCycleVertexOrder[1] = 1;
+    
+    currentCycle[1] = TRUE;
+    for(i = 1; i < adj[1]; i++){
+        currentCycle[graph[1][i]]=TRUE;
+        for(j = 0; j < i; j++){
+            currentCycleVertexOrder[0] = graph[1][j];
+            //search for cycle containing graph[1][i], 1,  graph[1][j]
+            continueCycle(graph, adj, graph[1][j], graph[1][i], order - 2);
+        }
+        currentCycle[graph[1][i]]=FALSE;
+    }
+    
+    if(cycleCount>0){
+        return processCycleUniversalEdges(graph, adj);
+    } else {
+        return 0;
+    }
+}
+
+int hamiltonianCyclesUncoveredEdges(GRAPH graph, ADJACENCY adj){
+    int i, j;
+    int order = graph[0][0];
+    cycleCount = 0;
+    
+    for(i=0; i<=MAXN; i++){
+        currentCycle[i] = FALSE;
+        for(j = 0; j <= MAXN; j++){
+            cycleEdgeIncidence[i][j] = 0;
+        }
+    }
+    
+    currentCycleVertexOrder[1] = 1;
+    
+    currentCycle[1] = TRUE;
+    for(i = 1; i < adj[1]; i++){
+        currentCycle[graph[1][i]]=TRUE;
+        for(j = 0; j < i; j++){
+            currentCycleVertexOrder[0] = graph[1][j];
+            //search for cycle containing graph[1][i], 1,  graph[1][j]
+            continueCycle(graph, adj, graph[1][j], graph[1][i], order - 2);
+        }
+        currentCycle[graph[1][i]]=FALSE;
+    }
+    
+    if(cycleCount>0){
+        return processCycleUncoveredEdges(graph, adj);
+    } else {
+        int edgeCount = 0;
+        for(i = 1; i < order; i++){
+            edgeCount += adj[i];
+        }
+        return edgeCount/2;
     }
 }

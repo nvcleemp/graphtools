@@ -58,7 +58,9 @@ embedders: build/embed build/tutte build/circular
 
 invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity \
             build/multi_invariant_girth build/multi_invariant_essential_edge_connectivity\
-            build/multi_invariant_hamiltonian_cycles build/multi_invariant_hamiltonian_cycles_edge_incidence
+            build/multi_invariant_hamiltonian_cycles build/multi_invariant_hamiltonian_cycles_edge_incidence\
+            build/multi_invariant_hamiltonian_cycles_universal_edges\
+            build/multi_invariant_hamiltonian_cycles_uncovered_edges
 
 cubic: build/cubic_is_odd_2_factored
 
@@ -251,6 +253,18 @@ build/multi_invariant_hamiltonian_cycles_edge_incidence: invariants/multi_double
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=hamiltonianCyclesEdgeIncidence $^
+	
+build/multi_invariant_hamiltonian_cycles_universal_edges: invariants/multi_int_invariant.c \
+                             invariants/multi_invariant_hamiltonian_cycles.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DINVARIANT=hamiltonianCyclesUniversalEdges -DINVARIANTNAME="number of edges that lie in all hamiltonian cycles" $^
+	
+build/multi_invariant_hamiltonian_cycles_uncovered_edges: invariants/multi_int_invariant.c \
+                             invariants/multi_invariant_hamiltonian_cycles.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DINVARIANT=hamiltonianCyclesUncoveredEdges -DINVARIANTNAME="number of edges that do not lie in any hamiltonian cycle" $^
 
 build/cubic_is_odd_2_factored: cubic/cubic_is_odd_2_factored.c $(CUBIC_SHARED)
 	mkdir -p build
