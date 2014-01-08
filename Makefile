@@ -63,7 +63,7 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
             build/multi_invariant_hamiltonian_cycles_uncovered_edges\
             build/multi_invariant_is_hamiltonian
 
-cubic: build/cubic_is_odd_2_factored
+cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle
 
 clean:
 	rm -rf build
@@ -274,6 +274,10 @@ build/multi_invariant_is_hamiltonian: invariants/multi_boolean_invariant.c \
 	cc -o $@ -O4 -DINVARIANT=isHamiltonian -DINVARIANTNAME="hamiltonian" $^
 
 build/cubic_is_odd_2_factored: cubic/cubic_is_odd_2_factored.c $(CUBIC_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
+build/cubic_is_matching_in_dominating_cycle: cubic/cubic_is_matching_in_dominating_cycle.c $(CUBIC_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
