@@ -42,10 +42,22 @@ boolean inCurrentCycle[MAXN];
 int currentCycle[MAXN];
 int cycleLength;
 
+int firstVertexNeighbour1;
+int firstVertexNeighbour2;
+
 /* Check the current cycle. Returns TRUE if the cycle is dominating.
  */
 boolean handleCycle(){
     int i, j;
+    //check that each matched vertex is in the cycle.
+    //since we use the matching edge as soon as we visit a matched vertex
+    //this is sufficient for the cycle to go through the matching
+    for(i = 0; i < vertexCount; i++){
+        if(matchedVertices[i] && !inCurrentCycle[i]){
+            return FALSE;
+        }
+    }
+    
     for(i = 0; i < vertexCount; i++){
         if(!inCurrentCycle[i]){
             for(j = 0; j < 3; j++){
@@ -79,7 +91,16 @@ boolean extendCycle(int newVertex, int firstVertex){
     inCurrentCycle[newVertex] = TRUE;
     cycleLength++;
     
-    if(matchedVertices[newVertex]){
+    //prevent us of continuing with a cycle that can't be closed
+    if(newVertex == firstVertexNeighbour1 && inCurrentCycle[firstVertexNeighbour2]){
+        if(extendCycle(firstVertex, firstVertex)){
+            return TRUE;
+        }
+    } else if(newVertex == firstVertexNeighbour2 && inCurrentCycle[firstVertexNeighbour1]){
+        if(extendCycle(firstVertex, firstVertex)){
+            return TRUE;
+        }
+    } else if(matchedVertices[newVertex]){
         for(i = 0; i < matchingSize; i++){
             if(matchingEdges[i][0] == newVertex){
                 if(extendCycleAlongMatchingEdge(matchingEdges[i][1], firstVertex)){
@@ -122,9 +143,20 @@ boolean extendCycleAlongMatchingEdge(int newVertex, int firstVertex){
     inCurrentCycle[newVertex] = TRUE;
     cycleLength++;
     
-    for(i = 0; i < 3; i++){
-        if(extendCycle(graph[newVertex][i], firstVertex)){
+    //prevent us of continuing with a cycle that can't be closed
+    if(newVertex == firstVertexNeighbour1 && inCurrentCycle[firstVertexNeighbour2]){
+        if(extendCycle(firstVertex, firstVertex)){
             return TRUE;
+        }
+    } else if(newVertex == firstVertexNeighbour2 && inCurrentCycle[firstVertexNeighbour1]){
+        if(extendCycle(firstVertex, firstVertex)){
+            return TRUE;
+        }
+    } else {
+        for(i = 0; i < 3; i++){
+            if(extendCycle(graph[newVertex][i], firstVertex)){
+                return TRUE;
+            }
         }
     }
     
@@ -147,6 +179,17 @@ void handleMatching(){
     
     currentCycle[0] = matchingEdges[0][0];
     inCurrentCycle[matchingEdges[0][0]] = TRUE;
+    
+    if(graph[matchingEdges[0][0]][0] == matchingEdges[0][1]){
+        firstVertexNeighbour1 = graph[matchingEdges[0][0]][1];
+        firstVertexNeighbour2 = graph[matchingEdges[0][0]][2];
+    } else if(graph[matchingEdges[0][0]][1] == matchingEdges[0][1]){
+        firstVertexNeighbour1 = graph[matchingEdges[0][0]][0];
+        firstVertexNeighbour2 = graph[matchingEdges[0][0]][2];
+    } else {
+        firstVertexNeighbour1 = graph[matchingEdges[0][0]][0];
+        firstVertexNeighbour2 = graph[matchingEdges[0][0]][1];
+    }
     
     cycleLength = 1;
     
