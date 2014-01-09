@@ -45,6 +45,8 @@ int cycleLength;
 int firstVertexNeighbour1;
 int firstVertexNeighbour2;
 
+boolean printMatching = FALSE;
+
 /* Check the current cycle. Returns TRUE if the cycle is dominating.
  */
 boolean handleCycle(){
@@ -197,6 +199,13 @@ void handleMatching(){
 
         writeCubicMultiCode(graph, vertexCount, stdout);
         graphsFiltered++;
+        if(printMatching){
+            fprintf(stderr, "In graph %d:\n", graphsFiltered);
+            for(i = 0; i < matchingSize; i++){
+                fprintf(stderr, "  %d - %d\n", matchingEdges[i][0], matchingEdges[i][1]);
+            }
+            fprintf(stderr, "\n");
+        }
     }
     
 }
@@ -242,6 +251,8 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -m, --matching\n");
+    fprintf(stderr, "       Print the matchings that can't be extended to a dominating cycle.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -265,15 +276,19 @@ int main(int argc, char** argv) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"matching", no_argument, NULL, 'm'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hm", long_options, &option_index)) != -1) {
         switch (c) {
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
+            case 'm':
+                printMatching = TRUE;
+                break;
             case '?':
                 usage(name);
                 return EXIT_FAILURE;
