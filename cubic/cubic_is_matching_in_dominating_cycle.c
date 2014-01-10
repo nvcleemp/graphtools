@@ -29,6 +29,7 @@ int vertexCount;
 GRAPH graph;
 
 int graphsFiltered = 0;
+int graphsRead = 0;
 
 int targetMatchingSize = -1;
 
@@ -199,7 +200,7 @@ void handleMatching(){
         writeCubicMultiCode(graph, vertexCount, stdout);
         graphsFiltered++;
         if(printMatching){
-            fprintf(stderr, "In graph %d:\n", graphsFiltered);
+            fprintf(stderr, "In graph %d (output as graph %d):\n", graphsRead, graphsFiltered);
             for(i = 0; i < matchingSize; i++){
                 fprintf(stderr, "  %d - %d\n", matchingEdges[i][0], matchingEdges[i][1]);
             }
@@ -267,8 +268,6 @@ void usage(char *name) {
 int main(int argc, char** argv) {
     
     int i;
-    
-    int graphsRead = 0;
 
     /*=========== commandline parsing ===========*/
 
