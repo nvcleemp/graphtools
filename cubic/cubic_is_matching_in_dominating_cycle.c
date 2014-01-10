@@ -215,7 +215,7 @@ void handleMatching(){
 void extendMatching(int nextVertex){
     int i, j;
     
-    if(matchingSize==3){
+    if(matchingSize==targetMatchingSize){
         handleMatching();
         return;
     }
