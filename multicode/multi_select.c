@@ -32,12 +32,15 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -m, --modulo r:m\n");
+    fprintf(stderr, "       Split the input into m parts and only output part r (0<=r<m).\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
 
 void usage(char *name) {
     fprintf(stderr, "Usage: %s [options] g1 g2\n", name);
+    fprintf(stderr, "       %s -m r:m\n", name);
     fprintf(stderr, "For more information type: %s -h \n\n", name);
 }
 
@@ -51,18 +54,31 @@ int main(int argc, char** argv) {
     
     int graphsRead = 0;
     int graphsFiltered = 0;
+    
+    boolean moduloEnabled = FALSE;
+    int moduloRest;
+    int moduloMod;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"modulo", required_argument, NULL, 'm'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hm:", long_options, &option_index)) != -1) {
         switch (c) {
+            case 'm':
+                moduloEnabled = TRUE;
+                if(sscanf(optarg, "%d:%d", &moduloRest, &moduloMod)!=2){
+                    fprintf(stderr, "Error while reading modulo -- exiting.\n");
+                    usage(name);
+                    return EXIT_FAILURE;
+                }
+                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
@@ -76,7 +92,10 @@ int main(int argc, char** argv) {
         }
     }
         
-    if (argc - optind == 0) {
+    if (argc - optind == 0 && !moduloEnabled) {
+        usage(name);
+        return EXIT_FAILURE;
+    } else if(argc - optind > 0 && moduloEnabled){
         usage(name);
         return EXIT_FAILURE;
     }
@@ -95,7 +114,12 @@ int main(int argc, char** argv) {
         decodeMultiCode(code, length, graph, adj);
         graphsRead++;
         
-        if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
+        if(moduloEnabled){
+            if(graphsRead % moduloMod == moduloRest){
+                graphsFiltered++;
+                writeMultiCode(graph, adj, stdout);
+            }
+        } else if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
             graphsFiltered++;
             writeMultiCode(graph, adj, stdout);
         }
