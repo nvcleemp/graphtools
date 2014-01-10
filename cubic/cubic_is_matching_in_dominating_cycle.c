@@ -173,7 +173,6 @@ boolean extendCycleAlongMatchingEdge(int newVertex, int firstVertex){
 void handleMatching(){
     int i;
     matchingCount++;
-    //fprintf(stderr, "Found %dth matching\n", matchingCount);
     
     for(i = 0; i < MAXN; i++){
         inCurrentCycle[i] = FALSE;
