@@ -6,7 +6,7 @@
  */
 
 /* This program reads planar graphs from standard in and
- * writes there dual to standard out.   
+ * writes their dual to standard out.   
  * 
  * 
  * Compile with:
