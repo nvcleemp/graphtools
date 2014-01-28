@@ -43,7 +43,7 @@ planar: build/stats_pl build/count_pl build/filter_pl \
 	build/non_iso_pl build/subdivide_vertex build/regular_pl \
 	build/random_relabel_pl build/bipartite_pl
 
-conversion: build/gconv build/genreg2multicode
+conversion: build/gconv build/genreg2multicode build/freetree2multicode
 
 multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complete_connect build/multi_path_connect \
@@ -204,6 +204,11 @@ build/genreg2multicode: conversion/genreg2multicode.c multicode/shared/multicode
                    multicode/shared/multicode_output.c
 	mkdir -p build
 	cc -o $@ -O4 $^
+
+build/freetree2multicode: conversion/freetree2multicode.c multicode/shared/multicode_base.c\
+                   multicode/shared/multicode_output.c
+	mkdir -p build
+	cc -o $@ -O4 -DMAXVAL=20 $^
 	
 build/embed: embedders/embed.c
 	mkdir -p build
