@@ -37,18 +37,178 @@
 
 typedef int boolean;
 
-int numberOfGraphs = 0;
+typedef struct e /* The data type used for edges */ {
+    int start; /* vertex where the edge starts */
+    int end; /* vertex where the edge ends */
+    
+    struct e *prev; /* previous edge in clockwise direction */
+    struct e *next; /* next edge in clockwise direction */
+    struct e *inverse; /* the edge that is inverse to this one */
+    int mark, index; /* two ints for temporary use;
+                          Only access mark via the MARK macros. */
+} EDGE;
+
+EDGE *firstedge[MAXN]; /* pointer to arbitrary edge out of vertex i. */
+int degree[MAXN];
+
+EDGE edges[MAXE];
+
+static int markvalue = 30000;
+#define RESETMARKS {int mki; if ((markvalue += 2) > 30000) \
+       { markvalue = 2; for (mki=0;mki<MAXE;++mki) edges[mki].mark=0;}}
+#define MARK(e) (e)->mark = markvalue
+#define MARKLO(e) (e)->mark = markvalue
+#define MARKHI(e) (e)->mark = markvalue+1
+#define UNMARK(e) (e)->mark = markvalue-1
+#define ISMARKED(e) ((e)->mark >= markvalue)
+#define ISMARKEDLO(e) ((e)->mark == markvalue)
+#define ISMARKEDHI(e) ((e)->mark > markvalue)
+
+int nv;
+int ne;
+
+//=============== Writing planarcode of graph ===========================
+
+void writePlanarCodeChar(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the number of vertices
+    fputc(nv, stdout);
+    
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            fputc(e->end + 1, stdout);
+            e = e->next;
+        } while (e != elast);
+        fputc(0, stdout);
+    }
+}
+
+void writeShort(unsigned short value){
+    if (fwrite(&value, sizeof (unsigned short), 1, stdout) != 1) {
+        fprintf(stderr, "fwrite() failed -- exiting!\n");
+        exit(-1);
+    }
+}
+
+void writePlanarCodeShort(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the number of vertices
+    fputc(0, stdout);
+    writeShort(nv);
+    
+    
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            writeShort(e->end + 1);
+            e = e->next;
+        } while (e != elast);
+        writeShort(0);
+    }
+}
+
+void writePlanarCode(){
+    static int first = TRUE;
+    
+    if(first){
+        first = FALSE;
+        
+        fprintf(stdout, ">>planar_code<<");
+    }
+    
+    if (nv + 1 <= 255) {
+        writePlanarCodeChar();
+    } else if (nv + 1 <= 65535) {
+        writePlanarCodeShort();
+    } else {
+        fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+        exit(-1);
+    }
+    
+}
 
 //=============== Reading and decoding planarcode ===========================
+
+EDGE *findEdge(int from, int to) {
+    EDGE *e, *elast;
+
+    e = elast = firstedge[from];
+    do {
+        if (e->end == to) {
+            return e;
+        }
+        e = e->next;
+    } while (e != elast);
+    fprintf(stderr, "error while looking for edge from %d to %d.\n", from, to);
+    exit(0);
+}
+
+void decodePlanarCode(unsigned short* code) {
+    /* complexity of method to determine inverse isn't that good, but will have to satisfy for now
+     */
+    int i, j, codePosition;
+    int edgeCounter = 0;
+    EDGE *inverse;
+
+    nv = code[0];
+    codePosition = 1;
+
+    for (i = 0; i < nv; i++) {
+        degree[i] = 0;
+        firstedge[i] = edges + edgeCounter;
+        edges[edgeCounter].start = i;
+        edges[edgeCounter].end = code[codePosition] - 1;
+        edges[edgeCounter].next = edges + edgeCounter + 1;
+        if (code[codePosition] - 1 < i) {
+            inverse = findEdge(code[codePosition] - 1, i);
+            edges[edgeCounter].inverse = inverse;
+            inverse->inverse = edges + edgeCounter;
+        } else {
+            edges[edgeCounter].inverse = NULL;
+        }
+        edgeCounter++;
+        codePosition++;
+        for (j = 1; code[codePosition]; j++, codePosition++) {
+            if (j == MAXVAL) {
+                fprintf(stderr, "MAXVAL too small: %d\n", MAXVAL);
+                exit(0);
+            }
+            edges[edgeCounter].start = i;
+            edges[edgeCounter].end = code[codePosition] - 1;
+            edges[edgeCounter].prev = edges + edgeCounter - 1;
+            edges[edgeCounter].next = edges + edgeCounter + 1;
+            if (code[codePosition] - 1 < i) {
+                inverse = findEdge(code[codePosition] - 1, i);
+                edges[edgeCounter].inverse = inverse;
+                inverse->inverse = edges + edgeCounter;
+            } else {
+                edges[edgeCounter].inverse = NULL;
+            }
+            edgeCounter++;
+        }
+        firstedge[i]->prev = edges + edgeCounter - 1;
+        edges[edgeCounter - 1].next = firstedge[i];
+        degree[i] = j;
+
+        codePosition++; /* read the closing 0 */
+    }
+
+    ne = edgeCounter;
+}
 
 /**
  * 
  * @param code
- * @param length
+ * @param laenge
  * @param file
  * @return returns 1 if a code was read and 0 otherwise. Exits in case of error.
  */
-int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPrint) {
+int readPlanarCode(unsigned short code[], int *length, FILE *file) {
     static int first = 1;
     unsigned char c;
     char testheader[20];
@@ -126,21 +286,17 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPri
 
     if (c != 0) /* unsigned chars would be sufficient */ {
         code[0] = c;
-        if (doPrint) fputc(c, stdout);
         if (code[0] > MAXN) {
             fprintf(stderr, "Constant N too small %d > %d \n", code[0], MAXN);
             exit(1);
         }
         while (zeroCounter < code[0]) {
             code[bufferSize] = (unsigned short) getc(file);
-            if (doPrint) fputc(code[bufferSize], stdout);
             if (code[bufferSize] == 0) zeroCounter++;
             bufferSize++;
         }
     } else {
-        if (doPrint) fputc(0, stdout);
         readCount = fread(code, sizeof (unsigned short), 1, file);
-        if (doPrint) fwrite(code, sizeof (unsigned short), 1, stdout);
         if(!readCount){
             fprintf(stderr, "Unexpected EOF.\n");
             exit(1);
@@ -153,7 +309,6 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPri
         zeroCounter = 0;
         while (zeroCounter < code[0]) {
             readCount = fread(code + bufferSize, sizeof (unsigned short), 1, file);
-            if (doPrint) fwrite(code + bufferSize, sizeof (unsigned short), 1, stdout);
             if(!readCount){
                 fprintf(stderr, "Unexpected EOF.\n");
                 exit(1);
@@ -164,9 +319,6 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPri
     }
 
     *length = bufferSize;
-    
-    
-    
     return (1);
 
 
@@ -175,35 +327,52 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file, boolean doPri
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s filters specified planar graphs in a file.\n\n", name);
+    fprintf(stderr, "The program %s filters specified planar graphs from a file.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices.\n", MAXN);
     fprintf(stderr, "Recompile with a larger value for MAXN if you need larger graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, " -m, --modulo r:m\n");
+    fprintf(stderr, "    Split the input into m parts and only output part r (0<=r<m).\n");
     fprintf(stderr, " -h, --help\n");
     fprintf(stderr, "    Print this help and return.\n");
 }
 
 void usage(char *name) {
     fprintf(stderr, "Usage: %s [options] g1 g2 ...\n", name);
+    fprintf(stderr, "       %s -m r:m\n", name);
     fprintf(stderr, "For more information type: %s -h \n\n", name);
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char** argv) {
+    
+    int graphsRead = 0;
+    int graphsFiltered = 0;
+    
+    boolean moduloEnabled = FALSE;
+    int moduloRest;
+    int moduloMod;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"modulo", required_argument, NULL, 'm'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hm:", long_options, &option_index)) != -1) {
         switch (c) {
-            case 0:
+            case 'm':
+                moduloEnabled = TRUE;
+                if(sscanf(optarg, "%d:%d", &moduloRest, &moduloMod)!=2){
+                    fprintf(stderr, "Error while reading modulo -- exiting.\n");
+                    usage(name);
+                    return EXIT_FAILURE;
+                }
                 break;
             case 'h':
                 help(name);
@@ -217,8 +386,11 @@ int main(int argc, char *argv[]) {
                 return EXIT_FAILURE;
         }
     }
-    
-    if (argc - optind == 0) {
+        
+    if (argc - optind == 0 && !moduloEnabled) {
+        usage(name);
+        return EXIT_FAILURE;
+    } else if(argc - optind > 0 && moduloEnabled){
         usage(name);
         return EXIT_FAILURE;
     }
@@ -229,18 +401,25 @@ int main(int argc, char *argv[]) {
         selectedGraphs[i] = atoi(argv[i + optind]);
     }
     
-    
-    fprintf(stdout, ">>planar_code<<");
-
-    /*=========== read planar graphs ===========*/
-
     unsigned short code[MAXCODELENGTH];
     int length;
-    i = 0;
-    while (readPlanarCode(code, &length, stdin, (i < argc - optind && numberOfGraphs == selectedGraphs[i] - 1))) {
-        numberOfGraphs++;
-        if (i < argc - optind && (numberOfGraphs == selectedGraphs[i])) {
-            i++;
+    while (readPlanarCode(code, &length, stdin)) {
+        decodePlanarCode(code);
+        graphsRead++;
+        
+        if(moduloEnabled){
+            if(graphsRead % moduloMod == moduloRest){
+                graphsFiltered++;
+                writePlanarCode();
+            }
+        } else if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
+            graphsFiltered++;
+            writePlanarCode();
         }
     }
+    
+    fprintf(stderr, "Read %d graph%s.\n", graphsRead, graphsRead==1 ? "" : "s");
+    fprintf(stderr, "Filtered %d graph%s.\n", graphsFiltered, graphsFiltered==1 ? "" : "s");
+
+    return (EXIT_SUCCESS);
 }
