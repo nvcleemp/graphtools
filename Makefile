@@ -1,5 +1,5 @@
 
-SOURCES = planar/stats_pl.c planar/count_pl.c planar/filter_pl.c\
+SOURCES = planar/stats_pl.c planar/count_pl.c planar/select_pl.c\
           planar/split_pl.c planar/dual_pl.c planar/non_iso_pl/non_iso_pl.c\
           planar/non_iso_pl/hashfunction.c planar/non_iso_pl/splay.c\
 	  planar/subdivide_vertex.c planar/regular_pl.c planar/bipartite_pl.c\
@@ -38,7 +38,7 @@ CUBIC_SHARED = cubic/shared/cubic_base.c cubic/shared/cubic_input.c\
 
 all: planar conversion multi visualise embedders invariants cubic
 
-planar: build/stats_pl build/count_pl build/filter_pl \
+planar: build/stats_pl build/count_pl build/select_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
 	build/non_iso_pl build/subdivide_vertex build/regular_pl \
 	build/random_relabel_pl build/bipartite_pl
@@ -78,9 +78,9 @@ build/count_pl: planar/count_pl.c
 	mkdir -p build
 	cc -o build/count_pl -O4 planar/count_pl.c
 
-build/filter_pl: planar/filter_pl.c
+build/select_pl: planar/select_pl.c
 	mkdir -p build
-	cc -o build/filter_pl -O4 planar/filter_pl.c
+	cc -o build/select_pl -O4 planar/select_pl.c
 
 build/split_pl: planar/split_pl.c
 	mkdir -p build
