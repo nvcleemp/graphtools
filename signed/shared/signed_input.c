@@ -223,7 +223,7 @@ int readMultiCode(unsigned short code[], int *length, FILE *file) {
         if (strcmp(testheader, ">>multi_code") == 0) {
 
         } else {
-            fprintf(stderr, "No signed_code header detected -- exiting!\n");
+            fprintf(stderr, "No multi_code header detected -- exiting!\n");
             exit(1);
         }
         //read reminder of header (either empty or le/be specification)
