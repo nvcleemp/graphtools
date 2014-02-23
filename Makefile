@@ -36,7 +36,10 @@ MULTICODE_SHARED = multicode/shared/multicode_base.c\
 CUBIC_SHARED = cubic/shared/cubic_base.c cubic/shared/cubic_input.c\
                cubic/shared/cubic_output.c
 
-all: planar conversion multi visualise embedders invariants cubic
+SIGNED_SHARED = signed/shared/signed_base.c signed/shared/signed_input.c\
+                signed/shared/signed_output.c
+
+all: planar conversion multi visualise embedders invariants cubic signed
 
 planar: build/stats_pl build/count_pl build/select_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
@@ -65,6 +68,8 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
 
 cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle\
        build/cubic_extend_matching_to_dominating_cycle build/cubic_is_matching_in_dominating_cycle2
+
+signed: build/signed_show
 
 clean:
 	rm -rf build
@@ -296,6 +301,10 @@ build/cubic_is_matching_in_dominating_cycle2: cubic/cubic_is_matching_in_dominat
 	cc -o $@ -O4 $^
 
 build/cubic_extend_matching_to_dominating_cycle: cubic/cubic_extend_matching_to_dominating_cycle.c $(CUBIC_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
+build/signed_show: signed/signed_show.c $(SIGNED_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
