@@ -60,7 +60,6 @@ void assignSigns_impl(int currentEdge, int negativeEdgeCount, GRAPH graph, ADJAC
 }
 
 void assignSigns(GRAPH graph, ADJACENCY adj, int order){
-    fprintf(stderr, "start\n");
     int i;
     for(i=1; i < order; i++){
         negativeEdgesAtVertex[i] = 0;
