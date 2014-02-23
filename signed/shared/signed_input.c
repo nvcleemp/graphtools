@@ -187,7 +187,7 @@ void decodeMultiCode(unsigned short* code, int length, GRAPH graph, ADJACENCY ad
         if (code[i] == 0) {
             currentVertex++;
         } else {
-            addEdge(graph, adj, currentVertex, (int) code[i], POSITIVE);
+            addEdge(graph, adj, currentVertex, (int) code[i], FALSE);
             if ((adj[code[i]] > MAXVAL) || (adj[currentVertex] > MAXVAL)) {
                 fprintf(stderr, "MAXVAL too small (%d)!\n", MAXVAL);
                 exit(0);
@@ -215,12 +215,12 @@ int readMultiCode(unsigned short code[], int *length, FILE *file) {
     if (first) {
         first = 0;
 
-        if (fread(&testheader, sizeof (unsigned char), 13, file) != 13) {
+        if (fread(&testheader, sizeof (unsigned char), 12, file) != 12) {
             fprintf(stderr, "can't read header ((1)file too small)-- exiting\n");
             exit(1);
         }
         testheader[13] = 0;
-        if (strcmp(testheader, ">>signed_code") == 0) {
+        if (strcmp(testheader, ">>multi_code") == 0) {
 
         } else {
             fprintf(stderr, "No signed_code header detected -- exiting!\n");
