@@ -12,7 +12,7 @@
 /* This method adds the edge (v,w) to graph. This assumes that adj contains
  * the current degree of the vertices v and w. This degrees are then updated.
  */
-void addEdge(GRAPH graph, ADJACENCY adj, int v, int w, int isNegative) {
+void addEdge(GRAPH graph, ADJACENCY adj, int v, int w, boolean isNegative) {
     if(edgeCounter == MAXE){
         fprintf(stderr, "Maximum number of edges reached -- exiting!");
         exit(EXIT_FAILURE);
