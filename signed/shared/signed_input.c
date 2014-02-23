@@ -219,7 +219,7 @@ int readMultiCode(unsigned short code[], int *length, FILE *file) {
             fprintf(stderr, "can't read header ((1)file too small)-- exiting\n");
             exit(1);
         }
-        testheader[13] = 0;
+        testheader[12] = 0;
         if (strcmp(testheader, ">>multi_code") == 0) {
 
         } else {
