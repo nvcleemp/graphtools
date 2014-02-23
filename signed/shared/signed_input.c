@@ -23,7 +23,7 @@ void decodeSignedCode(unsigned short* code, int length, GRAPH graph, ADJACENCY a
         if (code[i] == 0) {
             currentVertex++;
         } else {
-            addEdge(graph, adj, currentVertex, (int) code[i], (int) code[i+1]);
+            addEdge(graph, adj, currentVertex, (int) code[i], ((int) code[i+1])==NEGATIVE);
             if ((adj[code[i]] > MAXVAL) || (adj[currentVertex] > MAXVAL)) {
                 fprintf(stderr, "MAXVAL too small (%d)!\n", MAXVAL);
                 exit(0);
