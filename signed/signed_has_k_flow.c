@@ -330,7 +330,12 @@ int main(int argc, char** argv) {
     
     fprintf(stderr, "Read %d graph%s.\n", graphCount, graphCount==1 ? "" : "s");
     if(doFiltering){
-        fprintf(stderr, "Filtered %d graph%s.\n", graphsFiltered, graphsFiltered==1 ? "" : "s");
+        fprintf(stderr, "Filtered %d graph%s that %s a %d-flow.\n", 
+                graphsFiltered, graphsFiltered==1 ? "" : "s",
+                graphsFiltered==1 ?
+                    (invert ? "does not have" : "has") :
+                    (invert ? "do not have" : "have"),
+                k);
     }
 
     return (EXIT_SUCCESS);
