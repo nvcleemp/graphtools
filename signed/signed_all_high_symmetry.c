@@ -214,6 +214,7 @@ void assignSigns_impl(int currentEdge, int negativeEdgeCount, ADJACENCY adj){
 void assignSigns(GRAPH graph1, ADJACENCY adj, int order){
     //compute sets
     int i,j,k;
+    edgeSetCounter = 0;
     for(i=1; i < order; i++){
         negativeEdgesAtVertex[i] = 0;
     }
