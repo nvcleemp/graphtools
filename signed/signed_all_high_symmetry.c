@@ -318,7 +318,6 @@ int main(int argc, char *argv[]) {
     graphCount = 0;
 
     while (readMultiCode(code, &codeLength, stdin)){
-
         graphCount++;
         int order;
         decodeMultiCode(code, codeLength, graph, adj, &order);
