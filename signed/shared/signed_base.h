@@ -15,7 +15,7 @@
 #define MAXN 4000
 #endif
 #ifndef MAXVAL
-#define MAXVAL 5
+#define MAXVAL 10
 #endif
 #ifndef MAXE
 #define MAXE (MAXVAL*MAXN/2)
