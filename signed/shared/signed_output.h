@@ -17,6 +17,8 @@ extern "C" {
 
 void writeSignedCode(GRAPH graph, ADJACENCY adj, int order, FILE *f);
 
+void writeAsMultiCode(GRAPH graph, ADJACENCY adj, int order, FILE *f);
+
 #ifdef	__cplusplus
 }
 #endif

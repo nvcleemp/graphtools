@@ -67,3 +67,55 @@ void writeSignedCode(GRAPH graph, ADJACENCY adj, int order, FILE *f){
         exit(-1);
     }
 }
+
+void writeMultiCodeChar(GRAPH graph, ADJACENCY adj, int order, FILE *f){
+    int i, j;
+    
+    //write the number of vertices
+    fputc(order, f);
+    
+    for(i=1; i<order; i++){
+        for(j=0; j<adj[i]; j++){
+            if(i==graph[i][j]->smallest){
+                fputc(graph[i][j]->largest, f);
+            }
+        }
+        fputc(0, f);
+    }
+}
+
+void writeMultiCodeShort(GRAPH graph, ADJACENCY adj, int order, FILE *f){
+    int i, j;
+    
+    //write the number of vertices
+    fputc(0, f);
+    writeShort(order, f);
+    
+    for(i=1; i<order; i++){
+        for(j=0; j<adj[i]; j++){
+            if(i==graph[i][j]->smallest){
+                writeShort(graph[i][j]->largest, f);
+            }
+        }
+        writeShort(0, f);
+    }
+}
+
+void writeAsMultiCode(GRAPH graph, ADJACENCY adj, int order, FILE *f){
+    static int first = TRUE;
+    
+    if(first){
+        first = FALSE;
+        
+        fprintf(stdout, ">>multi_code<<");
+    }
+    
+    if (order <= 252) {
+        writeMultiCodeChar(graph, adj, order, f);
+    } else if (order <= 252*256) {
+        writeMultiCodeShort(graph, adj, order, f);
+    } else {
+        fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+        exit(-1);
+    }
+}
