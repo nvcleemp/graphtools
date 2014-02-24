@@ -28,6 +28,8 @@
 #include "shared/signed_input.h"
 #include "shared/signed_output.h"
 
+int graphsWritten = 0;
+
 int edgeCounter = 0;
 
 FILE *outFile;
@@ -42,6 +44,7 @@ void assignSigns_impl(int currentEdge, int negativeEdgeCount, GRAPH graph, ADJAC
             return;
         }
         writeSignedCode(graph, adj, order, outFile);
+        graphsWritten++;
     } else {
         edges[currentEdge].isNegative = FALSE;
         assignSigns_impl(currentEdge+1, negativeEdgeCount, graph, adj, order);
@@ -145,7 +148,8 @@ int main(int argc, char *argv[]) {
         assignSigns(graph, adj, order);
     }
 
-
+    fprintf(stderr, "Read %d graph%s.\n", graphCount, graphCount==1 ? "" : "s");
+    fprintf(stderr, "Written %d signed graph%s.\n", graphsWritten, graphsWritten==1 ? "" : "s");
 
     return EXIT_SUCCESS;
 

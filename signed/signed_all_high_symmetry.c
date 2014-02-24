@@ -34,6 +34,8 @@
 #include "shared/signed_output.h"
 #include "nauty/nausparse.h"
 
+int graphsWritten = 0;
+
 int edgeCounter = 0;
 
 FILE *outFile;
@@ -255,6 +257,7 @@ void assignSigns(GRAPH graph1, ADJACENCY adj, int order){
         if(forest[i]==i){
             loadSignature(i);
             writeSignedCode(graph1, adj, order, outFile);
+            graphsWritten++;
         }
     }
 }
@@ -335,7 +338,8 @@ int main(int argc, char *argv[]) {
         assignSigns(graph, adj, order);
     }
 
-
+    fprintf(stderr, "Read %d graph%s.\n", graphCount, graphCount==1 ? "" : "s");
+    fprintf(stderr, "Written %d signed graph%s.\n", graphsWritten, graphsWritten==1 ? "" : "s");
 
     return EXIT_SUCCESS;
 
