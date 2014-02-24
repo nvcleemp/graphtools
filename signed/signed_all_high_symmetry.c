@@ -63,6 +63,16 @@ DEFAULTOPTIONS_SPARSEGRAPH(nautyOptions);
 permutation automorphismGroupGenerators[MAXN][MAXN];
 int numberOfGenerators;
 
+void printEdgeSet(unsigned int edgeSet){
+    int i;
+    for(i = 0; i < edgeCounter; i++){
+        if((1<<i)&edgeSet){
+            fprintf(stderr, "%d-%d ", edges[i].smallest, edges[i].largest);
+        }
+    }
+    fprintf(stderr, "\n");
+}
+
 void storeGenerator(int count, permutation perm[], nvector orbits[],
         int numorbits, int stabvertex, int n) {
     memcpy(automorphismGroupGenerators + numberOfGenerators, perm, sizeof(permutation) * n);
