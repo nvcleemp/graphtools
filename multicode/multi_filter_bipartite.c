@@ -153,7 +153,11 @@ int main(int argc, char** argv) {
     }
     
     fprintf(stderr, "Read %d graph%s.\n", graphsRead, graphsRead==1 ? "" : "s");
-    fprintf(stderr, "Filtered %d graph%s.\n", graphsFiltered, graphsFiltered==1 ? "" : "s");
+    fprintf(stderr, "Filtered %d graph%s that %s %s bipartite.\n",
+            graphsFiltered,
+            graphsFiltered==1 ? "" : "s",
+            graphsFiltered==1 ? "is" : "are",
+            invertFilter ? "not" : "");
 
     return (EXIT_SUCCESS);
 }
