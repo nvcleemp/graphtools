@@ -110,3 +110,21 @@ boolean areAdjacent(GRAPH graph, ADJACENCY adj, int v, int w){
     
     return FALSE;
 }
+
+boolean areAdjacentWithSign(GRAPH graph, ADJACENCY adj, int v, int w, int sign){
+    int i;
+    
+    if(v > w){
+        int temp = v;
+        v = w;
+        w = temp;
+    }
+    for(i = 0; i < adj[v]; i++){
+        if(graph[v][i]->largest==w &&
+                graph[v][i]->isNegative==(sign==NEGATIVE)){
+            return TRUE;
+        }
+    }
+    
+    return FALSE;
+}

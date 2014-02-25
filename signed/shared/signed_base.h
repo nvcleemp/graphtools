@@ -64,6 +64,8 @@ void prepareGraph(GRAPH graph, ADJACENCY adj, int vertexCount);
 
 boolean areAdjacent(GRAPH graph, ADJACENCY adj, int v, int w);
 
+boolean areAdjacentWithSign(GRAPH graph, ADJACENCY adj, int v, int w, int sign);
+
 #ifdef	__cplusplus
 }
 #endif
