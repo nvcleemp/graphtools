@@ -1,7 +1,7 @@
 /*
  * Main developer: Nico Van Cleemput
  * 
- * Copyright (C) 2013 Nico Van Cleemput.
+ * Copyright (C) 2013-2014 Nico Van Cleemput.
  * Licensed under the GNU GPL, read the file LICENSE.txt for details.
  */
 
@@ -74,6 +74,8 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -c, --count\n");
     fprintf(stderr, "       Only count the number of graphs that are bipartite.\n");
+    fprintf(stderr, "    -i, --invert\n");
+    fprintf(stderr, "       Accept graphs only if they are NOT bipartite.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -93,19 +95,25 @@ int main(int argc, char** argv) {
     
     int graphsRead = 0;
     int graphsFiltered = 0;
+    
+    boolean invertFilter = FALSE;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"invert", no_argument, NULL, 'i'},
         {"count", no_argument, NULL, 'c'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hc", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hci", long_options, &option_index)) != -1) {
         switch (c) {
+            case 'i':
+                invertFilter = TRUE;
+                break;
             case 'c':
                 onlyCount = TRUE;
                 break;
@@ -129,6 +137,14 @@ int main(int argc, char** argv) {
         graphsRead++;
         
         if(isBipartite(graph, adj)){
+            if(invertFilter){
+                continue;
+            }
+            if(!onlyCount){
+                writeMultiCode(graph, adj, stdout);
+            }
+            graphsFiltered++;
+        } else if(invertFilter){
             if(!onlyCount){
                 writeMultiCode(graph, adj, stdout);
             }
