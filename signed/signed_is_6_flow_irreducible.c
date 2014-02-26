@@ -11,6 +11,8 @@
  * 
  * Compile with:
  *     
+ *     cc -o signed_is_6_flow_irreducible -O4  signed_is_6_flow_irreducible.c \
+ *           shared/signed_base.c shared/signed_input.c shared/signed_output.c
  * 
  */
 
