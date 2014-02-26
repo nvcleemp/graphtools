@@ -238,10 +238,10 @@ int main(int argc, char** argv) {
     
     fprintf(stderr, "Read %d graph%s.\n", graphCount, graphCount==1 ? "" : "s");
     if(doFiltering){
-        fprintf(stderr, "Filtered %d graph%s that %s %s 6-flow-irreducible.\n", 
+        fprintf(stderr, "Filtered %d graph%s that %s%s 6-flow-irreducible.\n", 
                 graphsFiltered, graphsFiltered==1 ? "" : "s",
                 graphsFiltered==1 ? "is" : "are",
-                invert ? "not" : "");
+                invert ? " not" : "");
     }
 
     return (EXIT_SUCCESS);
