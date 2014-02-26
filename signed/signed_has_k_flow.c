@@ -33,6 +33,114 @@ int unassignedEdgesAtVertex[MAXN+1];
 int flowAtVertex[MAXN+1];
 int flowValue[MAXE];
 
+FILE *flowFile = NULL;
+boolean showFlow = FALSE;
+
+//============================= Printing flows ==============================
+
+void writeFlow_impl(GRAPH g, int order, int columns, char *numberFormat, char *headerSeparator, char* emptyCell, int maxDegree) {
+    int x, y, lowerBound, upperBound;
+    fprintf(flowFile, "\n\n ");
+
+    fprintf(flowFile, numberFormat, order);
+    fprintf(flowFile, "     ");
+
+    for (x = 1; (x <= order)&&(x <= columns); x++) {
+        fprintf(flowFile, numberFormat, x);
+        fprintf(flowFile, "     ");
+    }
+    fprintf(flowFile, "|\n");
+
+    fprintf(flowFile, " ");
+
+    for (x = 0; (x <= order)&&(x <= columns); x++) {
+        fprintf(flowFile, "|%s", headerSeparator);
+    }
+    fprintf(flowFile, "|\n");
+
+    for (x = 0; x < maxDegree; x++) {
+        fprintf(flowFile, " |%s", emptyCell);
+        for (y = 1; (y <= order)&&(y <= columns); y++) {
+            if (g[y][x] == NULL) {
+                fprintf(flowFile, "|%s", emptyCell);
+            } else {
+                fprintf(flowFile, numberFormat, g[y][x]->largest == y ? g[y][x]->smallest : g[y][x]->largest);
+                fprintf(flowFile, g[y][x]->isNegative ? "-" : "+");
+                fprintf(flowFile, "(% 2d)", flowValue[g[y][x]->index]);
+            }
+        }
+        fprintf(flowFile, "|\n");
+    }
+
+    lowerBound = columns + 1;
+    upperBound = 2*columns;
+
+    while (order >= lowerBound) {
+        fprintf(flowFile, "\n");
+
+        fprintf(flowFile, "  %s", emptyCell);
+
+        for (x = lowerBound; (x <= order)&&(x <= upperBound); x++) {
+            fprintf(flowFile, numberFormat, x);
+            fprintf(flowFile, "     ");
+        }
+        fprintf(flowFile, "|\n");
+
+        fprintf(flowFile, "  %s", emptyCell);
+
+        for (x = lowerBound; (x <= order)&&(x <= upperBound); x++) {
+            fprintf(flowFile, "|%s", headerSeparator);
+        }
+        fprintf(flowFile, "|\n");
+
+        for (y = 0; y < maxDegree; y++) {
+            fprintf(flowFile, "  %s", emptyCell);
+            for (x = lowerBound; (x <= order)&&(x <= upperBound); x++) {
+                if (g[x][y] == NULL) {
+                    fprintf(flowFile, "|%s", emptyCell);
+                } else {
+                    fprintf(flowFile, numberFormat, g[x][y]->largest == x ? g[x][y]->smallest : g[x][y]->largest);
+                    fprintf(flowFile, g[x][y]->isNegative ? "-" : "+");
+                    fprintf(flowFile, "(% 2d)", flowValue[g[x][y]->index]);
+                }
+            }
+            fprintf(flowFile, "|\n");
+        }
+        lowerBound += columns;
+        upperBound += columns;
+    }
+}
+
+void writeFlow2Digits(GRAPH g, int order, int maxDegree) {
+    writeFlow_impl(g, order, 8, "|%2d", "=======", "       ", maxDegree);
+}
+
+void writeFlow3Digits(GRAPH g, int order, int maxDegree) {
+    writeFlow_impl(g, order, 7, "|%3d", "========", "        ", maxDegree);
+}
+
+void writeFlow4Digits(GRAPH g, int order, int maxDegree) {
+    writeFlow_impl(g, order, 6, "|%4d", "=========", "         ", maxDegree);
+}
+
+void writeFlow(GRAPH g, ADJACENCY adj, int order) {
+    int maxDegree = 0;
+    int i;
+    for(i = 1; i <= order; i++){
+        if(adj[i]>maxDegree){
+            maxDegree = adj[i];
+        }
+    }
+    if (order < 100) {
+        writeFlow2Digits(g, order, maxDegree);
+    } else if (order < 1000) {
+        writeFlow3Digits(g, order, maxDegree);
+    } else /*if (order < 10000)*/ {
+        writeFlow4Digits(g, order, maxDegree);
+    }
+
+}
+
 boolean findKflow(GRAPH graph, ADJACENCY adj, int order, int unassignedEdges){
     int i, j;
     
@@ -232,6 +340,8 @@ void help(char *name) {
     fprintf(stderr, "       Invert the filter.\n");
     fprintf(stderr, "    -m, --multicode\n");
     fprintf(stderr, "       Export the graphs in multi_code format (signs are not exported).\n");
+    fprintf(stderr, "    -s, --show\n");
+    fprintf(stderr, "       Shows the k-flow if there is one. This feature is disabled if -f is used.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -252,6 +362,8 @@ int main(int argc, char** argv) {
     boolean doFiltering = FALSE;
     boolean invert = FALSE;
     boolean asMulticode = FALSE;
+    
+    flowFile = stderr;
 
     /*=========== commandline parsing ===========*/
 
@@ -261,11 +373,12 @@ int main(int argc, char** argv) {
         {"invert", no_argument, NULL, 'i'},
         {"filter", no_argument, NULL, 'f'},
         {"multicode", no_argument, NULL, 'm'},
+        {"show", no_argument, NULL, 's'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hfim", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hfims", long_options, &option_index)) != -1) {
         switch (c) {
             case 'i':
                 invert = TRUE;
@@ -275,6 +388,9 @@ int main(int argc, char** argv) {
                 break;
             case 'm':
                 asMulticode = TRUE;
+                break;
+            case 's':
+                showFlow = TRUE;
                 break;
             case 'h':
                 help(name);
@@ -321,9 +437,12 @@ int main(int argc, char** argv) {
             }
         } else {
             if(value){
-                fprintf(stdout, "Graph %d has a %d-flow.\n", graphCount, k);
+                fprintf(stderr, "Graph %d has a %d-flow.\n", graphCount, k);
+                if(showFlow){
+                    writeFlow(graph, adj, order);
+                }
             } else {
-                fprintf(stdout, "Graph %d does not have a %d-flow.\n", graphCount, k);
+                fprintf(stderr, "Graph %d does not have a %d-flow.\n", graphCount, k);
             }
         }
     }
