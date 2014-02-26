@@ -140,7 +140,7 @@ boolean is6FlowIrreducible(GRAPH graph, ADJACENCY adj, int order){
 
 void help(char *name) {
     fprintf(stderr, "The program %s determines whether signed graphs in signed_code\n", name);
-    fprintf(stderr, "format are a 6-flow irreducible.\n\n");
+    fprintf(stderr, "format are 6-flow irreducible.\n\n");
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options] k\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
