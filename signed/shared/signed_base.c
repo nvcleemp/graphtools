@@ -128,3 +128,11 @@ boolean areAdjacentWithSign(GRAPH graph, ADJACENCY adj, int v, int w, int sign){
     
     return FALSE;
 }
+
+
+void switchAtVertex(GRAPH graph, ADJACENCY adj, int v){
+    int i;
+    for(i = 0; i < adj[v]; i++){
+        graph[v][i]->isNegative = !(graph[v][i]->isNegative);
+    }
+}
