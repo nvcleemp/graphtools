@@ -72,7 +72,7 @@ cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle
 
 signed: build/signed_show build/signed_all build/signed_all_high_symmetry\
         build/signed_has_k_flow build/signed_is_6_flow_irreducible\
-        build/signed_is_flow_admissable
+        build/signed_is_flow_admissable build/signed_random_equivalent
 
 clean:
 	rm -rf build
@@ -341,6 +341,10 @@ build/signed_is_6_flow_irreducible: signed/signed_is_6_flow_irreducible.c $(SIGN
 build/signed_is_flow_admissable: signed/signed_is_flow_admissable.c $(SIGNED_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DMAXN=63 $^
+
+build/signed_random_equivalent: signed/signed_random_equivalent.c $(SIGNED_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
