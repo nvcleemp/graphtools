@@ -37,10 +37,15 @@ FILE *outFile;
 int negativeEdgesAtVertex[MAXN+1];
 
 boolean noOne = FALSE;
+boolean isNumberOfEdgesFixed = FALSE;
+int fixedNumberOfEdges = 0;
 
 void assignSigns_impl(int currentEdge, int negativeEdgeCount, GRAPH graph, ADJACENCY adj, int order){
     if(currentEdge == edgeCounter){
         if(noOne && negativeEdgeCount==1){
+            return;
+        }
+        if(isNumberOfEdgesFixed && negativeEdgeCount!=fixedNumberOfEdges){
             return;
         }
         writeSignedCode(graph, adj, order, outFile);
@@ -85,6 +90,9 @@ void help(char *name) {
     fprintf(stderr, "       Print this help and return.\n");
     fprintf(stderr, "    --no-one\n");
     fprintf(stderr, "       Exclude assignments that only contain 1 negative edge.\n");
+    fprintf(stderr, "    -e n, --edges n\n");
+    fprintf(stderr, "       Only give signatures with n negative edges. The use of this switch\n");
+    fprintf(stderr, "       disables --no-one.\n");
 }
 
 void usage(char *name) {
@@ -105,11 +113,12 @@ int main(int argc, char *argv[]) {
     char *name = argv[0];
     static struct option long_options[] = {
         {"no-one", no_argument, NULL, 0},
+        {"edges", required_argument, NULL, 'e'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "he:", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 //handle long option with no alternative
@@ -122,6 +131,10 @@ int main(int argc, char *argv[]) {
                         usage(name);
                         return EXIT_FAILURE;
                 }
+                break;
+            case 'e':
+                isNumberOfEdgesFixed = TRUE;
+                fixedNumberOfEdges = atoi(optarg);
                 break;
             case 'h':
                 help(name);
@@ -136,6 +149,9 @@ int main(int argc, char *argv[]) {
         }
     }
     
+    if(isNumberOfEdgesFixed){
+        noOne = FALSE;
+    }
     outFile = stdout;
 
     graphCount = 0;
