@@ -342,6 +342,8 @@ void help(char *name) {
     fprintf(stderr, "       Export the graphs in multi_code format (signs are not exported).\n");
     fprintf(stderr, "    -s, --show\n");
     fprintf(stderr, "       Shows the k-flow if there is one. This feature is disabled if -f is used.\n");
+    fprintf(stderr, "       Note that positive edges are always oriented from small to large, and\n");
+    fprintf(stderr, "       negative edges are always oriented like a source.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
