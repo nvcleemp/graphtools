@@ -136,3 +136,10 @@ void switchAtVertex(GRAPH graph, ADJACENCY adj, int v){
         graph[v][i]->isNegative = !(graph[v][i]->isNegative);
     }
 }
+
+void setAllPositive(){
+    int i;
+    for(i = 0; i < edgeCounter; i++){
+        edges[i].isNegative = FALSE;
+    }
+}

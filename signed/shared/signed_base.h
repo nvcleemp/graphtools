@@ -68,6 +68,8 @@ boolean areAdjacentWithSign(GRAPH graph, ADJACENCY adj, int v, int w, int sign);
 
 void switchAtVertex(GRAPH graph, ADJACENCY adj, int v);
 
+void setAllPositive();
+
 #ifdef	__cplusplus
 }
 #endif
