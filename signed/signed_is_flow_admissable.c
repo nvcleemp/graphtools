@@ -118,9 +118,7 @@ boolean isFlowAdmissable(GRAPH graph, ADJACENCY adj, int order){
         edges[i].index = i;
         if(edges[i].isNegative) negativeEdgeCount++;
     }
-    if(negativeEdgeCount==0){
-        return TRUE;
-    } else if(negativeEdgeCount==1){
+    if(negativeEdgeCount==1){
         return FALSE;
     }
     unsigned long long int possibleEquivalentOneSets = fullSets[edgeCounter];
