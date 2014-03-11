@@ -68,7 +68,8 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
             build/multi_invariant_is_hamiltonian
 
 cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle\
-       build/cubic_extend_matching_to_dominating_cycle build/cubic_is_matching_in_dominating_cycle2
+       build/cubic_extend_matching_to_dominating_cycle build/cubic_is_matching_in_dominating_cycle2\
+       build/cubic_is_matching_and_vertices_in_dominating_cycle
 
 signed: build/signed_show build/signed_all build/signed_all_high_symmetry\
         build/signed_has_k_flow build/signed_is_6_flow_irreducible\
@@ -315,6 +316,10 @@ build/cubic_is_matching_in_dominating_cycle2: cubic/cubic_is_matching_in_dominat
 build/cubic_extend_matching_to_dominating_cycle: cubic/cubic_extend_matching_to_dominating_cycle.c $(CUBIC_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
+
+build/cubic_is_matching_and_vertices_in_dominating_cycle: cubic/cubic_is_matching_and_vertices_in_dominating_cycle.c $(CUBIC_SHARED)
+	mkdir -p build
+	cc -o $@ -g -O4 $^
 
 build/signed_show: signed/signed_show.c $(SIGNED_SHARED)
 	mkdir -p build
