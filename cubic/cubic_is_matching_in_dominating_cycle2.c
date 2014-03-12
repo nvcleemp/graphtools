@@ -199,10 +199,10 @@ boolean extendCycleAlongMatchingEdge(
 boolean findCycleThroughMatching(int matching){
     int firstVertex = edges[matchingsFirstEdge[matching]][0];
     
-    if(BIT(graph[firstVertex][0]) &  matchedVertices[matching]){
+    if(graph[firstVertex][0] == edges[matchingsFirstEdge[matching]][1]){
         firstVertexNeighbour1 = graph[firstVertex][1];
         firstVertexNeighbour2 = graph[firstVertex][2];
-    } else if(BIT(graph[firstVertex][1]) &  matchedVertices[matching]){
+    } else if(graph[firstVertex][1] == edges[matchingsFirstEdge[matching]][1]){
         firstVertexNeighbour1 = graph[firstVertex][0];
         firstVertexNeighbour2 = graph[firstVertex][2];
     } else {

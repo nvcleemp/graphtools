@@ -65,7 +65,7 @@ boolean handleCycle(unsigned long long int currentCycleEdges,
             return FALSE;
         }
     }
-    
+
     //remove all matchings contained in this cycle
     int removedMatchings = 0;
     i = 0;
@@ -105,7 +105,7 @@ boolean extendCycle(int newVertex, int newEdge, int firstVertex,
         unsigned long long int currentCycleVertices,
         int cycleLength) {
     int i;
-
+    
     if (newVertex == firstVertex) {
         return handleCycle(currentCycleEdges | BIT(newEdge), currentCycleVertices, cycleLength);
     }
@@ -202,13 +202,13 @@ boolean extendCycleAlongMatchingEdge(
     return FALSE;
 }
 
-boolean findCycleThroughMatching(int matching){
+boolean findCycleThroughMatching(int matching){    
     int firstVertex = edges[matchingsFirstEdge[matching]][0];
     
-    if(BIT(graph[firstVertex][0]) &  matchedVertices[matching]){
+    if(graph[firstVertex][0] == edges[matchingsFirstEdge[matching]][1]){
         firstVertexNeighbour1 = graph[firstVertex][1];
         firstVertexNeighbour2 = graph[firstVertex][2];
-    } else if(BIT(graph[firstVertex][1]) &  matchedVertices[matching]){
+    } else if(graph[firstVertex][1] == edges[matchingsFirstEdge[matching]][1]){
         firstVertexNeighbour1 = graph[firstVertex][0];
         firstVertexNeighbour2 = graph[firstVertex][2];
     } else {
@@ -451,13 +451,13 @@ int main(int argc, char** argv) {
         if(printMatching && matchingAndVertexSetCount){
             fprintf(stderr, "Graph %d\nVertices: ", graphsFiltered);
             for(i = 0; i < vertexCount; i++){
-                if(vertexSets[0] & BIT(i)){
+                if(vertexSets[matchingAndVertexSetCount-1] & BIT(i)){
                     fprintf(stderr, "%d ", i+1);
                 }
             }
             fprintf(stderr, "\nEdges: ");
             for(i = 0; i < edgeCount; i++){
-                if(matchings[0] & BIT(i)){
+                if(matchings[matchingAndVertexSetCount-1] & BIT(i)){
                     fprintf(stderr, "%d-%d ", edges[i][0] + 1, edges[i][1] + 1);
                 }
             }
