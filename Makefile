@@ -54,7 +54,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_combine  build/multi_remove_edges build/multi_corona \
        build/multi_filter_regular build/multi_filter_snark \
        build/multi_induced_subgraph build/multi_identify build/multi_mycielski\
-       build/multi_filter_bipartite build/multi_non_iso build/multi_select
+       build/multi_filter_bipartite build/multi_non_iso build/multi_select\
+       build/multi_complement
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -145,6 +146,10 @@ build/multi_combine: multicode/multi_combine.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 	
 build/multi_corona: multicode/multi_corona.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multi_complement: multicode/multi_complement.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
