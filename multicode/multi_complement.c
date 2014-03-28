@@ -34,14 +34,14 @@ void constructComplement(GRAPH graph, ADJACENCY adj, GRAPH complementGraph, ADJA
     prepareGraph(complementGraph, complementAdj, order);
     
     for(i=1; i<=order; i++){
-        for(j=1; j<=MAXN; j++){
+        for(j=1; j<=order; j++){
             neighbours[j] = FALSE;
         }
         for(j=0; j<adj[i]; j++){
             neighbours[graph[i][j]] = TRUE;
         }
         neighbours[i] = TRUE;
-        for(j=1; j<=MAXN; j++){
+        for(j=1; j<=order; j++){
             if(!neighbours[j]){
                 addEdge(complementGraph, complementAdj, i, j);
             }
