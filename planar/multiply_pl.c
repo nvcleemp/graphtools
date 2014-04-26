@@ -325,7 +325,8 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 void help(char *name) {
     fprintf(stderr, "The program %s makes copies of planar graphs from a file.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
-    fprintf(stderr, " %s\n\n", name);
+    fprintf(stderr, " %s n\n\n", name);
+    fprintf(stderr, "where n is the number of copies that must be made of each graph.\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices.\n", MAXN);
     fprintf(stderr, "Recompile with a larger value for MAXN if you need larger graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
