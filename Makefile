@@ -44,7 +44,8 @@ all: planar conversion multi visualise embedders invariants cubic signed
 planar: build/stats_pl build/count_pl build/select_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
 	build/non_iso_pl build/subdivide_vertex build/regular_pl \
-	build/random_relabel_pl build/bipartite_pl build/delete_pl
+	build/random_relabel_pl build/bipartite_pl build/delete_pl\
+	build/multiply_pl
 
 conversion: build/gconv build/genreg2multicode build/freetree2multicode\
             build/multicode2signedcode build/pregraphcode2multicode
@@ -126,6 +127,10 @@ build/bipartite_pl: planar/bipartite_pl.c
 	cc -o $@ -O4 $^
 	
 build/delete_pl: planar/delete_pl.c
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multiply_pl: planar/multiply_pl.c
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
