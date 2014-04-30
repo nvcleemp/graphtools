@@ -76,6 +76,9 @@ int ne;
 int nv2;
 int ne2;
 
+FILE *firstFile = NULL;
+FILE *secondFile = NULL;
+
 void printGraph2(){
     int i;
     EDGE *e, *elast;
@@ -428,6 +431,10 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -1 file\n");
+    fprintf(stderr, "       Read the first graph from the specified file instead of stdin.\n");
+    fprintf(stderr, "    -2 file\n");
+    fprintf(stderr, "       Read the second graph from the specified file instead of stdin.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -448,8 +455,16 @@ int main(int argc, char *argv[]) {
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "h1:2:", long_options, &option_index)) != -1) {
         switch (c) {
+            case '1':
+                fprintf(stderr, "Reading first graph from file %s.\n", optarg);
+                firstFile = fopen(optarg, "r");
+                break;
+            case '2':
+                fprintf(stderr, "Reading second graph from file %s.\n", optarg);
+                secondFile = fopen(optarg, "r");
+                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
@@ -475,7 +490,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     if(sscanf(argv[optind + 1], "%d,%d", &from2, &to2)!=2){
-        fprintf(stderr, "Error while reading edge 1.\n");
+        fprintf(stderr, "Error while reading edge 2.\n");
         usage(name);
         return EXIT_FAILURE;
     }
@@ -489,17 +504,25 @@ int main(int argc, char *argv[]) {
 
     unsigned short code[MAXCODELENGTH];
     int length;
-    if (readPlanarCode(code, &length, stdin)) {
+    if (readPlanarCode(code, &length, firstFile == NULL ? stdin : firstFile)) {
         decodePlanarCode(code);
     } else {
         fprintf(stderr, "Could not read first graph -- exiting!\n");
         return EXIT_FAILURE;
     }
-    if (readPlanarCode(code, &length, stdin)) {
+    if (readPlanarCode(code, &length, secondFile == NULL ? stdin : secondFile)) {
         decodePlanarCode2(code);
     } else {
         fprintf(stderr, "Could not read second graph -- exiting!\n");
         return EXIT_FAILURE;
+    }
+    
+    //close files
+    if(firstFile!=NULL){
+        fclose(firstFile);
+    }
+    if(secondFile!=NULL){
+        fclose(secondFile);
     }
     
     EDGE* e1 = findEdge(from1, to1);
