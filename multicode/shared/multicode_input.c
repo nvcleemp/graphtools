@@ -104,7 +104,7 @@ int readMultiCode(unsigned short code[], int *length, FILE *file) {
         if (code[2] == 0) zeroCounter++;
         bufferSize = 3;
         // 3 characters were read and stored in buffer
-        if ((code[1] == '>') && (code[2] == 'p')) /*we are sure that we're dealing with a header*/ {
+        if ((code[1] == '>') && (code[2] == 'm')) /*we are sure that we're dealing with a header*/ {
             while ((c = getc(file)) != '<');
             /* read 2 more characters: */
             c = getc(file);
