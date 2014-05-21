@@ -81,7 +81,7 @@ signed: build/signed_show build/signed_all build/signed_all_high_symmetry\
         build/signed_has_k_flow build/signed_is_6_flow_irreducible\
         build/signed_is_flow_admissable build/signed_random_equivalent\
         build/signed_is_flow_admissable_ST build/signed_select\
-        build/signed_has_barble
+        build/signed_has_barble build/signed_underlying
 
 clean:
 	rm -rf build
@@ -412,6 +412,10 @@ build/signed_select: signed/signed_select.c $(SIGNED_SHARED)
 	cc -o $@ -O4 $^
 
 build/signed_has_barble: signed/signed_has_barble.c $(SIGNED_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
+build/signed_underlying: signed/signed_underlying.c $(SIGNED_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
