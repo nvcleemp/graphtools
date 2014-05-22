@@ -61,7 +61,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
-embedders: build/embed build/tutte build/circular build/all_embeddings
+embedders: build/embed build/tutte build/circular build/all_embeddings build/hamiltonian_embed
 
 invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity \
             build/multi_invariant_girth build/multi_invariant_essential_edge_connectivity\
@@ -276,6 +276,10 @@ build/circular: embedders/circular.c multicode/shared/multicode_base.c multicode
 build/all_embeddings: embedders/all_embeddings.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DMAXVAL=20 $^
+
+build/hamiltonian_embed: embedders/hamiltonian_embed.c multicode/shared/multicode_base.c multicode/shared/multicode_input.c
+	mkdir -p build
+	cc -o $@ -O4 $^ -lm
 	
 build/multi_invariant_order: invariants/multi_int_invariant.c \
                              invariants/multi_invariant_order.c \
