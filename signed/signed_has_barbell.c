@@ -6,12 +6,12 @@
  */
 
 /* This program reads graphs in signed_code format and computes whether
- * they have a barble.
+ * they have a barbell.
  * 
  * 
  * Compile with:
  *     
- *     cc -o signed_has_barble -O4  signed_has_barble.c \
+ *     cc -o signed_has_barbell -O4  signed_has_barbell.c \
  *           shared/signed_base.c shared/signed_input.c shared/signed_output.c
  * 
  */
@@ -110,9 +110,9 @@ boolean checkSimpleCycles_impl(GRAPH graph, ADJACENCY adj, int firstVertex, int 
     return FALSE;
 }
 
-/* Checks the simple cycles and returns TRUE if the graph has a barble.
+/* Checks the simple cycles and returns TRUE if the graph has a barbell.
  */
-boolean hasBarble(GRAPH graph, ADJACENCY adj, int order){
+boolean hasBarbell(GRAPH graph, ADJACENCY adj, int order){
     int v, i;
     for(i=0; i<edgeCounter; i++){
         edges[i].index = i;
@@ -144,7 +144,7 @@ boolean hasBarble(GRAPH graph, ADJACENCY adj, int order){
 
 void help(char *name) {
     fprintf(stderr, "The program %s determines whether signed graphs in signed_code\n", name);
-    fprintf(stderr, "format have a barble.\n\n");
+    fprintf(stderr, "format have a barbell.\n\n");
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options] k\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
@@ -222,7 +222,7 @@ int main(int argc, char** argv) {
         }
         
         unbalancedCycleCount = 0; //reset unbalanced cycles
-        boolean value = hasBarble(graph, adj, order);
+        boolean value = hasBarbell(graph, adj, order);
         if(doFiltering){
             if(invert && !value){
                 graphsFiltered++;
@@ -233,16 +233,16 @@ int main(int argc, char** argv) {
             }
         } else {
             if(value){
-                fprintf(stdout, "Graph %d has barble.\n", graphCount);
+                fprintf(stdout, "Graph %d has a barbell.\n", graphCount);
             } else {
-                fprintf(stdout, "Graph %d does not have barble.\n", graphCount);
+                fprintf(stdout, "Graph %d does not have a barbell.\n", graphCount);
             }
         }
     }
     
     fprintf(stderr, "Read %d graph%s.\n", graphCount, graphCount==1 ? "" : "s");
     if(doFiltering){
-        fprintf(stderr, "Filtered %d graph%s that %s%s barble.\n", 
+        fprintf(stderr, "Filtered %d graph%s that %s%s barbell.\n", 
                 graphsFiltered, graphsFiltered==1 ? "" : "s",
                 graphsFiltered==1 ? "has" : "have",
                 invert ? " no" : "a");
