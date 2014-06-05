@@ -111,15 +111,16 @@ int main(int argc, char** argv) {
     unsigned short code[MAXCODELENGTH];
     int length;
     while (readMultiCode(code, &length, stdin)) {
-        decodeMultiCode(code, length, graph, adj);
         graphsRead++;
         
         if(moduloEnabled){
             if(graphsRead % moduloMod == moduloRest){
+                decodeMultiCode(code, length, graph, adj);
                 graphsFiltered++;
                 writeMultiCode(graph, adj, stdout);
             }
         } else if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
+            decodeMultiCode(code, length, graph, adj);
             graphsFiltered++;
             writeMultiCode(graph, adj, stdout);
         }
