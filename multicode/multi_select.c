@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     GRAPH graph;
     ADJACENCY adj;
     
-    int graphsRead = 0;
+    unsigned long long int graphsRead = 0;
     int graphsFiltered = 0;
     
     boolean moduloEnabled = FALSE;
@@ -126,7 +126,7 @@ int main(int argc, char** argv) {
         }
     }
     
-    fprintf(stderr, "Read %d graph%s.\n", graphsRead, graphsRead==1 ? "" : "s");
+    fprintf(stderr, "Read %llu graph%s.\n", graphsRead, graphsRead==1 ? "" : "s");
     fprintf(stderr, "Filtered %d graph%s.\n", graphsFiltered, graphsFiltered==1 ? "" : "s");
 
     return (EXIT_SUCCESS);
