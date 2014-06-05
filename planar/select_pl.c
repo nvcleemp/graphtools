@@ -11,7 +11,7 @@
  * 
  * Compile with:
  *     
- *     cc -o filter_pl -O4 filter_pl.c
+ *     cc -o select_pl -O4 select_pl.c
  * 
  */
 
