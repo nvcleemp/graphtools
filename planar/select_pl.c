@@ -404,15 +404,16 @@ int main(int argc, char** argv) {
     unsigned short code[MAXCODELENGTH];
     int length;
     while (readPlanarCode(code, &length, stdin)) {
-        decodePlanarCode(code);
         graphsRead++;
         
         if(moduloEnabled){
             if(graphsRead % moduloMod == moduloRest){
+                decodePlanarCode(code);
                 graphsFiltered++;
                 writePlanarCode();
             }
         } else if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
+            decodePlanarCode(code);
             graphsFiltered++;
             writePlanarCode();
         }
