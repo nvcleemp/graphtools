@@ -29,6 +29,7 @@ GRAPH graph;
 int twoFactorCount;
 
 boolean printSizes = FALSE;
+boolean printSizeParities = FALSE;
 
 void print2Factor(int factor[]){
     int i, v;
@@ -110,10 +111,51 @@ void print2FactorSizes(int factor[]){
     fprintf(stderr, "\n");
 }
 
+void print2FactorSizeParities(int factor[]){
+    int i, v;
+    int totalCount = 0;
+    int currentCount;
+    
+    boolean available[MAXN];
+    
+    for(i=0; i<MAXN; i++){
+        available[i] = TRUE;
+    }
+    
+    while(totalCount < vertexCount){
+        v = 0;
+        while(!available[v]) v++;
+        
+        //start cycle from v
+        available[v] = FALSE;
+        currentCount = 1;
+        i = 0;
+        while(factor[v]==i || !available[graph[v][i]]) i++;
+        int start = v;
+        v = graph[v][i];
+        while(v!=start){
+            available[v] = FALSE;
+            currentCount++;
+            i = 0;
+            while(i<3 && (factor[v]==i || !available[graph[v][i]])) i++;
+            if(i==3) {
+                v = start;
+            } else {
+                v = graph[v][i];
+            }
+        }
+        fprintf(stderr, "%d", currentCount%2);
+        totalCount += currentCount;
+    }
+    fprintf(stderr, "\n");
+}
+
 void handle2Factor(int factor[]){
     twoFactorCount++;
     if(printSizes){
         print2FactorSizes(factor);
+    } else if(printSizeParities){
+        print2FactorSizeParities(factor);
     } else {
         print2Factor(factor);
     }
@@ -179,7 +221,7 @@ void findAll2Factors(){
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s prints all the 2-factors of the given cubic graphs.\n\n", name);
+    fprintf(stderr, "The program %s prints all the 2-factors of the given cubic\ngraphs.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options]\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
@@ -189,6 +231,9 @@ void help(char *name) {
     fprintf(stderr, "       Print this help and return.\n");
     fprintf(stderr, "    -s, --sizes\n");
     fprintf(stderr, "       Print the sizes of the components instead of the components.\n");
+    fprintf(stderr, "    -p, --parities\n");
+    fprintf(stderr, "       Print the parities of the sizes of the components instead of the\n");
+    fprintf(stderr, "       components.\n");
 }
 
 void usage(char *name) {
@@ -209,14 +254,20 @@ int main(int argc, char** argv) {
     char *name = argv[0];
     static struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
-        {"sizes", no_argument, NULL, 's'}
+        {"sizes", no_argument, NULL, 's'},
+        {"parities", no_argument, NULL, 'p'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hs", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hsp", long_options, &option_index)) != -1) {
         switch (c) {
             case 's':
                 printSizes = TRUE;
+                printSizeParities = FALSE;
+                break;
+            case 'p':
+                printSizeParities = TRUE;
+                printSizes = FALSE;
                 break;
             case 'h':
                 help(name);
