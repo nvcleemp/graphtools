@@ -28,8 +28,9 @@ int vertexCount;
 GRAPH graph;
 int twoFactorCount;
 
+boolean printSizes = FALSE;
+
 void print2Factor(int factor[]){
-    twoFactorCount++;
     int i, v;
     int totalCount = 0;
     int currentCount;
@@ -70,6 +71,54 @@ void print2Factor(int factor[]){
     fprintf(stderr, "\n");
 }
 
+void print2FactorSizes(int factor[]){
+    int i, v;
+    int totalCount = 0;
+    int currentCount;
+    
+    boolean available[MAXN];
+    
+    for(i=0; i<MAXN; i++){
+        available[i] = TRUE;
+    }
+    
+    while(totalCount < vertexCount){
+        v = 0;
+        while(!available[v]) v++;
+        
+        //start cycle from v
+        available[v] = FALSE;
+        currentCount = 1;
+        i = 0;
+        while(factor[v]==i || !available[graph[v][i]]) i++;
+        int start = v;
+        v = graph[v][i];
+        while(v!=start){
+            available[v] = FALSE;
+            currentCount++;
+            i = 0;
+            while(i<3 && (factor[v]==i || !available[graph[v][i]])) i++;
+            if(i==3) {
+                v = start;
+            } else {
+                v = graph[v][i];
+            }
+        }
+        fprintf(stderr, "%d ", currentCount);
+        totalCount += currentCount;
+    }
+    fprintf(stderr, "\n");
+}
+
+void handle2Factor(int factor[]){
+    twoFactorCount++;
+    if(printSizes){
+        print2FactorSizes(factor);
+    } else {
+        print2Factor(factor);
+    }
+}
+
 void findAll2FactorsImpl(boolean available[], boolean positionAdjacencyList[][MAXN], int factor[]){
     int v, i;
     
@@ -77,7 +126,7 @@ void findAll2FactorsImpl(boolean available[], boolean positionAdjacencyList[][MA
     while(v<vertexCount && !available[v]) v++;
     
     if(v==vertexCount){
-        print2Factor(factor);
+        handle2Factor(factor);
     } else {
         available[v] = FALSE;
         for(i=0; i<3; i++){
@@ -138,6 +187,8 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
+    fprintf(stderr, "    -s, --sizes\n");
+    fprintf(stderr, "       Print the sizes of the components instead of the components.\n");
 }
 
 void usage(char *name) {
@@ -157,12 +208,16 @@ int main(int argc, char** argv) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
-        {"help", no_argument, NULL, 'h'}
+        {"help", no_argument, NULL, 'h'},
+        {"sizes", no_argument, NULL, 's'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hs", long_options, &option_index)) != -1) {
         switch (c) {
+            case 's':
+                printSizes = TRUE;
+                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
