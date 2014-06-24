@@ -97,6 +97,12 @@ boolean hasNonOdd2FactorImpl(boolean available[], boolean positionAdjacencyList[
 }
 
 boolean hasNonOdd2Factor(){
+    /*
+     * We construct a 2-factor by constructing a 1-factor. The complement is then
+     * a 2-factor. In the array factor we store the position in the adjacency list
+     * of the edge that is used for the 1-factor. This allows us to handle multi-
+     * graphs.
+     */
     int i, j;
     
     boolean available[MAXN];
