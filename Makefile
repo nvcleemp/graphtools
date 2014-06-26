@@ -69,7 +69,8 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
             build/multi_invariant_hamiltonian_cycles_universal_edges\
             build/multi_invariant_hamiltonian_cycles_uncovered_edges\
             build/multi_invariant_is_hamiltonian build/multi_invariant_chromatic_number\
-            build/multi_invariant_maximum_degree build/multi_invariant_vertex_connectivity
+            build/multi_invariant_maximum_degree build/multi_invariant_vertex_connectivity\
+            build/multi_invariant_number_of_perfect_matchings
 
 cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle\
        build/cubic_extend_matching_to_dominating_cycle build/cubic_is_matching_in_dominating_cycle2\
@@ -363,6 +364,12 @@ build/multi_invariant_vertex_connectivity: invariants/multi_int_invariant.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=vertex_connectivity -DINVARIANTNAME="vertex connectivity" $^
+
+build/multi_invariant_number_of_perfect_matchings: invariants/multi_int_invariant.c \
+                             invariants/multi_invariant_number_of_perfect_matchings.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -g -DINVARIANT=numberPM -DINVARIANTNAME="number of perfect matchings" $^
 
 build/cubic_is_odd_2_factored: cubic/cubic_is_odd_2_factored.c $(CUBIC_SHARED)
 	mkdir -p build
