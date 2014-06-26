@@ -75,7 +75,8 @@ cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle
        build/cubic_extend_matching_to_dominating_cycle build/cubic_is_matching_in_dominating_cycle2\
        build/cubic_is_matching_and_vertices_in_dominating_cycle\
        build/cubic_are_matching_vertices_in_dominating_cycle\
-       build/cubic_every_edge_in_5_cycle build/cubic_all_2_factors
+       build/cubic_every_edge_in_5_cycle build/cubic_all_2_factors\
+       build/cubic_K33S_M_2_factors
 
 signed: build/signed_show build/signed_all build/signed_all_high_symmetry\
         build/signed_has_k_flow build/signed_is_6_flow_irreducible\
@@ -384,6 +385,10 @@ build/cubic_every_edge_in_5_cycle: cubic/cubic_every_edge_in_5_cycle.c $(CUBIC_S
 	cc -o $@ -g -O4 $^
 
 build/cubic_all_2_factors: cubic/cubic_all_2_factors.c $(CUBIC_SHARED)
+	mkdir -p build
+	cc -o $@ -g -O4 $^
+
+build/cubic_K33S_M_2_factors: cubic/cubic_K33S_M_2_factors.c $(CUBIC_SHARED)
 	mkdir -p build
 	cc -o $@ -g -O4 $^
 
