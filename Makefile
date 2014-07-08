@@ -57,7 +57,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_filter_regular build/multi_filter_snark \
        build/multi_induced_subgraph build/multi_identify build/multi_mycielski\
        build/multi_filter_bipartite build/multi_non_iso build/multi_select\
-       build/multi_complement build/multi_multiply build/multi_star_product
+       build/multi_complement build/multi_multiply build/multi_star_product\
+       build/multi_components
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -231,6 +232,10 @@ build/multi_multiply: multicode/multi_multiply.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 	
 build/multi_star_product: multicode/multi_star_product.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multi_components: multicode/multi_components.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
