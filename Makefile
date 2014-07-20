@@ -363,7 +363,7 @@ build/multi_invariant_maximum_degree: invariants/multi_int_invariant.c \
                              invariants/multi_invariant_maximum_degree.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
-	cc -o $@ -g -DINVARIANT=maximumDegree -DINVARIANTNAME="maximum degree" $^
+	cc -o $@ -O4 -DINVARIANT=maximumDegree -DINVARIANTNAME="maximum degree" -DMAXN=1000 -DMAXVAL=1000 $^
 	
 build/multi_invariant_vertex_connectivity: invariants/multi_int_invariant.c \
                              invariants/multi_invariant_vertex_connectivity.c \
