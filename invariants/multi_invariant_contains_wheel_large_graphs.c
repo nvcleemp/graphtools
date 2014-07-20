@@ -47,7 +47,7 @@ boolean checkSimpleCycles_impl(
             continue;
         } else if(neighbour == firstVertex){
             //we have returned to the first vertex
-            if(currentVertex < secondVertex){
+            if(currentVertex <= secondVertex){
                 //cycle not in canonical form
                 continue;
             }
