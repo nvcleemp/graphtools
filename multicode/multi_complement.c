@@ -43,7 +43,9 @@ void constructComplement(GRAPH graph, ADJACENCY adj, GRAPH complementGraph, ADJA
         neighbours[i] = TRUE;
         for(j=1; j<=order; j++){
             if(!neighbours[j]){
-                addEdge(complementGraph, complementAdj, i, j);
+                if(i < j){
+                    addEdge(complementGraph, complementAdj, i, j);
+                }
             }
         }
     }
