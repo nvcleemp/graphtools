@@ -74,7 +74,8 @@ boolean checkSimpleCycles_impl(
             if(handleSimpleCycle(*verticesInCycle, universalNeighbours)){
                 return TRUE;
             }
-        } else {
+        } else if(IS_NOT_EMPTY(
+                INTERSECTION(universalNeighbours, neighbourhoods[neighbour]))){
             //we continue the cycle
             ADD(*verticesInCycle, neighbour);
             if(checkSimpleCycles_impl(
