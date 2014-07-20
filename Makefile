@@ -160,7 +160,7 @@ build/subdivide_vertex: planar/subdivide_vertex.c
 	
 build/multiread: multicode/multiread.c multicode/shared/multicode_base.c multicode/shared/multicode_input.c
 	mkdir -p build
-	cc -o $@ -O4 $^
+	cc -o $@ -O4 -DMAXN=1000 -DMAXVAL=1000 $^
 
 build/multi_add_edges: multicode/multi_add_edges.c $(MULTICODE_SHARED)
 	mkdir -p build
@@ -180,7 +180,7 @@ build/multi_corona: multicode/multi_corona.c $(MULTICODE_SHARED)
 	
 build/multi_complement: multicode/multi_complement.c $(MULTICODE_SHARED)
 	mkdir -p build
-	cc -o $@ -O4 $^
+	cc -o $@ -O4 -DMAXN=1000 -DMAXVAL=1000 $^
 	
 build/multi_induced_subgraph: multicode/multi_induced_subgraph.c $(MULTICODE_SHARED)
 	mkdir -p build
@@ -382,7 +382,7 @@ build/multi_invariant_contains_wheel: invariants/multi_boolean_invariant.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=containsWheel -DINVARIANTNAME="'contains wheel'" $^
-
+	
 build/cubic_is_odd_2_factored: cubic/cubic_is_odd_2_factored.c $(CUBIC_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
