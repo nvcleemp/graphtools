@@ -73,7 +73,8 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
             build/multi_invariant_maximum_degree build/multi_invariant_vertex_connectivity\
             build/multi_invariant_number_of_perfect_matchings\
             build/multi_invariant_contains_wheel build/multi_invariant_contains_wheel_large_graphs\
-            build/multi_wheels_overview build/multi_overview_degrees
+            build/multi_wheels_overview build/multi_overview_degrees\
+            build/multi_overview_cycles
 
 cubic: build/cubic_is_odd_2_factored build/cubic_is_matching_in_dominating_cycle\
        build/cubic_extend_matching_to_dominating_cycle build/cubic_is_matching_in_dominating_cycle2\
@@ -392,6 +393,10 @@ build/multi_invariant_contains_wheel_large_graphs: invariants/multi_boolean_inva
 	
 build/multi_wheels_overview: invariants/multi_wheels_overview.c \
                              $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DMAXN=500 -DMAXVAL=500 $^
+
+build/multi_overview_cycles: invariants/multi_overview_cycles.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DMAXN=500 -DMAXVAL=500 $^
 	
