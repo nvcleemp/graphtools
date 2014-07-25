@@ -58,7 +58,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_induced_subgraph build/multi_identify build/multi_mycielski\
        build/multi_filter_bipartite build/multi_non_iso build/multi_select\
        build/multi_complement build/multi_multiply build/multi_star_product\
-       build/multi_components build/multi_adjacency_matrix
+       build/multi_components build/multi_adjacency_matrix\
+       build/multi_suppress_degree_2
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -244,6 +245,10 @@ build/multi_components: multicode/multi_components.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 	
 build/multi_adjacency_matrix: multicode/multi_adjacency_matrix.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multi_suppress_degree_2: multicode/multi_suppress_degree_2.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
