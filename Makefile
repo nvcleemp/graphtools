@@ -60,7 +60,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complement build/multi_multiply build/multi_star_product\
        build/multi_components build/multi_adjacency_matrix\
        build/multi_suppress_degree_2 build/multi_remove_degree_1\
-       build/multi_simplify build/multi_cut_vertices
+       build/multi_simplify build/multi_cut_vertices build/multi_biconnected_components
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -262,6 +262,10 @@ build/multi_simplify: multicode/multi_simplify.c $(MULTICODE_SHARED)
 	cc -o $@ -O4 $^
 
 build/multi_cut_vertices: multicode/multi_cut_vertices.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/multi_biconnected_components: multicode/multi_biconnected_components.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 
