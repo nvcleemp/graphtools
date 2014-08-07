@@ -60,7 +60,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complement build/multi_multiply build/multi_star_product\
        build/multi_components build/multi_adjacency_matrix\
        build/multi_suppress_degree_2 build/multi_remove_degree_1\
-       build/multi_simplify build/multi_cut_vertices build/multi_biconnected_components
+       build/multi_simplify build/multi_cut_vertices build/multi_biconnected_components\
+       build/multi_edge_orbits
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -268,6 +269,11 @@ build/multi_cut_vertices: multicode/multi_cut_vertices.c $(MULTICODE_SHARED)
 build/multi_biconnected_components: multicode/multi_biconnected_components.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
+	
+build/multi_edge_orbits: multicode/multi_edge_orbits.c $(MULTICODE_SHARED) \
+	      nauty/nauty.c nauty/nautil.c nauty/naugraph.c nauty/schreier.c nauty/naurng.c
+	mkdir -p build
+	cc -o $@ -g -DMAXN=1000 -DMAXVAL=999 $^
 
 build/multi_non_iso:multicode/multi_non_iso.c nauty/nautil.c nauty/nauty.c nauty/naugraph.c
 	mkdir -p build
