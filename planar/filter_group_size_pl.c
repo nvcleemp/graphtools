@@ -74,7 +74,6 @@ int nv;
 int ne;
 int nf;
 
-int automorphisms[2*MAXE][MAXN]; //there are at most 2e automorphisms (e = #arcs)
 int automorphismsCount;
 
 //////////////////////////////////////////////////////////////////////////////
@@ -197,14 +196,12 @@ void calculateAutomorphismGroup(){
                     constructAlternateCertificate(e);
                     if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
                         //store automorphism
-                        memcpy(automorphisms[automorphismsCount], alternateLabelling, sizeof(int)*MAXN);
                         automorphismsCount++;
                     }
                 }
                 constructAlternateCertificateOrientationReversing(e);
                 if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
                     //store automorphism
-                    memcpy(automorphisms[automorphismsCount], alternateLabelling, sizeof(int)*MAXN);
                     automorphismsCount++;
                 }
                 e = e->next;
