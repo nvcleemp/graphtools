@@ -188,7 +188,7 @@ void constructAlternateCertificateOrientationReversing(EDGE *eStart){
 }
 
 void calculateAutomorphismGroup(){
-    automorphismsCount = 0;
+    automorphismsCount = 1; //identity
     
     //construct certificate
     int pos = 0;
@@ -233,8 +233,7 @@ void writeData() {
     fprintf(stdout, "Number of vertices: %d\n", nv);
     fprintf(stdout, "Number of edges: %d\n", ne/2);
     fprintf(stdout, "Number of faces: %d\n", nf);
-    fprintf(stdout, "Number of automorphisms: %d\n", automorphismsCount + 1);
-    //+1 to also count the identity
+    fprintf(stdout, "Number of automorphisms: %d\n", automorphismsCount);
 }
 
 void writeDegreeSequence() {
@@ -329,8 +328,7 @@ void writeDataLatex() {
     fprintf(stdout, "Number of vertices: %d\\\\\n", nv);
     fprintf(stdout, "Number of edges: %d\\\\\n", ne/2);
     fprintf(stdout, "Number of faces: %d\\\\\n", nf);
-    fprintf(stdout, "Number of automorphisms: %d\\\\\n", automorphismsCount + 1);
-    //+1 to also count the identity
+    fprintf(stdout, "Number of automorphisms: %d\\\\\n", automorphismsCount);
 }
 
 void writeDegreeSequenceLatex() {
