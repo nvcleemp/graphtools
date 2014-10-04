@@ -192,7 +192,7 @@ void calculateAutomorphismGroup(){
     
     //construct certificate
     int pos = 0;
-    int i, j;
+    int i;
     
     pos = constructCertificate(firstedge[0]);
     
