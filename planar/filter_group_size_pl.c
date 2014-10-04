@@ -195,13 +195,13 @@ void calculateAutomorphismGroup(){
                 if(e!=ebase){
                     constructAlternateCertificate(e);
                     if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
-                        //store automorphism
+                        //count automorphism
                         automorphismsCount++;
                     }
                 }
                 constructAlternateCertificateOrientationReversing(e);
                 if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
-                    //store automorphism
+                    //count automorphism
                     automorphismsCount++;
                 }
                 e = e->next;
