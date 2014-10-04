@@ -176,7 +176,7 @@ void constructAlternateCertificateOrientationReversing(EDGE *eStart){
 }
 
 void calculateAutomorphismGroup(){
-    automorphismsCount = 0;
+    automorphismsCount = 1; //identity
     orientationReversingAutomorphismCount = 0;
     
     //construct certificate
@@ -570,8 +570,7 @@ int main(int argc, char *argv[]) {
         decodePlanarCode(code);
         numberOfGraphs++;
         calculateAutomorphismGroup();
-        //+1 because the count does not include the identity
-        if(automorphismsCount + 1 == size){
+        if(automorphismsCount == size){
             writePlanarCode();
             filteredGraphs++;
         }
