@@ -75,6 +75,7 @@ int ne;
 int nf;
 
 int automorphismsCount;
+int orientationReversingAutomorphismCount;
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -176,6 +177,7 @@ void constructAlternateCertificateOrientationReversing(EDGE *eStart){
 
 void calculateAutomorphismGroup(){
     automorphismsCount = 0;
+    orientationReversingAutomorphismCount = 0;
     
     //construct certificate
     int pos = 0;
@@ -203,6 +205,7 @@ void calculateAutomorphismGroup(){
                 if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
                     //count automorphism
                     automorphismsCount++;
+                    orientationReversingAutomorphismCount++;
                 }
                 e = e->next;
             } while (e!=elast);
