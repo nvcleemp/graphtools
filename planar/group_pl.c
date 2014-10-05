@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <string.h>
+#include <ctype.h>
 
 #define UNKNOWN 0
 #define Cn__    1
@@ -957,6 +958,111 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
     return (1);
 
 
+}
+
+//================== PARSE GROUP NAME ================
+
+int parseGroupParameter(char* input, int* groupParameter, boolean *anyParameterAllowed){
+    if (input[0] == '*'){
+        *anyParameterAllowed = TRUE;
+        return 1;
+    } else if (isdigit(input[0])){
+        int length = 1;
+        while(isdigit(input[length])) length++;
+        *groupParameter = atoi(input);
+        *anyParameterAllowed = FALSE;
+        return length;
+    } else {
+        fprintf(stderr, "Illegal group parameter: %s -- exiting!\n", input);
+        exit(EXIT_FAILURE);
+    }
+}
+
+void parseGroup(char* input, int* groupId, int* groupParameter, boolean* anyParameterAllowed){
+    if (input[0] == 'T'){
+        if (input[1] == '\0') {
+            *groupId = T__;
+        } else if (input[2] != '\0') {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        } else if (input[1] == 'd') {
+            *groupId = Td__;
+        } else if (input[1] == 'h') {
+            *groupId = Th__;
+        } else {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        }
+    } else if (input[0] == 'O') {
+        if (input[1] == '\0') {
+            *groupId = O__;
+        } else if (input[2] != '\0') {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        } else if (input[1] == 'h') {
+            *groupId = Oh__;
+        } else {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        }
+    } else if (input[0] == 'I') {
+        if (input[1] == '\0') {
+            *groupId = I__;
+        } else if (input[2] != '\0') {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        } else if (input[1] == 'h') {
+            *groupId = Ih__;
+        } else {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        }
+    } else if (input[0] == 'C') {
+        int length = parseGroupParameter(input + 1, groupParameter, anyParameterAllowed);
+        if (!(*anyParameterAllowed) && (*groupParameter <= 0)) {
+            fprintf(stderr, "Illegal group parameter: %d -- exiting!\n", *groupParameter);
+            exit(EXIT_FAILURE);
+        } else if (input[length + 1] == '\0') {
+            *groupId = Cn__;
+        } else if (input[length + 1] == 'h' && input[length + 2] == '\0') {
+            *groupId = Cnh__;
+        } else if (input[length + 1] == 'v' && input[length + 2] == '\0') {
+            *groupId = Cnv__;
+        } else {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        }
+    } else if (input[0] == 'S') {
+       int length = parseGroupParameter(input + 1, groupParameter, anyParameterAllowed);
+       if (input[length + 1] != '\0') {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+       } else if (!(*anyParameterAllowed) && 
+               (*groupParameter <= 0 || (*groupParameter)%2 == 1)) {
+            fprintf(stderr, "Illegal group parameter: %d -- exiting!\n", *groupParameter);
+            exit(EXIT_FAILURE);
+       } else {
+           *groupId = S2n__;
+       }
+    } else if (input[0] == 'D') {
+        int length = parseGroupParameter(input + 1, groupParameter, anyParameterAllowed);
+        if (!(*anyParameterAllowed) && (*groupParameter <= 0)) {
+            fprintf(stderr, "Illegal group parameter: %d -- exiting!\n", *groupParameter);
+            exit(EXIT_FAILURE);
+        } else if (input[length + 1] == '\0') {
+            *groupId = Dn__;
+        } else if (input[length + 1] == 'h' && input[length + 2] == '\0') {
+            *groupId = Dnh__;
+        } else if (input[length + 1] == 'd' && input[length + 2] == '\0') {
+            *groupId = Dnd__;
+        } else {
+            fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
+        exit(EXIT_FAILURE);
+    }
 }
 
 //====================== USAGE =======================
