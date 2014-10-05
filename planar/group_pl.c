@@ -98,6 +98,33 @@ int mirrorAutomorphismsCount;
 int numberOfGraphs = 0;
 int reportsWritten = 0;
 
+boolean groupHasParameter[15] = {FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
+                                 FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};
+
+//////////////////////////////////////////////////////////////////////////////
+
+/* Return c<0 if the first group is smaller
+ * Return 0 if the groups are equal
+ * Return c>0 if the first group is greater 
+ */
+int compareGroups(int groupId1, int groupParameter1, boolean anyParameterAllowed1,
+        int groupId2, int groupParameter2, boolean anyParameterAllowed2) {
+    if(groupId1 == groupId2) {
+        if(!groupHasParameter[groupId1] ||
+                (anyParameterAllowed1 && anyParameterAllowed2)){
+            return 0;
+        } else if(anyParameterAllowed1 && !anyParameterAllowed2){
+            return -1;
+        } else if(!anyParameterAllowed1 && anyParameterAllowed2){
+            return 1;
+        } else {
+            return groupParameter1 - groupParameter2;
+        }
+    } else {
+        return groupId1 - groupId2;
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 void printGroupName(FILE *f, int groupId, int groupParameter, boolean anyParameterAllowed){
