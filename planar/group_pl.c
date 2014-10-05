@@ -100,23 +100,51 @@ int reportsWritten = 0;
 
 //////////////////////////////////////////////////////////////////////////////
 
-void printGroupName(FILE *f, int groupId, int groupParameter){
+void printGroupName(FILE *f, int groupId, int groupParameter, boolean anyParameterAllowed){
     if(groupId==UNKNOWN){
         fprintf(f, "UNKNOWN");
     } else if(groupId==Cn__){
-        fprintf(f, "C%d", groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "C*");
+        } else {
+            fprintf(f, "C%d", groupParameter);
+        }
     } else if(groupId==Cnh__){
-        fprintf(f, "C%dh", groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "C*h");
+        } else {
+            fprintf(f, "C%dh", groupParameter);
+        }
     } else if(groupId==Cnv__){
-        fprintf(f, "C%dv", groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "C*v");
+        } else {
+            fprintf(f, "C%dv", groupParameter);
+        }
     } else if(groupId==S2n__){
-        fprintf(f, "S%d", 2*groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "S*");
+        } else {
+            fprintf(f, "S%d", 2*groupParameter);
+        }
     } else if(groupId==Dn__){
-        fprintf(f, "D%d", groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "D*");
+        } else {
+            fprintf(f, "D%d", groupParameter);
+        }
     } else if(groupId==Dnh__){
-        fprintf(f, "D%dh", groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "D*h");
+        } else {
+            fprintf(f, "D%dh", groupParameter);
+        }
     } else if(groupId==Dnd__){
-        fprintf(f, "D%dd", groupParameter);
+        if(anyParameterAllowed){
+            fprintf(f, "D*d");
+        } else {
+            fprintf(f, "D%dd", groupParameter);
+        }
     } else if(groupId==T__){
         fprintf(f, "T");
     } else if(groupId==Td__){
@@ -1122,7 +1150,7 @@ int main(int argc, char *argv[]) {
         int groupParameter = 0;
         determineAutomorphismGroup(&groupId, &groupParameter);
         fprintf(stderr, "Graph %d has group ", numberOfGraphs);
-        printGroupName(stderr, groupId, groupParameter);
+        printGroupName(stderr, groupId, groupParameter, FALSE);
         fprintf(stderr, "\n");
     }
 
