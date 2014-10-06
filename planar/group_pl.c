@@ -114,6 +114,9 @@ typedef struct group_list_element {
 
 typedef GLE GROUPLIST;
 
+int filterEnabled = FALSE;
+GROUPLIST *filterList;
+
 /* Return c<0 if the first group is smaller
  * Return 0 if the groups are equal
  * Return c>0 if the first group is greater 
@@ -1243,6 +1246,19 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
+    fprintf(stderr, "    -f, --filter\n");
+    fprintf(stderr, "       If this option is given then several group names can be given as argument\n");
+    fprintf(stderr, "       and the program will filter out the graphs which have one of the specified\n");
+    fprintf(stderr, "       groups as symmetry group.\n");
+    fprintf(stderr, "       Valid group names are:\n");
+    fprintf(stderr, "       Cn       where n is either a positive integer or *\n");
+    fprintf(stderr, "       Cnh      where n is either a positive integer or *\n");
+    fprintf(stderr, "       Cnv      where n is either a positive integer or *\n");
+    fprintf(stderr, "       Sn       where n is either a positive even integer or *\n");
+    fprintf(stderr, "       Dn       where n is either a positive integer or *\n");
+    fprintf(stderr, "       Dnh      where n is either a positive integer or *\n");
+    fprintf(stderr, "       Dnd      where n is either a positive integer or *\n");
+    fprintf(stderr, "       T, Th, Td, O, Oh, I, Ih\n");
 }
 
 void usage(char *name) {
@@ -1257,17 +1273,21 @@ int main(int argc, char *argv[]) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
-        {"help", no_argument, NULL, 'h'}
+        {"help", no_argument, NULL, 'h'},
+        {"filter", no_argument, NULL, 'f'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hf", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
+            case 'f':
+                filterEnabled = TRUE;
+                break;
             case '?':
                 usage(name);
                 return EXIT_FAILURE;
@@ -1275,6 +1295,23 @@ int main(int argc, char *argv[]) {
                 fprintf(stderr, "Illegal option %c.\n", c);
                 usage(name);
                 return EXIT_FAILURE;
+        }
+    }
+    
+    if(filterEnabled && argc - optind == 0){
+        usage(name);
+        return EXIT_FAILURE;
+    } else if(filterEnabled){
+        //parse the group names that need to be filtered
+        int groupId = UNKNOWN, groupParameter = 0;
+        boolean anyParameterAllowed = FALSE;
+        
+        int i;
+        for(i = optind; i < argc; i++){
+            parseGroup(argv[i], &groupId, &groupParameter, &anyParameterAllowed);
+            
+            filterList = addToGroupList(filterList, groupId, groupParameter, 
+                    anyParameterAllowed);
         }
     }
 
@@ -1288,9 +1325,15 @@ int main(int argc, char *argv[]) {
         int groupId = UNKNOWN;
         int groupParameter = 0;
         determineAutomorphismGroup(&groupId, &groupParameter);
-        fprintf(stderr, "Graph %d has group ", numberOfGraphs);
-        printGroupName(stderr, groupId, groupParameter, FALSE);
-        fprintf(stderr, "\n");
+        if(filterEnabled){
+            if(groupIncludedInList(filterList, groupId, groupParameter)){
+                //TODO: accept graph
+            }
+        } else {
+            fprintf(stderr, "Graph %d has group ", numberOfGraphs);
+            printGroupName(stderr, groupId, groupParameter, FALSE);
+            fprintf(stderr, "\n");
+        }
     }
 
 }
