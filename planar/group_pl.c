@@ -1345,6 +1345,7 @@ void parseGroup(char* input, int* groupId, int* groupParameter, boolean* anyPara
             exit(EXIT_FAILURE);
        } else {
            *groupId = S2n__;
+           (*groupParameter) /= 2;
        }
     } else if (input[0] == 'D') {
         int length = parseGroupParameter(input + 1, groupParameter, anyParameterAllowed);
