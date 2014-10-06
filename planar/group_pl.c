@@ -898,6 +898,70 @@ void determineAutomorphismGroup(int *groupId, int *groupParameter){
 
 //////////////////////////////////////////////////////////////////////////////
 
+//=============== Writing planarcode of graph ===========================
+
+void writePlanarCodeChar(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the number of vertices
+    fputc(nv, stdout);
+    
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            fputc(e->end + 1, stdout);
+            e = e->next;
+        } while (e != elast);
+        fputc(0, stdout);
+    }
+}
+
+void writeShort(unsigned short value){
+    if (fwrite(&value, sizeof (unsigned short), 1, stdout) != 1) {
+        fprintf(stderr, "fwrite() failed -- exiting!\n");
+        exit(-1);
+    }
+}
+
+void writePlanarCodeShort(){
+    int i;
+    EDGE *e, *elast;
+    
+    //write the number of vertices
+    fputc(0, stdout);
+    writeShort(nv);
+    
+    
+    for(i=0; i<nv; i++){
+        e = elast = firstedge[i];
+        do {
+            writeShort(e->end + 1);
+            e = e->next;
+        } while (e != elast);
+        writeShort(0);
+    }
+}
+
+void writePlanarCode(){
+    static int first = TRUE;
+    
+    if(first){
+        first = FALSE;
+        
+        fprintf(stdout, ">>planar_code<<");
+    }
+    
+    if (nv + 1 <= 255) {
+        writePlanarCodeChar();
+    } else if (nv + 1 <= 65535) {
+        writePlanarCodeShort();
+    } else {
+        fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
+        exit(-1);
+    }
+    
+}
 
 //=============== Reading and decoding planarcode ===========================
 
