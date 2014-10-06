@@ -800,8 +800,13 @@ void determineAutomorphismGroup(int *groupId, int *groupParameter){
         *groupParameter = automorphismsCount;
         return;
     } else if(mirrorAutomorphismsCount == 1 && automorphismsCount == 2){
-        *groupId = Cnh__;
-        *groupParameter = 1;
+        if(hasOrientationReversingSymmetryWithFixPoint()){
+            *groupId = Cnh__;
+            *groupParameter = 1;
+        } else {
+            *groupId = S2n__;
+            *groupParameter = 1;
+        }
         return;
     }
     
