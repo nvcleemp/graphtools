@@ -1404,6 +1404,9 @@ int main(int argc, char *argv[]) {
             filterList = addToGroupList(filterList, groupId, groupParameter, 
                     anyParameterAllowed);
         }
+        
+        fprintf(stderr, "Filtering out graphs that have one of the following groups:\n");
+        printGroupList(stderr, filterList, printItem);
     }
 
     /*=========== read planar graphs ===========*/
