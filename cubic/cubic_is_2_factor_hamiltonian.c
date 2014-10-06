@@ -28,6 +28,8 @@ int vertexCount;
 GRAPH graph;
 int twoFactorCount;
 
+boolean hamiltonicityRequired = FALSE;
+
 boolean isHamiltonian2Factor(int factor[]){
     int i, v;
     int currentCount;
@@ -127,7 +129,7 @@ boolean is2FactorHamiltonian(){
         available[neighbour] = TRUE;
     }
     
-    return twoFactorCount > 0;
+    return (!hamiltonicityRequired) || (twoFactorCount > 0);
 }
     
 //====================== USAGE =======================
@@ -164,17 +166,21 @@ int main(int argc, char** argv) {
     char *name = argv[0];
     static struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
-        {"verbose", no_argument, NULL, 'v'}
+        {"verbose", no_argument, NULL, 'v'},
+        {"hamiltonian", no_argument, NULL, 'H'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hv", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hvH", long_options, &option_index)) != -1) {
         switch (c) {
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
             case 'v':
                 verbose = TRUE;
+                break;
+            case 'H':
+                hamiltonicityRequired = TRUE;
                 break;
             case '?':
                 usage(name);
