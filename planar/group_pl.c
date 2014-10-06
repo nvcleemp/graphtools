@@ -1350,6 +1350,10 @@ void help(char *name) {
     fprintf(stderr, "       Dnh      where n is either a positive integer or *\n");
     fprintf(stderr, "       Dnd      where n is either a positive integer or *\n");
     fprintf(stderr, "       T, Th, Td, O, Oh, I, Ih\n");
+    fprintf(stderr, "    -s, --summary\n");
+    fprintf(stderr, "       At the end give a summary of the encountered groups.\n");
+    fprintf(stderr, "    -q, --quiet\n");
+    fprintf(stderr, "       Do not show group info for individual graphs.\n");
 }
 
 void usage(char *name) {
