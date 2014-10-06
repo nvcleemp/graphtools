@@ -27,9 +27,11 @@
 int vertexCount;
 GRAPH graph;
 int twoFactorCount;
+int graphsRead;
 
 boolean printSizes = FALSE;
 boolean printSizeParities = FALSE;
+boolean onlyCount = FALSE;
 
 void print2Factor(int factor[]){
     int i, v;
@@ -152,6 +154,9 @@ void print2FactorSizeParities(int factor[]){
 
 void handle2Factor(int factor[]){
     twoFactorCount++;
+    if(onlyCount){
+        return;
+    }
     if(printSizes){
         print2FactorSizes(factor);
     } else if(printSizeParities){
@@ -214,8 +219,13 @@ void findAll2Factors(){
         available[neighbour] = TRUE;
     }
     
-    fprintf(stderr, "Found %d 2-factor%s.\n\n", twoFactorCount,
-            twoFactorCount == 1 ? "" : "s");
+    if(onlyCount){
+        fprintf(stderr, "Graph %d has %d 2-factor%s.\n\n", graphsRead, twoFactorCount,
+                twoFactorCount == 1 ? "" : "s");
+    } else {
+        fprintf(stderr, "Found %d 2-factor%s.\n\n", twoFactorCount,
+                twoFactorCount == 1 ? "" : "s");
+    }
 }
     
 //====================== USAGE =======================
@@ -246,7 +256,7 @@ void usage(char *name) {
  */
 int main(int argc, char** argv) {
     
-    int graphsRead = 0;
+    graphsRead = 0;
 
     /*=========== commandline parsing ===========*/
 
@@ -255,19 +265,27 @@ int main(int argc, char** argv) {
     static struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
         {"sizes", no_argument, NULL, 's'},
-        {"parities", no_argument, NULL, 'p'}
+        {"parities", no_argument, NULL, 'p'},
+        {"count", no_argument, NULL, 'c'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsp", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hspc", long_options, &option_index)) != -1) {
         switch (c) {
             case 's':
                 printSizes = TRUE;
                 printSizeParities = FALSE;
+                onlyCount = FALSE;
                 break;
             case 'p':
                 printSizeParities = TRUE;
                 printSizes = FALSE;
+                onlyCount = FALSE;
+                break;
+            case 'c':
+                printSizeParities = FALSE;
+                printSizes = FALSE;
+                onlyCount = TRUE;
                 break;
             case 'h':
                 help(name);
@@ -288,7 +306,9 @@ int main(int argc, char** argv) {
         decodeCubicMultiCode(code, length, graph, &vertexCount);
         graphsRead++;
         
-        fprintf(stderr, "Graph %d:\n", graphsRead);
+        if(!onlyCount){
+            fprintf(stderr, "Graph %d:\n", graphsRead);
+        }
         findAll2Factors();
     }
     
