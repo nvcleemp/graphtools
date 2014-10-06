@@ -1361,6 +1361,7 @@ int main(int argc, char *argv[]) {
     
     boolean giveSummary = FALSE;
     GROUPLIST *summary = NULL;
+    boolean singleInfo = TRUE;
 
     /*=========== commandline parsing ===========*/
 
@@ -1369,11 +1370,12 @@ int main(int argc, char *argv[]) {
     static struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
         {"filter", no_argument, NULL, 'f'},
-        {"summary", no_argument, NULL, 's'}
+        {"summary", no_argument, NULL, 's'},
+        {"quiet", no_argument, NULL, 'q'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hfs", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hfsq", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -1385,6 +1387,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 's':
                 giveSummary = TRUE;
+                break;
+            case 'q':
+                singleInfo = FALSE;
                 break;
             case '?':
                 usage(name);
@@ -1430,7 +1435,7 @@ int main(int argc, char *argv[]) {
             if(groupIncludedInList(filterList, groupId, groupParameter)){
                 writePlanarCode();
             }
-        } else {
+        } else if(singleInfo){
             fprintf(stderr, "Graph %d has group ", numberOfGraphs);
             printGroupName(stderr, groupId, groupParameter, FALSE);
             fprintf(stderr, "\n");
