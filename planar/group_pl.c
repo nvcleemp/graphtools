@@ -1391,7 +1391,7 @@ int main(int argc, char *argv[]) {
         determineAutomorphismGroup(&groupId, &groupParameter);
         if(filterEnabled){
             if(groupIncludedInList(filterList, groupId, groupParameter)){
-                //TODO: accept graph
+                writePlanarCode();
             }
         } else {
             fprintf(stderr, "Graph %d has group ", numberOfGraphs);
