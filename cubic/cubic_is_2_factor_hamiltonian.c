@@ -193,6 +193,7 @@ int main(int argc, char** argv) {
         graphsRead++;
         
         if(is2FactorHamiltonian()){
+            graphsFiltered++;
             if(verbose){
                 fprintf(stderr, "Graph %d is 2-factor hamiltonian.\n", graphsRead);
             }
