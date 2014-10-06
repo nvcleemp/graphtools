@@ -313,6 +313,27 @@ void printGroupName(FILE *f, int groupId, int groupParameter, boolean anyParamet
     }
 }
 
+void printItem(FILE *f, GROUPLIST *listElement){
+    printGroupName(f, listElement->groupId, listElement->groupParameter, 
+            listElement->anyParameterAllowed);
+    fprintf(f, "\n");
+}
+
+void printItemFrequency(FILE *f, GROUPLIST *listElement){
+    printGroupName(f, listElement->groupId, listElement->groupParameter, 
+            listElement->anyParameterAllowed);
+    fprintf(f, ":  %d\n", listElement->frequency);
+}
+
+void printGroupList(FILE *f, GROUPLIST *list, 
+        void (*itemPrinter)(FILE *file, GROUPLIST *item)){
+    if(list!=NULL){
+        printGroupList(f, list->smaller, itemPrinter);
+        itemPrinter(f, list);
+        printGroupList(f, list->greater, itemPrinter);
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 int certificate[MAXE+MAXN];
