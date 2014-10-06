@@ -141,6 +141,8 @@ void help(char *name) {
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
+    fprintf(stderr, "    -v, --verbose\n");
+    fprintf(stderr, "       Print extra text to stderr for each 2-factor hamiltonian graph.\n");
 }
 
 void usage(char *name) {
@@ -154,21 +156,26 @@ void usage(char *name) {
 int main(int argc, char** argv) {
     
     int graphsRead = 0, graphsFiltered = 0;
+    boolean verbose = FALSE;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
-        {"help", no_argument, NULL, 'h'}
+        {"help", no_argument, NULL, 'h'},
+        {"verbose", no_argument, NULL, 'v'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hv", long_options, &option_index)) != -1) {
         switch (c) {
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
+            case 'v':
+                verbose = TRUE;
+                break;
             case '?':
                 usage(name);
                 return EXIT_FAILURE;
@@ -186,6 +193,9 @@ int main(int argc, char** argv) {
         graphsRead++;
         
         if(is2FactorHamiltonian()){
+            if(verbose){
+                fprintf(stderr, "Graph %d is 2-factor hamiltonian.\n", graphsRead);
+            }
             writeCubicMultiCode(graph, vertexCount, stdout);
         }
     }
