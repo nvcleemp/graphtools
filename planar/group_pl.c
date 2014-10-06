@@ -1240,7 +1240,43 @@ int parseGroupParameter(char* input, int* groupParameter, boolean *anyParameterA
 }
 
 void parseGroup(char* input, int* groupId, int* groupParameter, boolean* anyParameterAllowed){
-    if (input[0] == 'T'){
+    if(strcmp(input, "Cs")==0){
+        //Cs is equal to C1h
+        *groupId = Cnh__;
+        *groupParameter = 1;
+        *anyParameterAllowed = FALSE;
+        fprintf(stderr, "Replaced Cs by C1h\n");
+    } else if(strcmp(input, "C1v")==0){
+        //C1v is equal to C1h
+        *groupId = Cnh__;
+        *groupParameter = 1;
+        *anyParameterAllowed = FALSE;
+        fprintf(stderr, "Replaced C1v by C1h\n");
+    } else if(strcmp(input, "Ci")==0){
+        //Ci is equal to S2
+        *groupId = S2n__;
+        *groupParameter = 1;
+        *anyParameterAllowed = FALSE;
+        fprintf(stderr, "Replaced Ci by S2\n");
+    } else if(strcmp(input, "D1")==0){
+        //D1 is equal to C2
+        *groupId = Cn__;
+        *groupParameter = 2;
+        *anyParameterAllowed = FALSE;
+        fprintf(stderr, "Replaced D1 by C2\n");
+    } else if(strcmp(input, "D1h")==0){
+        //D1h is equal to C2v
+        *groupId = Cnv__;
+        *groupParameter = 2;
+        *anyParameterAllowed = FALSE;
+        fprintf(stderr, "Replaced D1h by C2v\n");
+    } else if(strcmp(input, "D1d")==0){
+        //D1d is equal to C2h
+        *groupId = Cnh__;
+        *groupParameter = 2;
+        *anyParameterAllowed = FALSE;
+        fprintf(stderr, "Replaced D1d by C2h\n");
+    } else if (input[0] == 'T'){
         if (input[1] == '\0') {
             *groupId = T__;
         } else if (input[2] != '\0') {
