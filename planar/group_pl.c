@@ -108,6 +108,8 @@ typedef struct group_list_element {
     int groupParameter;
     boolean anyParameterAllowed;
     
+    int frequency;
+    
     struct group_list_element *smaller;
     struct group_list_element *greater;
 } GLE;
@@ -168,6 +170,8 @@ GLE *newGroupListElement(int groupId, int groupParameter, boolean anyParameterAl
     gle->groupParameter = groupParameter;
     gle->anyParameterAllowed = anyParameterAllowed;
     
+    gle->frequency = 1;
+    
     gle->smaller = gle->greater = NULL;
     
     return gle;
@@ -194,7 +198,9 @@ GROUPLIST *addToGroupList(GROUPLIST *list, int groupId, int groupParameter, bool
             } else {
                 addToGroupList(el->smaller, groupId, groupParameter, anyParameterAllowed);
             }
-        } 
+        } else {
+            el->frequency++;
+        }
         
         return list;
     }
