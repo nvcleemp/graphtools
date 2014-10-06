@@ -93,7 +93,7 @@ int nf;
 int automorphisms[2*MAXE][MAXN]; //there are at most 2e automorphisms (e = #arcs)
 boolean isOrientationReversingAutomorphism[2*MAXE];
 int automorphismsCount;
-int mirrorAutomorphismsCount;
+int orientationReversingAutomorphismsCount;
 
 int numberOfGraphs = 0;
 int reportsWritten = 0;
@@ -443,7 +443,7 @@ void determineAutomorphisms(){
     isOrientationReversingAutomorphism[0] = FALSE;
     
     automorphismsCount = 1;
-    mirrorAutomorphismsCount = 0;
+    orientationReversingAutomorphismsCount = 0;
     
     //construct certificate
     int pos = 0;
@@ -481,7 +481,7 @@ void determineAutomorphisms(){
                     }
                     isOrientationReversingAutomorphism[automorphismsCount] = TRUE;
                     automorphismsCount++;
-                    mirrorAutomorphismsCount++;
+                    orientationReversingAutomorphismsCount++;
                 }
                 e = e->next;
             } while (e!=elast);
@@ -700,7 +700,7 @@ int countOrientationReversingSymmetriesWithFixPoints(){
 void determineAutomorphismGroupInfiniteFamilies(int *groupId,
         int *groupParameter, int rotDegree, int center, boolean centerIsVertex,
         boolean centerIsEdge){
-    if(mirrorAutomorphismsCount==0){
+    if(orientationReversingAutomorphismsCount==0){
         if(automorphismsCount==rotDegree){
             *groupId = Cn__;
         } else if(automorphismsCount==2*rotDegree){
@@ -770,7 +770,7 @@ void determineAutomorphismGroupOther(int *groupId, int *groupParameter){
     } else if(automorphismsCount==48){
         *groupId = Oh__;
     } else if(automorphismsCount==24){
-        if(mirrorAutomorphismsCount==0){
+        if(orientationReversingAutomorphismsCount==0){
             *groupId = O__;
         } else {
             int orientationReversingSymmetriesWithFixPoints = 
@@ -803,12 +803,12 @@ void determineAutomorphismGroup(int *groupId, int *groupParameter){
     
     //if the group is chiral and has an odd order or an order less than 4
     //then it is a cyclic group. (since D1 is equal to C2)
-    if(mirrorAutomorphismsCount == 0 && 
+    if(orientationReversingAutomorphismsCount == 0 && 
             (automorphismsCount < 4 || automorphismsCount%2 == 1)){
         *groupId = Cn__;
         *groupParameter = automorphismsCount;
         return;
-    } else if(mirrorAutomorphismsCount == 1 && automorphismsCount == 2){
+    } else if(orientationReversingAutomorphismsCount == 1 && automorphismsCount == 2){
         if(hasOrientationReversingSymmetryWithFixPoint()){
             *groupId = Cnh__;
             *groupParameter = 1;
