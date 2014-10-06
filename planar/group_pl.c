@@ -103,6 +103,17 @@ boolean groupHasParameter[15] = {FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE
 
 //////////////////////////////////////////////////////////////////////////////
 
+typedef struct group_list_element {
+    int groupId;
+    int groupParameter;
+    boolean anyParameterAllowed;
+    
+    struct group_list_element *smaller;
+    struct group_list_element *greater;
+} GLE;
+
+typedef GLE GROUPLIST;
+
 /* Return c<0 if the first group is smaller
  * Return 0 if the groups are equal
  * Return c>0 if the first group is greater 
@@ -123,6 +134,107 @@ int compareGroups(int groupId1, int groupParameter1, boolean anyParameterAllowed
     } else {
         return groupId1 - groupId2;
     }
+}
+
+/* Return c<0 if the group is greater than the category
+ * Return 0 if the group is included in the category
+ * Return c>0 if the group is smaller than the category 
+ */
+int groupIncludedInCategory(int groupIdCategory, int groupParameterCategory, 
+        boolean anyParameterAllowedCategory, int groupId, int groupParameter) {
+    if(groupIdCategory == groupId) {
+        if(!groupHasParameter[groupIdCategory] || anyParameterAllowedCategory){
+            return 0;
+        } else {
+            return groupParameterCategory - groupParameter;
+        }
+    } else {
+        return groupIdCategory - groupId;
+    }
+}
+
+GLE *newGroupListElement(int groupId, int groupParameter, boolean anyParameterAllowed){
+    GLE *gle = malloc(sizeof(GLE));
+    
+    if(gle==NULL){
+        fprintf(stderr, "Cannot get enough memory to store group list -- exiting!\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    gle->groupId = groupId;
+    gle->groupParameter = groupParameter;
+    gle->anyParameterAllowed = anyParameterAllowed;
+    
+    gle->smaller = gle->greater = NULL;
+    
+    return gle;
+}
+
+GROUPLIST *addToGroupList(GROUPLIST *list, int groupId, int groupParameter, boolean anyParameterAllowed){
+    if(list == NULL){
+        return newGroupListElement(groupId, groupParameter, anyParameterAllowed);
+    } else {
+        GLE *el = list;
+        
+        int comparison = compareGroups(el->groupId, el->groupParameter, el->anyParameterAllowed,
+                groupId, groupParameter, anyParameterAllowed);
+        
+        if (comparison < 0) {
+            if (el->greater == NULL) {
+                el->greater = newGroupListElement(groupId, groupParameter, anyParameterAllowed);
+            } else {
+                addToGroupList(el->greater, groupId, groupParameter, anyParameterAllowed);
+            }
+        } else if (comparison > 0) {
+            if (el->smaller == NULL) {
+                el->smaller = newGroupListElement(groupId, groupParameter, anyParameterAllowed);
+            } else {
+                addToGroupList(el->smaller, groupId, groupParameter, anyParameterAllowed);
+            }
+        } 
+        
+        return list;
+    }
+}
+
+boolean containsGroup(GROUPLIST *list, int groupId, int groupParameter, boolean anyParameterAllowed){
+    GLE* el = list;
+    
+    while (el != NULL) {
+        int comparison = compareGroups(el->groupId, el->groupParameter, el->anyParameterAllowed,
+                groupId, groupParameter, anyParameterAllowed);
+        
+        if (comparison == 0) {
+            return TRUE;
+        } else if (comparison < 0) {
+            el = el->greater;
+        } else {
+            el = el->smaller;
+        }
+    }
+    
+    //reached a NULL without finding the group
+    return FALSE;
+}
+
+boolean groupIncludedInList(GROUPLIST *list, int groupId, int groupParameter){
+    GLE* el = list;
+    
+    while (el != NULL) {
+        int comparison = groupIncludedInCategory(el->groupId, el->groupParameter,
+                el->anyParameterAllowed, groupId, groupParameter);
+        
+        if (comparison == 0) {
+            return TRUE;
+        } else if (comparison < 0) {
+            el = el->greater;
+        } else {
+            el = el->smaller;
+        }
+    }
+    
+    //reached a NULL without finding the group
+    return FALSE;
 }
 
 //////////////////////////////////////////////////////////////////////////////
