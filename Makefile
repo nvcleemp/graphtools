@@ -288,7 +288,7 @@ build/multi_vertex_orbits: multicode/multi_vertex_orbits.c $(MULTICODE_SHARED) \
 	mkdir -p build
 	cc -o $@ -g -DMAXN=1000 -DMAXVAL=999 $^
 
-build/multi_non_iso:multicode/multi_non_iso.c nauty/nautil.c nauty/nauty.c nauty/naugraph.c
+build/multi_non_iso:multicode/multi_non_iso.c nauty/nautil.c nauty/nauty.c nauty/naugraph.c nauty/schreier.c nauty/naurng.c
 	mkdir -p build
 	cc -O4 -o $@ $^
 	
