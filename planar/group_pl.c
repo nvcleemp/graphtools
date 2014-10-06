@@ -489,21 +489,33 @@ void determineAutomorphisms(){
     }
 }
 
+boolean hasOrientationPreservingSymmetryWithGivenAction(int v, int w, int vImage, int wImage){
+    int i = 0;
+    while(i < automorphismsCount){
+        if(!isOrientationReversingAutomorphism[i]){
+            if(automorphisms[i][v] == vImage && automorphisms[i][w] == wImage){
+                return TRUE;
+            }
+        }
+        i++;
+    }
+    
+    return FALSE;
+}
+
 int identifyRotationalSymmetryThroughVertex(int v){
-    EDGE *base, *image;
-    int deg, i, length;
+    EDGE *edge;
+    int deg, neighbour, i;
     
     deg = degree[v];
-    base = image = firstedge[v];
+    edge = firstedge[v];
     i = 0;
-    
-    length = constructCertificate(base);
+    neighbour = edge->end;
     
     while(i < deg/2){
         i++;
-        image = image->next;
-        constructAlternateCertificate(image);
-        if(memcmp(certificate, alternateCertificate, sizeof(int)*length) == 0){
+        edge = edge->next;
+        if(hasOrientationPreservingSymmetryWithGivenAction(v, v, neighbour, edge->end)){
             return deg/i;
         }
     }
@@ -512,20 +524,19 @@ int identifyRotationalSymmetryThroughVertex(int v){
 }
 
 int identifyRotationalSymmetryThroughFace(int f){
-    EDGE *base, *image;
-    int deg, i, length;
+    EDGE *edge;
+    int deg, i, v, w;
     
     deg = faceSize[f];
-    base = image = facestart[f];
+    edge = facestart[f];
     i = 0;
-    
-    length = constructCertificate(base);
+    v = edge->start;
+    w = edge->end;
     
     while(i < deg/2){
         i++;
-        image = image->next->inverse;
-        constructAlternateCertificate(image);
-        if(memcmp(certificate, alternateCertificate, sizeof(int)*length) == 0){
+        edge = edge->next->inverse;
+        if(hasOrientationPreservingSymmetryWithGivenAction(v, w, edge->start, edge->end)){
             return deg/i;
         }
     }
@@ -534,9 +545,7 @@ int identifyRotationalSymmetryThroughFace(int f){
 }
 
 boolean hasRotationalSymmetryThroughEdge(EDGE *e){
-    int length = constructCertificate(e);
-    constructAlternateCertificate(e->inverse);
-    return memcmp(certificate, alternateCertificate, sizeof(int)*length) == 0;
+    return hasOrientationPreservingSymmetryWithGivenAction(e->start, e->end, e->end, e->start);
 }
 
 /* Returns TRUE if the graph contains a mirror symmetry fixating the given vertex.
