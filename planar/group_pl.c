@@ -93,6 +93,7 @@ int nf;
 int automorphisms[2*MAXE][MAXN]; //there are at most 2e automorphisms (e = #arcs)
 boolean isOrientationReversingAutomorphism[2*MAXE];
 int automorphismsCount;
+int orientationPreservingAutomorphismsCount;
 int orientationReversingAutomorphismsCount;
 
 int numberOfGraphs = 0;
@@ -443,6 +444,7 @@ void determineAutomorphisms(){
     isOrientationReversingAutomorphism[0] = FALSE;
     
     automorphismsCount = 1;
+    orientationPreservingAutomorphismsCount = 1;
     orientationReversingAutomorphismsCount = 0;
     
     //construct certificate
@@ -471,6 +473,7 @@ void determineAutomorphisms(){
                         }
                         isOrientationReversingAutomorphism[automorphismsCount] = FALSE;
                         automorphismsCount++;
+                        orientationPreservingAutomorphismsCount++;
                     }
                 }
                 constructAlternateCertificateOrientationReversing(e);
