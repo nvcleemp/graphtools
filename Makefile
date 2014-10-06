@@ -46,7 +46,7 @@ planar: build/stats_pl build/count_pl build/select_pl \
 	build/non_iso_pl build/subdivide_vertex build/regular_pl \
 	build/random_relabel_pl build/bipartite_pl build/delete_pl\
 	build/multiply_pl build/fill_face_pl build/show_pl\
-	build/delete_edges_pl build/filter_group_size_pl
+	build/delete_edges_pl build/filter_group_size_pl build/group_pl
 
 conversion: build/gconv build/genreg2multicode build/freetree2multicode\
             build/multicode2signedcode build/pregraphcode2multicode
@@ -161,6 +161,10 @@ build/show_pl: planar/show_pl.c
 	cc -o $@ -O4 $^
 	
 build/filter_group_size_pl: planar/filter_group_size_pl.c
+	mkdir -p build
+	cc -o $@ -O4 $^
+	
+build/group_pl: planar/group_pl.c
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
