@@ -1358,6 +1358,9 @@ void usage(char *name) {
 }
 
 int main(int argc, char *argv[]) {
+    
+    boolean giveSummary = FALSE;
+    GROUPLIST *summary = NULL;
 
     /*=========== commandline parsing ===========*/
 
@@ -1365,11 +1368,12 @@ int main(int argc, char *argv[]) {
     char *name = argv[0];
     static struct option long_options[] = {
         {"help", no_argument, NULL, 'h'},
-        {"filter", no_argument, NULL, 'f'}
+        {"filter", no_argument, NULL, 'f'},
+        {"summary", no_argument, NULL, 's'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hf", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hfs", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -1378,6 +1382,9 @@ int main(int argc, char *argv[]) {
                 return EXIT_SUCCESS;
             case 'f':
                 filterEnabled = TRUE;
+                break;
+            case 's':
+                giveSummary = TRUE;
                 break;
             case '?':
                 usage(name);
@@ -1428,6 +1435,12 @@ int main(int argc, char *argv[]) {
             printGroupName(stderr, groupId, groupParameter, FALSE);
             fprintf(stderr, "\n");
         }
+        if(giveSummary){
+            summary = addToGroupList(summary, groupId, groupParameter, FALSE);
+        }
     }
 
+    if(giveSummary){
+        printGroupList(stderr, summary, printItemFrequency);
+    }
 }
