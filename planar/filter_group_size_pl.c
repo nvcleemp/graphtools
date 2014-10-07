@@ -31,6 +31,8 @@
 
 #define INFI (MAXN + 1)
 
+typedef int boolean;
+
 #undef FALSE
 #undef TRUE
 #define FALSE 0
@@ -75,19 +77,85 @@ int ne;
 int nf;
 
 int automorphismsCount;
-int orientationReversingAutomorphismCount;
+int orientationPreservingAutomorphismsCount;
+int orientationReversingAutomorphismsCount;
 
 //////////////////////////////////////////////////////////////////////////////
 
 int certificate[MAXE+MAXN];
 int canonicalLabelling[MAXN];
+int reverseCanonicalLabelling[MAXN];
 EDGE *canonicalFirstedge[MAXN];
-int alternateCertificate[MAXE+MAXN];
 int alternateLabelling[MAXN];
 EDGE *alternateFirstedge[MAXN];
 int queue[MAXN];
+boolean hasChiralGroup;
 
-int constructCertificate(EDGE *eStart){
+EDGE *orientationPreservingStartingEdges[MAXE];
+EDGE *orientationReversingStartingEdges[MAXE];
+int startingEdgesCount; //the number of starting edges is always the same for both orientations
+
+void findStartingEdges(){
+    int i, startingDegree, startingFaceSize, minimumFrequency;
+    int degreeFrequency[MAXN] = {0};
+    int faceSizeFrequency[MAXN] = {0};
+    EDGE *start, *edge;
+    
+    startingEdgesCount = 0;
+    
+    //build the degree frequency table
+    for(i = 0; i < nv; i++){
+        degreeFrequency[degree[i]]++;
+    }
+    
+    //find the smallest degree with the lowest frequency
+    minimumFrequency = MAXN;
+    for(i = 0; i < MAXN; i++){
+        if(degreeFrequency[i] && degreeFrequency[i] < minimumFrequency){
+            startingDegree = i;
+            minimumFrequency = degreeFrequency[i];
+        }
+    }
+    
+    //build the frequency table of face sizes incident to a vertex with startingDegree
+    for(i = 0; i < MAXN; i++){
+        if(degree[i] == startingDegree){
+            start = edge = firstedge[i];
+            
+            do {
+                faceSizeFrequency[faceSize[edge->rightface]]++;
+                edge = edge->next;
+            } while (start != edge);
+        }
+    }
+    
+    //find the smallest face size incident with a vertex of startingDegree and with smallest frequency
+    minimumFrequency = MAXE;
+    for(i = 0; i < MAXN; i++){
+        if(faceSizeFrequency[i] && faceSizeFrequency[i] < minimumFrequency){
+            startingFaceSize = i;
+            minimumFrequency = faceSizeFrequency[i];
+        }
+    }
+    
+    //store all starting edges
+    for(i = 0; i < MAXN; i++){
+        if(degree[i] == startingDegree){
+            start = edge = firstedge[i];
+            
+            do {
+                if(faceSize[edge->rightface] == startingFaceSize){
+                    orientationPreservingStartingEdges[startingEdgesCount] = edge;
+                    orientationReversingStartingEdges[startingEdgesCount] = edge->next;
+                    startingEdgesCount++;
+                }
+                edge = edge->next;
+            } while (start != edge);
+        }
+    }
+}
+
+void constructCertificate(EDGE *eStart){
     int i;
     for(i=0; i<MAXN; i++){
         canonicalLabelling[i] = MAXN;
@@ -114,102 +182,169 @@ int constructCertificate(EDGE *eStart){
         } while (e!=elast);
         certificate[position++] = MAXN;
     }
-    return position;
+    for(i = 0; i < nv; i++){
+        reverseCanonicalLabelling[canonicalLabelling[i]] = i;
+    }
 }
 
-void constructAlternateCertificate(EDGE *eStart){
+void constructCertificateOrientationReversed(EDGE *eStart){
     int i;
     for(i=0; i<MAXN; i++){
-        alternateLabelling[i] = MAXN;
+        canonicalLabelling[i] = MAXN;
     }
     EDGE *e, *elast;
     int head = 1;
     int tail = 0;
     int vertexCounter = 1;
-    int alternateCertificatePosition = 0;
+    int position = 0;
     queue[0] = eStart->start;
-    alternateFirstedge[eStart->start] = eStart;
-    alternateLabelling[eStart->start] = 0;
+    canonicalFirstedge[eStart->start] = eStart;
+    canonicalLabelling[eStart->start] = 0;
     while(head>tail){
         int currentVertex = queue[tail++];
-        e = elast = alternateFirstedge[currentVertex];
+        e = elast = canonicalFirstedge[currentVertex];
         do {
-            if(alternateLabelling[e->end]==MAXN){
+            if(canonicalLabelling[e->end]==MAXN){
                 queue[head++] = e->end;
-                alternateLabelling[e->end] = vertexCounter++;
-                alternateFirstedge[e->end] = e->inverse;
+                canonicalLabelling[e->end] = vertexCounter++;
+                canonicalFirstedge[e->end] = e->inverse;
             }
-            alternateCertificate[alternateCertificatePosition++] = alternateLabelling[e->end];
-            e = e->next;
-        } while (e!=elast);
-        alternateCertificate[alternateCertificatePosition++] = MAXN;
-    }
-}
-
-void constructAlternateCertificateOrientationReversing(EDGE *eStart){
-    int i;
-    for(i=0; i<MAXN; i++){
-        alternateLabelling[i] = MAXN;
-    }
-    EDGE *e, *elast;
-    int head = 1;
-    int tail = 0;
-    int vertexCounter = 1;
-    int alternateCertificatePosition = 0;
-    queue[0] = eStart->start;
-    alternateFirstedge[eStart->start] = eStart;
-    alternateLabelling[eStart->start] = 0;
-    while(head>tail){
-        int currentVertex = queue[tail++];
-        e = elast = alternateFirstedge[currentVertex];
-        do {
-            if(alternateLabelling[e->end]==MAXN){
-                queue[head++] = e->end;
-                alternateLabelling[e->end] = vertexCounter++;
-                alternateFirstedge[e->end] = e->inverse;
-            }
-            alternateCertificate[alternateCertificatePosition++] = alternateLabelling[e->end];
+            certificate[position++] = canonicalLabelling[e->end];
             e = e->prev;
         } while (e!=elast);
-        alternateCertificate[alternateCertificatePosition++] = MAXN;
+        certificate[position++] = MAXN;
     }
+    for(i = 0; i < nv; i++){
+       reverseCanonicalLabelling[canonicalLabelling[i]] = i;
+    }
+}
+
+/* returns 1 if this edge leads to a better certificate
+ * returns 0 if this edge leads to the same certificate
+ * returns -1 if this edge leads to a worse certificate
+ */
+int hasBetterCertificateOrientationPreserving(EDGE *eStart){
+    int i, j;
+    for(i=0; i<MAXN; i++){
+        alternateLabelling[i] = MAXN;
+    }
+    EDGE *e, *elast;
+    int head = 1;
+    int tail = 0;
+    int vertexCounter = 1;
+    int currentPos = 0;
+    queue[0] = eStart->start;
+    alternateFirstedge[eStart->start] = eStart;
+    alternateLabelling[eStart->start] = 0;
+    while(head>tail){
+        int currentVertex = queue[tail++];
+        e = elast = alternateFirstedge[currentVertex];
+        do {
+            if(alternateLabelling[e->end]==MAXN){
+                queue[head++] = e->end;
+                alternateLabelling[e->end] = vertexCounter++;
+                alternateFirstedge[e->end] = e->inverse;
+            }
+            if(alternateLabelling[e->end] < certificate[currentPos]){
+                constructCertificate(eStart);
+                automorphismsCount = 1;
+                orientationPreservingAutomorphismsCount = 1;
+                return 1;
+            } else if(alternateLabelling[e->end] > certificate[currentPos]){
+                return -1;
+            }
+            currentPos++;
+            e = e->next;
+        } while (e!=elast);
+        //MAXN will always be at least the value of certificate[currentPos]
+        if(MAXN > certificate[currentPos]){
+            return -1;
+        }
+        currentPos++;
+    }
+    automorphismsCount++;
+    orientationPreservingAutomorphismsCount++;
+    return 0;
+}
+
+int hasBetterCertificateOrientationReversing(EDGE *eStart){
+    int i, j;
+    for(i=0; i<MAXN; i++){
+        alternateLabelling[i] = MAXN;
+    }
+    EDGE *e, *elast;
+    int head = 1;
+    int tail = 0;
+    int vertexCounter = 1;
+    int currentPos = 0;
+    queue[0] = eStart->start;
+    alternateFirstedge[eStart->start] = eStart;
+    alternateLabelling[eStart->start] = 0;
+    while(head>tail){
+        int currentVertex = queue[tail++];
+        e = elast = alternateFirstedge[currentVertex];
+        do {
+            if(alternateLabelling[e->end]==MAXN){
+                queue[head++] = e->end;
+                alternateLabelling[e->end] = vertexCounter++;
+                alternateFirstedge[e->end] = e->inverse;
+            }
+            if(alternateLabelling[e->end] < certificate[currentPos]){
+                constructCertificateOrientationReversed(eStart);
+                hasChiralGroup = TRUE;
+                automorphismsCount = 1;
+                orientationPreservingAutomorphismsCount = 1;
+                orientationReversingAutomorphismsCount = 0;
+                return 1;
+            } else if(alternateLabelling[e->end] > certificate[currentPos]){
+                return -1;
+            }
+            currentPos++;
+            e = e->prev;
+        } while (e!=elast);
+        //MAXN will always be at least the value of certificate[currentPos]
+        if(MAXN > certificate[currentPos]){
+            return -1;
+        }
+        currentPos++;
+    }
+    if(hasChiralGroup){
+        orientationPreservingAutomorphismsCount++;
+    } else {
+        orientationReversingAutomorphismsCount++;
+    }
+    automorphismsCount++;
+    return 0;
 }
 
 void calculateAutomorphismGroup(){
-    automorphismsCount = 1; //identity
-    orientationReversingAutomorphismCount = 0;
-    
-    //construct certificate
-    int pos = 0;
     int i;
     
-    pos = constructCertificate(firstedge[0]);
+    hasChiralGroup = FALSE;
     
-    //construct alternate certificates
-    EDGE *ebase = firstedge[0];
+    //identity    
+    automorphismsCount = 1;
+    orientationPreservingAutomorphismsCount = 1;
+    orientationReversingAutomorphismsCount = 0;
     
-    for(i=0; i<nv; i++){
-        if(degree[i]==degree[0]){
-            EDGE *e, *elast;
-
-            e = elast = firstedge[i];
-            do {
-                if(e!=ebase){
-                    constructAlternateCertificate(e);
-                    if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
-                        //count automorphism
-                        automorphismsCount++;
-                    }
-                }
-                constructAlternateCertificateOrientationReversing(e);
-                if(memcmp(certificate, alternateCertificate, sizeof(int)*pos) == 0) {
-                    //count automorphism
-                    automorphismsCount++;
-                    orientationReversingAutomorphismCount++;
-                }
-                e = e->next;
-            } while (e!=elast);
-        }
+    //find starting edges
+    findStartingEdges();
+    
+    //construct initial certificate
+    constructCertificate(orientationPreservingStartingEdges[0]);
+    
+    //look for better automorphism
+    for(i = 1; i < startingEdgesCount; i++){
+        int result = hasBetterCertificateOrientationPreserving(
+                                orientationPreservingStartingEdges[i]);
+        //if result == 1, then the counts are already reset and the new certificate is stored
+        //if result == 0, then the automorphism is already stored
+    }
+    for(i = 0; i < startingEdgesCount; i++){
+        int result = hasBetterCertificateOrientationReversing(
+                                orientationReversingStartingEdges[i]);
+        //if result == 1, then the counts are already reset and the new certificate is stored
+        //if result == 0, then the automorphism is already stored
     }
 }
 
