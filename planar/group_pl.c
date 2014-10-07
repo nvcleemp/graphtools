@@ -1497,6 +1497,9 @@ void parseGroup(char* input, int* groupId, int* groupParameter, boolean* anyPara
             *groupId = Dnh__;
         } else if (input[length + 1] == 'd' && input[length + 2] == '\0') {
             *groupId = Dnd__;
+        } else if (input[length + 1] == 'v' && input[length + 2] == '\0') {
+            *groupId = Dnd__;
+            fprintf(stderr, "Replaced D%dv by D%dd\n", *groupParameter, *groupParameter);
         } else {
             fprintf(stderr, "Illegal group name: %s -- exiting!\n", input);
             exit(EXIT_FAILURE);
