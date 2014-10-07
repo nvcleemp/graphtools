@@ -1556,6 +1556,9 @@ void help(char *name) {
     fprintf(stderr, "       Dnh      where n is either a positive integer or *\n");
     fprintf(stderr, "       Dnd      where n is either a positive integer or *\n");
     fprintf(stderr, "       T, Th, Td, O, Oh, I, Ih\n");
+    fprintf(stderr, "    -i, --invert\n");
+    fprintf(stderr, "       Inverts the filter, i.e., filter graphs not having one of the specified\n");
+    fprintf(stderr, "       groups.\n");
     fprintf(stderr, "    -s, --summary\n");
     fprintf(stderr, "       At the end give a summary of the encountered groups.\n");
     fprintf(stderr, "    -q, --quiet\n");
@@ -1572,6 +1575,7 @@ int main(int argc, char *argv[]) {
     boolean giveSummary = FALSE;
     GROUPLIST *summary = NULL;
     boolean singleInfo = TRUE;
+    boolean inverted = FALSE;
 
     /*=========== commandline parsing ===========*/
 
@@ -1581,11 +1585,12 @@ int main(int argc, char *argv[]) {
         {"help", no_argument, NULL, 'h'},
         {"filter", no_argument, NULL, 'f'},
         {"summary", no_argument, NULL, 's'},
-        {"quiet", no_argument, NULL, 'q'}
+        {"quiet", no_argument, NULL, 'q'},
+        {"invert", no_argument, NULL, 'i'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hfsq", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hfsqi", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -1600,6 +1605,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'q':
                 singleInfo = FALSE;
+                break;
+            case 'i':
+                inverted = TRUE;
                 break;
             case '?':
                 usage(name);
@@ -1627,7 +1635,7 @@ int main(int argc, char *argv[]) {
                     anyParameterAllowed);
         }
         
-        fprintf(stderr, "Filtering out graphs that have one of the following groups:\n");
+        fprintf(stderr, "Filtering out graphs that %shave one of the following groups:\n", inverted ? "do not " : "");
         printGroupList(stderr, filterList, 0, printItem);
     }
 
@@ -1642,8 +1650,14 @@ int main(int argc, char *argv[]) {
         int groupParameter = 0;
         determineAutomorphismGroup(&groupId, &groupParameter);
         if(filterEnabled){
-            if(groupIncludedInList(filterList, groupId, groupParameter)){
-                writePlanarCode();
+            if(inverted){
+                if(!groupIncludedInList(filterList, groupId, groupParameter)){
+                    writePlanarCode();
+                }
+            } else {
+                if(groupIncludedInList(filterList, groupId, groupParameter)){
+                    writePlanarCode();
+                }
             }
         } else if(singleInfo){
             fprintf(stderr, "Graph %d has group ", numberOfGraphs);
