@@ -91,7 +91,6 @@ int ne;
 int nf;
 
 int automorphisms[2*MAXE][MAXN]; //there are at most 2e automorphisms (e = #arcs)
-boolean isOrientationReversingAutomorphism[2*MAXE];
 int automorphismsCount;
 int orientationPreservingAutomorphismsCount;
 int orientationReversingAutomorphismsCount;
@@ -563,7 +562,6 @@ int hasBetterCertificateOrientationPreserving(EDGE *eStart){
         automorphisms[automorphismsCount][j] 
                 = reverseCanonicalLabelling[alternateLabelling[j]];
     }
-    isOrientationReversingAutomorphism[automorphismsCount] = FALSE;
     automorphismsCount++;
     orientationPreservingAutomorphismsCount++;
     return 0;
@@ -615,10 +613,8 @@ int hasBetterCertificateOrientationReversing(EDGE *eStart){
                 = reverseCanonicalLabelling[alternateLabelling[j]];
     }
     if(hasChiralGroup){
-        isOrientationReversingAutomorphism[automorphismsCount] = FALSE;
         orientationPreservingAutomorphismsCount++;
     } else {
-        isOrientationReversingAutomorphism[automorphismsCount] = TRUE;
         orientationReversingAutomorphismsCount++;
     }
     automorphismsCount++;
@@ -634,7 +630,6 @@ void determineAutomorphisms(){
     for(i = 0; i < nv; i++){
         automorphisms[0][i] = i;
     }
-    isOrientationReversingAutomorphism[0] = FALSE;
     
     automorphismsCount = 1;
     orientationPreservingAutomorphismsCount = 1;
@@ -663,11 +658,9 @@ void determineAutomorphisms(){
 
 boolean hasOrientationPreservingSymmetryWithGivenAction(int v, int w, int vImage, int wImage){
     int i = 0;
-    while(i < automorphismsCount){
-        if(!isOrientationReversingAutomorphism[i]){
-            if(automorphisms[i][v] == vImage && automorphisms[i][w] == wImage){
-                return TRUE;
-            }
+    while(i < orientationPreservingAutomorphismsCount){
+        if(automorphisms[i][v] == vImage && automorphisms[i][w] == wImage){
+            return TRUE;
         }
         i++;
     }
@@ -726,9 +719,8 @@ boolean hasRotationalSymmetryThroughEdge(EDGE *e){
 boolean hasOrientationReversingSymmetryStabilisingGivenVertex(int v){
     int i;
     
-    for(i = 0; i < automorphismsCount; i++){
-        if(isOrientationReversingAutomorphism[i] 
-                && automorphisms[i][v] == v){
+    for(i = orientationPreservingAutomorphismsCount; i < automorphismsCount; i++){
+        if(automorphisms[i][v] == v){
             return TRUE;
         }
     }
@@ -743,18 +735,16 @@ boolean hasOrientationReversingSymmetryStabilisingGivenFace(int f){
     int i, from, to;
     EDGE *e;
     
-    for(i = 0; i < automorphismsCount; i++){
-        if(isOrientationReversingAutomorphism[i]){
-            e = facestart[f];
-            from = automorphisms[i][e->start];
-            to = automorphisms[i][e->end];
-            e = firstedge[from];
-            while(e->end != to) {
-                e = e->next;
-            }
-            if(e->inverse->rightface == f){
-                return TRUE;
-            }
+    for(i = orientationPreservingAutomorphismsCount; i < automorphismsCount; i++){
+        e = facestart[f];
+        from = automorphisms[i][e->start];
+        to = automorphisms[i][e->end];
+        e = firstedge[from];
+        while(e->end != to) {
+            e = e->next;
+        }
+        if(e->inverse->rightface == f){
+            return TRUE;
         }
     }
     
@@ -768,14 +758,12 @@ boolean hasOrientationReversingSymmetryStabilisingGivenEdge(int e){
     int i, from, to;
     EDGE *edge = edges+e;
     
-    for(i = 0; i < automorphismsCount; i++){
-        if(isOrientationReversingAutomorphism[i]){
-            from = automorphisms[i][edge->start];
-            to = automorphisms[i][edge->end];
-            if((edge->start == from && edge->end == to) ||
-                    (edge->start == to && edge->end == from)){
-                return TRUE;
-            }
+    for(i = orientationPreservingAutomorphismsCount; i < automorphismsCount; i++){
+        from = automorphisms[i][edge->start];
+        to = automorphisms[i][edge->end];
+        if((edge->start == from && edge->end == to) ||
+                (edge->start == to && edge->end == from)){
+            return TRUE;
         }
     }
     
@@ -786,12 +774,10 @@ boolean hasOrientationReversingSymmetryWithFixPoint(){
     int i, j;
     
     //first check if any vertices are fixed
-    for(i = 0; i < automorphismsCount; i++){
-        if(isOrientationReversingAutomorphism[i]){
-            for(j = 0; j < nv; j++){
-                if(automorphisms[i][j] == j){
-                    return TRUE;
-                }
+    for(i = orientationPreservingAutomorphismsCount; i < automorphismsCount; i++){
+        for(j = 0; j < nv; j++){
+            if(automorphisms[i][j] == j){
+                return TRUE;
             }
         }
     }
@@ -799,16 +785,14 @@ boolean hasOrientationReversingSymmetryWithFixPoint(){
     //next we check if any edge is fixed as a set
     //we don't need to check that a directed edge is fixed
     //because in that case also the vertices are fixed
-    for(i = 0; i < automorphismsCount; i++){
-        if(isOrientationReversingAutomorphism[i]){
-            for(j = 0; j < ne; j++){
-                if(j < edges[j].inverse->index){
-                    int start = edges[j].start;
-                    int end = edges[j].end;
-                    if(automorphisms[i][start] == end &&
-                            automorphisms[i][end] == start){
-                        return TRUE;
-                    }
+    for(i = orientationPreservingAutomorphismsCount; i < automorphismsCount; i++){
+        for(j = 0; j < ne; j++){
+            if(j < edges[j].inverse->index){
+                int start = edges[j].start;
+                int end = edges[j].end;
+                if(automorphisms[i][start] == end &&
+                        automorphisms[i][end] == start){
+                    return TRUE;
                 }
             }
         }
@@ -820,12 +804,8 @@ boolean hasOrientationReversingSymmetryWithFixPoint(){
     return FALSE;
 }
 
-boolean isOrientationReversingSymmetryWithFixPoint(int i){
+boolean isSymmetryWithFixPoint(int i){
     int j;
-    
-    if(!isOrientationReversingAutomorphism[i]){
-        return FALSE;
-    }
         
     //first check if any vertices are fixed
     for(j = 0; j < nv; j++){
@@ -860,8 +840,8 @@ int countOrientationReversingSymmetriesWithFixPoints(){
     count = 0;
     
     //first check if any vertices are fixed
-    for(i = 0; i < automorphismsCount; i++){
-        if(isOrientationReversingSymmetryWithFixPoint(i)){
+    for(i = orientationPreservingAutomorphismsCount; i < automorphismsCount; i++){
+        if(isSymmetryWithFixPoint(i)){
             count++;
         }
     }
