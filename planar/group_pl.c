@@ -249,89 +249,131 @@ boolean groupIncludedInList(GROUPLIST *list, int groupId, int groupParameter){
 
 //////////////////////////////////////////////////////////////////////////////
 
-void printGroupName(FILE *f, int groupId, int groupParameter, boolean anyParameterAllowed){
+int lengthHelper(unsigned x) {
+    if(x < 10) return 1;
+    if(x < 100) return 2;
+    if(x < 1000) return 3;
+    if(x < 10000) return 4;
+    if(x < 100000) return 5;
+    if(x < 1000000) return 6;
+    if(x < 10000000) return 7;
+    if(x < 100000000) return 8;
+    if(x < 1000000000) return 9;
+    return 10;
+}
+
+int printingLengthOfInteger(int x) {
+    return x<0 ? lengthHelper(-x)+1 : lengthHelper(x);
+}
+
+void printGroupName(FILE *f, int groupId, int groupParameter, boolean anyParameterAllowed, int minimumLength){
+    int currentLength;
     if(groupId==UNKNOWN){
         fprintf(f, "UNKNOWN");
+        currentLength = 7;
     } else if(groupId==Cn__){
         if(anyParameterAllowed){
             fprintf(f, "C*");
+            currentLength = 2;
         } else {
             fprintf(f, "C%d", groupParameter);
+            currentLength = 1 + printingLengthOfInteger(groupParameter);
         }
     } else if(groupId==Cnh__){
         if(anyParameterAllowed){
             fprintf(f, "C*h");
+            currentLength = 3;
         } else {
             fprintf(f, "C%dh", groupParameter);
+            currentLength = 2 + printingLengthOfInteger(groupParameter);
         }
     } else if(groupId==Cnv__){
         if(anyParameterAllowed){
             fprintf(f, "C*v");
+            currentLength = 3;
         } else {
             fprintf(f, "C%dv", groupParameter);
+            currentLength = 2 + printingLengthOfInteger(groupParameter);
         }
     } else if(groupId==S2n__){
         if(anyParameterAllowed){
             fprintf(f, "S*");
+            currentLength = 2;
         } else {
             fprintf(f, "S%d", 2*groupParameter);
+            currentLength = 1 + printingLengthOfInteger(2*groupParameter);
         }
     } else if(groupId==Dn__){
         if(anyParameterAllowed){
             fprintf(f, "D*");
+            currentLength = 2;
         } else {
             fprintf(f, "D%d", groupParameter);
+            currentLength = 1 + printingLengthOfInteger(groupParameter);
         }
     } else if(groupId==Dnh__){
         if(anyParameterAllowed){
             fprintf(f, "D*h");
+            currentLength = 3;
         } else {
             fprintf(f, "D%dh", groupParameter);
+            currentLength = 2 + printingLengthOfInteger(groupParameter);
         }
     } else if(groupId==Dnd__){
         if(anyParameterAllowed){
             fprintf(f, "D*d");
+            currentLength = 3;
         } else {
             fprintf(f, "D%dd", groupParameter);
+            currentLength = 2 + printingLengthOfInteger(groupParameter);
         }
     } else if(groupId==T__){
         fprintf(f, "T");
+        currentLength = 1;
     } else if(groupId==Td__){
         fprintf(f, "Td");
+        currentLength = 2;
     } else if(groupId==Th__){
         fprintf(f, "Th");
+        currentLength = 2;
     } else if(groupId==O__){
         fprintf(f, "O");
+        currentLength = 1;
     } else if(groupId==Oh__){
         fprintf(f, "Oh");
+        currentLength = 2;
     } else if(groupId==I__){
         fprintf(f, "I");
+        currentLength = 1;
     } else if(groupId==Ih__){
         fprintf(f, "Ih");
+        currentLength = 2;
     } else {
         fprintf(stderr, "Illegal group id: %d -- exiting!\n", groupId);
         exit(EXIT_FAILURE);
     }
+    int i;
+    for(i = currentLength; i < minimumLength; i++) fprintf(f, " ");
 }
 
-void printItem(FILE *f, GROUPLIST *listElement){
+void printItem(FILE *f, GROUPLIST *listElement, int minimumGroupNameLength){
     printGroupName(f, listElement->groupId, listElement->groupParameter, 
-            listElement->anyParameterAllowed);
+            listElement->anyParameterAllowed, minimumGroupNameLength);
     fprintf(f, "\n");
 }
 
-void printItemFrequency(FILE *f, GROUPLIST *listElement){
+void printItemFrequency(FILE *f, GROUPLIST *listElement, int minimumGroupNameLength){
     printGroupName(f, listElement->groupId, listElement->groupParameter, 
-            listElement->anyParameterAllowed);
-    fprintf(f, ":  %d\n", listElement->frequency);
+            listElement->anyParameterAllowed, minimumGroupNameLength);
+    fprintf(f, " %*d\n", minimumGroupNameLength, listElement->frequency);
 }
 
-void printGroupList(FILE *f, GROUPLIST *list, 
-        void (*itemPrinter)(FILE *file, GROUPLIST *item)){
+void printGroupList(FILE *f, GROUPLIST *list, int minimumGroupNameLength, 
+        void (*itemPrinter)(FILE *file, GROUPLIST *item, int l)){
     if(list!=NULL){
-        printGroupList(f, list->smaller, itemPrinter);
-        itemPrinter(f, list);
-        printGroupList(f, list->greater, itemPrinter);
+        printGroupList(f, list->smaller, minimumGroupNameLength, itemPrinter);
+        itemPrinter(f, list, minimumGroupNameLength);
+        printGroupList(f, list->greater, minimumGroupNameLength, itemPrinter);
     }
 }
 
@@ -1606,7 +1648,7 @@ int main(int argc, char *argv[]) {
         }
         
         fprintf(stderr, "Filtering out graphs that have one of the following groups:\n");
-        printGroupList(stderr, filterList, printItem);
+        printGroupList(stderr, filterList, 0, printItem);
     }
 
     /*=========== read planar graphs ===========*/
@@ -1625,7 +1667,7 @@ int main(int argc, char *argv[]) {
             }
         } else if(singleInfo){
             fprintf(stderr, "Graph %d has group ", numberOfGraphs);
-            printGroupName(stderr, groupId, groupParameter, FALSE);
+            printGroupName(stderr, groupId, groupParameter, FALSE, 0);
             fprintf(stderr, "\n");
         }
         if(giveSummary){
@@ -1634,6 +1676,6 @@ int main(int argc, char *argv[]) {
     }
 
     if(giveSummary){
-        printGroupList(stderr, summary, printItemFrequency);
+        printGroupList(stderr, summary, 7, printItemFrequency);
     }
 }
