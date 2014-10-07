@@ -1535,7 +1535,7 @@ void parseGroup(char* input, int* groupId, int* groupParameter, boolean* anyPara
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s generates a summary of planar graphs.\n\n", name);
+    fprintf(stderr, "The program %s determines the symmetry type of plane graphs.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options]\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
