@@ -680,7 +680,7 @@ int identifyRotationalSymmetryThroughVertex(int v){
     while(i < deg/2){
         i++;
         edge = edge->next;
-        if(hasOrientationPreservingSymmetryWithGivenAction(v, v, neighbour, edge->end)){
+        if(hasOrientationPreservingSymmetryWithGivenAction(v, neighbour, v, edge->end)){
             return deg/i;
         }
     }
