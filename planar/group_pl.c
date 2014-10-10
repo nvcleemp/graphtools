@@ -1565,6 +1565,10 @@ void help(char *name) {
     fprintf(stderr, "       At the end give a summary of the encountered groups.\n");
     fprintf(stderr, "    -q, --quiet\n");
     fprintf(stderr, "       Do not show group info for individual graphs.\n");
+    fprintf(stderr, "    -m, --machine\n");
+    fprintf(stderr, "       Outputs the information about individual graphs to stdout instead of\n");
+    fprintf(stderr, "       stderr. Also the output is written in the format 'graph number, group\n");
+    fprintf(stderr, "       name'. In combination with the option -f this option has no effect.\n");
     fprintf(stderr, "    --old\n");
     fprintf(stderr, "       The program also accepts planar_code files without a header.\n");
 }
@@ -1580,6 +1584,7 @@ int main(int argc, char *argv[]) {
     GROUPLIST *summary = NULL;
     boolean singleInfo = TRUE;
     boolean inverted = FALSE;
+    boolean machineReadable = FALSE;
 
     /*=========== commandline parsing ===========*/
 
@@ -1591,11 +1596,12 @@ int main(int argc, char *argv[]) {
         {"filter", no_argument, NULL, 'f'},
         {"summary", no_argument, NULL, 's'},
         {"quiet", no_argument, NULL, 'q'},
-        {"invert", no_argument, NULL, 'i'}
+        {"invert", no_argument, NULL, 'i'},
+        {"machine", no_argument, NULL, 'm'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hfsqi", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hfsqim", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 switch (option_index) {
@@ -1622,6 +1628,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'i':
                 inverted = TRUE;
+                break;
+            case 'm':
+                machineReadable = TRUE;
                 break;
             case '?':
                 usage(name);
@@ -1674,9 +1683,15 @@ int main(int argc, char *argv[]) {
                 }
             }
         } else if(singleInfo){
-            fprintf(stderr, "Graph %d has group ", numberOfGraphs);
-            printGroupName(stderr, groupId, groupParameter, FALSE, 0);
-            fprintf(stderr, "\n");
+            if(machineReadable){
+                fprintf(stdout, "%d, ", numberOfGraphs);
+                printGroupName(stdout, groupId, groupParameter, FALSE, 0);
+                fprintf(stdout, "\n");
+            } else {
+                fprintf(stderr, "Graph %d has group ", numberOfGraphs);
+                printGroupName(stderr, groupId, groupParameter, FALSE, 0);
+                fprintf(stderr, "\n");
+            }
         }
         if(giveSummary){
             summary = addToGroupList(summary, groupId, groupParameter, FALSE);
