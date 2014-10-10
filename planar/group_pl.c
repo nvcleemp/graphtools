@@ -116,7 +116,7 @@ typedef struct group_list_element {
 
 typedef GLE GROUPLIST;
 
-int filterEnabled = FALSE;
+boolean filterEnabled = FALSE;
 GROUPLIST *filterList;
 
 /* Return c<0 if the first group is smaller
