@@ -101,6 +101,8 @@ int reportsWritten = 0;
 boolean groupHasParameter[15] = {FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
                                  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};
 
+boolean oldStyleInput = FALSE;
+
 //////////////////////////////////////////////////////////////////////////////
 
 typedef struct group_list_element {
@@ -1280,7 +1282,7 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
     int readCount;
 
 
-    if (first) {
+    if (first && !oldStyleInput) {
         first = 0;
 
         if (fread(&testheader, sizeof (unsigned char), 13, file) != 13) {
@@ -1563,6 +1565,8 @@ void help(char *name) {
     fprintf(stderr, "       At the end give a summary of the encountered groups.\n");
     fprintf(stderr, "    -q, --quiet\n");
     fprintf(stderr, "       Do not show group info for individual graphs.\n");
+    fprintf(stderr, "    --old\n");
+    fprintf(stderr, "       The program also accepts planar_code files without a header.\n");
 }
 
 void usage(char *name) {
@@ -1582,6 +1586,7 @@ int main(int argc, char *argv[]) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"old", no_argument, NULL, 0},
         {"help", no_argument, NULL, 'h'},
         {"filter", no_argument, NULL, 'f'},
         {"summary", no_argument, NULL, 's'},
@@ -1593,6 +1598,15 @@ int main(int argc, char *argv[]) {
     while ((c = getopt_long(argc, argv, "hfsqi", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
+                switch (option_index) {
+                    case 0:
+                        oldStyleInput = TRUE;
+                        break;
+                    default:
+                        fprintf(stderr, "Illegal option index %d.\n", option_index);
+                        usage(name);
+                        return EXIT_FAILURE;
+                }
                 break;
             case 'h':
                 help(name);
