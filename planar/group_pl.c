@@ -95,9 +95,6 @@ int automorphismsCount;
 int orientationPreservingAutomorphismsCount;
 int orientationReversingAutomorphismsCount;
 
-int numberOfGraphs = 0;
-int reportsWritten = 0;
-
 boolean groupHasParameter[15] = {FALSE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE,
                                  FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE};
 
@@ -1580,6 +1577,9 @@ void usage(char *name) {
 
 int main(int argc, char *argv[]) {
     
+    int numberOfGraphs = 0;
+    int graphsWritten = 0;
+    
     boolean giveSummary = FALSE;
     GROUPLIST *summary = NULL;
     boolean singleInfo = TRUE;
@@ -1676,10 +1676,12 @@ int main(int argc, char *argv[]) {
             if(inverted){
                 if(!groupIncludedInList(filterList, groupId, groupParameter)){
                     writePlanarCode();
+                    graphsWritten++;
                 }
             } else {
                 if(groupIncludedInList(filterList, groupId, groupParameter)){
                     writePlanarCode();
+                    graphsWritten++;
                 }
             }
         } else if(singleInfo){
@@ -1697,8 +1699,16 @@ int main(int argc, char *argv[]) {
             summary = addToGroupList(summary, groupId, groupParameter, FALSE);
         }
     }
+    
+    fprintf(stderr, "Read %d graph%s.\n", numberOfGraphs, 
+            numberOfGraphs == 1 ? "" : "s");
+    if(filterEnabled){
+        fprintf(stderr, "Written %d graph%s.\n", graphsWritten,
+                graphsWritten == 1 ? "" : "s");
+    }
 
     if(giveSummary){
+        fprintf(stderr, "Frequency table of groups for input graphs:\n");
         printGroupList(stderr, summary, 7, printItemFrequency);
     }
 }
