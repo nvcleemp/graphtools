@@ -82,10 +82,12 @@ int latex = FALSE;
 int numberOfGraphs = 0;
 int reportsWritten = 0;
 
+boolean showFaces = FALSE;
 boolean automorphismInfo = FALSE;
 boolean needAutomorphisms = FALSE;
 boolean vertexOrbitInfo = FALSE;
 boolean edgeOrbitInfo = FALSE;
+boolean faceOrbitInfo = FALSE;
 
 int vertexOrbits[MAXN];
 int vertexOrbitsSize[MAXN];
@@ -96,6 +98,10 @@ VERTEXPAIR undirectedEdges[MAXE/2];
 int edgeOrbits[MAXE/2];
 int edgeOrbitsSize[MAXE/2];
 int edgeOrbitCount;
+
+int faceOrbits[MAXN];
+int faceOrbitsSize[MAXN];
+int faceOrbitCount;
 
 int nv;
 int ne;
@@ -491,6 +497,62 @@ void determineEdgeOrbits(){
     }
 }
 
+void determineFaceOrbits(){
+    int i, j, start, end, image;
+    EDGE *e;
+    
+    for(i = 0; i < nf; i++){
+        faceOrbits[i] = i;
+        faceOrbitsSize[i] = 1;
+    }
+    faceOrbitCount = nf;
+    
+    if(automorphismsCount == 1){
+        return; //trivial symmetry
+    }
+    
+    //we skip the first automorphism since this always corresponds to the identity
+    for(j = 1; j < orientationPreservingAutomorphismsCount; j++){
+        for(i = 0; i < nf; i++){
+            //determine image
+            start = automorphisms[j][facestart[i]->start];
+            end = automorphisms[j][facestart[i]->end];
+            
+            e = firstedge[start];
+            while(e->end != end){
+                e = e->next;
+            }
+            
+            image = e->rightface;
+            
+            unionElements(faceOrbits, faceOrbitsSize, &faceOrbitCount,
+                    i, image);
+        }
+    }
+    for(j = orientationPreservingAutomorphismsCount; j < automorphismsCount; j++){
+        for(i = 0; i < nf; i++){
+            //determine image
+            start = automorphisms[j][facestart[i]->start];
+            end = automorphisms[j][facestart[i]->end];
+            
+            e = firstedge[start];
+            while(e->end != end){
+                e = e->next;
+            }
+            
+            image = e->inverse->rightface;
+            
+            unionElements(faceOrbits, faceOrbitsSize, &faceOrbitCount,
+                    i, image);
+        }
+    }
+    
+    //make sure that each element is connected to its root
+    for(i = 0; i < nf; i++){
+        findRootOfElement(faceOrbits, i);
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 void writeNumbering() {
@@ -592,6 +654,23 @@ void writeFaceSizeVector() {
     fprintf(stdout, "\n");
 }
 
+void writeFaces() {
+    int i;
+    EDGE *e, *eStart;
+
+    fprintf(stdout, "Faces:\n");
+    for (i = 0; i < nf; i++) {
+        e = eStart = facestart[i];
+        fprintf(stdout, "   F%d) %d", i+1, e->start + 1);
+        e = e->inverse->prev;
+        while (e!=eStart){
+            fprintf(stdout, ", %d", e->start + 1);
+            e = e->inverse->prev;
+        }
+        fprintf(stdout, "\n");
+    }
+}
+
 void writeVertexOrbits() {
     int i, j, count;
     
@@ -635,6 +714,31 @@ void writeEdgeOrbits() {
             for(j = i + 1; j < ne/2; j++){
                 if(edgeOrbits[j] == i){
                     fprintf(stdout, ", %d-%d", undirectedEdges[j][0]+1, undirectedEdges[j][1]+1);
+                }
+            }
+            fprintf(stdout, "\n");
+        }
+    }
+}
+
+void writeFaceOrbits() {
+    int i, j, count;
+    
+    if(automorphismsCount == 1){
+        fprintf(stdout, "Graph has trivial symmetry, so each face corresponds to an orbit.\n");
+        return;
+    }
+
+    fprintf(stdout, "Face orbits:\n");
+    
+    count = 0;
+    for (i = 0; i < nf; i++) {
+        if(faceOrbits[i] == i){
+            count++;
+            fprintf(stdout, "   Orbit %d: F%d", count, i+1);
+            for(j = i + 1; j < nf; j++){
+                if(faceOrbits[j] == i){
+                    fprintf(stdout, ", F%d", j + 1);
                 }
             }
             fprintf(stdout, "\n");
@@ -741,6 +845,23 @@ void writeFaceSizeVectorLatex() {
     fprintf(stdout, "\\\\\n");
 }
 
+void writeFacesLatex() {
+    int i;
+    EDGE *e, *eStart;
+
+    fprintf(stdout, "Faces:\\\\\n");
+    for (i = 0; i < nf; i++) {
+        e = eStart = facestart[i];
+        fprintf(stdout, "\\ \\  F%d) %d", i+1, e->start + 1);
+        e = e->inverse->prev;
+        while (e!=eStart){
+            fprintf(stdout, ", %d", e->start + 1);
+            e = e->inverse->prev;
+        }
+        fprintf(stdout, "\\\\\n");
+    }
+}
+
 void writeVertexOrbitsLatex() {
     int i, j, count;
     
@@ -791,6 +912,31 @@ void writeEdgeOrbitsLatex() {
     }
 }
 
+void writeFaceOrbitsLatex() {
+    int i, j, count;
+    
+    if(automorphismsCount == 1){
+        fprintf(stdout, "Graph has trivial symmetry, so each face corresponds to an orbit.\\\\\n");
+        return;
+    }
+
+    fprintf(stdout, "Face orbits:\\\\\n");
+    
+    count = 0;
+    for (i = 0; i < nf; i++) {
+        if(faceOrbits[i] == i){
+            count++;
+            fprintf(stdout, "\\ \\  Orbit %d: F%d", count, i+1);
+            for(j = i + 1; j < nf; j++){
+                if(faceOrbits[j] == i){
+                    fprintf(stdout, ", F%d", j + 1);
+                }
+            }
+            fprintf(stdout, "\\\\\n");
+        }
+    }
+}
+
 void writeStatistics() {
     if(automorphismInfo || needAutomorphisms){
         calculateAutomorphismGroup();
@@ -800,6 +946,9 @@ void writeStatistics() {
         if(edgeOrbitInfo){
             determineEdgeOrbits();
         }
+        if(faceOrbitInfo){
+            determineFaceOrbits();
+        }
     }
     if(latex){
         if(includeNumbering) writeNumberingLatex();
@@ -808,11 +957,17 @@ void writeStatistics() {
         writeDegreeVectorLatex();
         writeFaceSizeSequenceLatex();
         writeFaceSizeVectorLatex();
+        if(showFaces){
+            writeFacesLatex();
+        }
         if(vertexOrbitInfo){
             writeVertexOrbitsLatex();
         }
         if(edgeOrbitInfo){
             writeEdgeOrbitsLatex();
+        }
+        if(faceOrbitInfo){
+            writeFaceOrbitsLatex();
         }
 
         fprintf(stdout, "\\\\\n");
@@ -823,11 +978,17 @@ void writeStatistics() {
         writeDegreeVector();
         writeFaceSizeSequence();
         writeFaceSizeVector();
+        if(showFaces){
+            writeFaces();
+        }
         if(vertexOrbitInfo){
             writeVertexOrbits();
         }
         if(edgeOrbitInfo){
             writeEdgeOrbits();
+        }
+        if(faceOrbitInfo){
+            writeFaceOrbits();
         }
 
         fprintf(stdout, "\n");
@@ -1096,6 +1257,8 @@ void help(char *name) {
     fprintf(stderr, "       Give an overview of the vertex orbits.\n");
     fprintf(stderr, "    -E, --edge-orbits\n");
     fprintf(stderr, "       Give an overview of the (undirected) edge orbits.\n");
+    fprintf(stderr, "    -F, --face-orbits\n");
+    fprintf(stderr, "       Give an overview of the face orbits.\n");
 }
 
 void usage(char *name) {
@@ -1117,11 +1280,12 @@ int main(int argc, char *argv[]) {
         {"filter", required_argument, NULL, 'f'},
         {"automorphisms", no_argument, NULL, 'a'},
         {"vertex-orbits", no_argument, NULL, 'V'},
-        {"edge-orbits", no_argument, NULL, 'E'}
+        {"edge-orbits", no_argument, NULL, 'E'},
+        {"face-orbits", no_argument, NULL, 'F'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsf:aVE", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hsf:aVEF", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -1145,6 +1309,11 @@ int main(int argc, char *argv[]) {
             case 'E':
                 needAutomorphisms = TRUE;
                 edgeOrbitInfo = TRUE;
+                break;
+            case 'F':
+                needAutomorphisms = TRUE;
+                showFaces = TRUE;
+                faceOrbitInfo = TRUE;
                 break;
             case '?':
                 usage(name);
