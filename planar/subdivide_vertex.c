@@ -46,12 +46,6 @@ typedef struct e /* The data type used for edges */ {
     struct e *inverse; /* the edge that is inverse to this one */
     int mark, index; /* two ints for temporary use;
                           Only access mark via the MARK macros. */
-
-    int left_facesize; /* size of the face in prev-direction of the edge.
-        		  Only used for -p option. */
-    char angle; /* angle between this edge and next edge;
-                   0: alpha, 1: beta, 2: gamma, 3: delta */
-    int allowedInFaceMatching;
 } EDGE;
 
 EDGE *firstedge[MAXN]; /* pointer to arbitrary edge out of vertex i. */
@@ -207,7 +201,6 @@ void decodePlanarCode(unsigned short* code) {
         edges[edgeCounter].start = i;
         edges[edgeCounter].end = code[codePosition] - 1;
         edges[edgeCounter].next = edges + edgeCounter + 1;
-        edges[edgeCounter].allowedInFaceMatching = TRUE;
         if (code[codePosition] - 1 < i) {
             inverse = findEdge(code[codePosition] - 1, i);
             edges[edgeCounter].inverse = inverse;
@@ -226,7 +219,6 @@ void decodePlanarCode(unsigned short* code) {
             edges[edgeCounter].end = code[codePosition] - 1;
             edges[edgeCounter].prev = edges + edgeCounter - 1;
             edges[edgeCounter].next = edges + edgeCounter + 1;
-            edges[edgeCounter].allowedInFaceMatching = TRUE;
             if (code[codePosition] - 1 < i) {
                 inverse = findEdge(code[codePosition] - 1, i);
                 edges[edgeCounter].inverse = inverse;
