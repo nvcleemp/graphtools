@@ -85,10 +85,17 @@ int reportsWritten = 0;
 boolean automorphismInfo = FALSE;
 boolean needAutomorphisms = FALSE;
 boolean vertexOrbitInfo = FALSE;
+boolean edgeOrbitInfo = FALSE;
 
 int vertexOrbits[MAXN];
 int vertexOrbitsSize[MAXN];
 int vertexOrbitCount;
+
+typedef int VERTEXPAIR[2];
+VERTEXPAIR undirectedEdges[MAXE/2];
+int edgeOrbits[MAXE/2];
+int edgeOrbitsSize[MAXE/2];
+int edgeOrbitCount;
 
 int nv;
 int ne;
@@ -432,6 +439,58 @@ void determineVertexOrbits(){
     }
 }
 
+void determineEdgeOrbits(){
+    int i, j, k, start, end, temp;
+    
+    for(i = 0; i < MAXE/2; i++){
+        edgeOrbits[i] = i;
+        edgeOrbitsSize[i] = 1;
+    }
+    vertexOrbitCount = ne/2;
+    
+    for(i = 0, j = 0; i < ne; i++){
+        if(edges[i].start < edges[i].end){
+            undirectedEdges[j][0] = edges[i].start;
+            undirectedEdges[j][1] = edges[i].end;
+            j++;
+        }
+    }
+    
+    if(automorphismsCount == 1){
+        return; //trivial symmetry
+    }
+    
+    //we skip the first automorphism since this always corresponds to the identity
+    for(j = 1; j < automorphismsCount; j++){
+        for(i = 0; i < ne/2; i++){
+            //determine image of edge
+            start = automorphisms[j][undirectedEdges[i][0]];
+            end = automorphisms[j][undirectedEdges[i][1]];
+            
+            //canonical version of image
+            if(start > end){
+                temp = start;
+                start = end;
+                end = temp;
+            }
+            
+            //search the pair in the list
+            for(k = 0; k<ne/2; k++){
+                if(start == undirectedEdges[k][0] && end == undirectedEdges[k][1]){
+                    unionElements(edgeOrbits, edgeOrbitsSize, &edgeOrbitCount, i, k);
+                    break;
+                    //the list of edges doesn't contain any duplicates so we can stop
+                }
+            }
+        }
+    }
+    
+    //make sure that each element is connected to its root
+    for(i = 0; i < nv; i++){
+        findRootOfElement(vertexOrbits, i);
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 void writeNumbering() {
@@ -551,6 +610,31 @@ void writeVertexOrbits() {
             for(j = i + 1; j < nv; j++){
                 if(vertexOrbits[j] == i){
                     fprintf(stdout, ", %d", j + 1);
+                }
+            }
+            fprintf(stdout, "\n");
+        }
+    }
+}
+
+void writeEdgeOrbits() {
+    int i, j, count;
+    
+    if(automorphismsCount == 1){
+        fprintf(stdout, "Graph has trivial symmetry, so each edge corresponds to an orbit.\n");
+        return;
+    }
+
+    fprintf(stdout, "Edge orbits:\n");
+    
+    count = 0;
+    for (i = 0; i < ne/2; i++) {
+        if(edgeOrbits[i] == i){
+            count++;
+            fprintf(stdout, "   Orbit %d: %d-%d", count, undirectedEdges[i][0]+1, undirectedEdges[i][1]+1);
+            for(j = i + 1; j < ne/2; j++){
+                if(edgeOrbits[j] == i){
+                    fprintf(stdout, ", %d-%d", undirectedEdges[j][0]+1, undirectedEdges[j][1]+1);
                 }
             }
             fprintf(stdout, "\n");
@@ -682,11 +766,39 @@ void writeVertexOrbitsLatex() {
     }
 }
 
+void writeEdgeOrbitsLatex() {
+    int i, j, count;
+    
+    if(automorphismsCount == 1){
+        fprintf(stdout, "Graph has trivial symmetry, so each edge corresponds to an orbit.\\\\\n");
+        return;
+    }
+
+    fprintf(stdout, "Edge orbits:\\\\\n");
+    
+    count = 0;
+    for (i = 0; i < ne/2; i++) {
+        if(edgeOrbits[i] == i){
+            count++;
+            fprintf(stdout, "\\ \\  Orbit %d: %d-%d", count, undirectedEdges[i][0]+1, undirectedEdges[i][1]+1);
+            for(j = i + 1; j < ne/2; j++){
+                if(edgeOrbits[j] == i){
+                    fprintf(stdout, ", %d-%d", undirectedEdges[j][0]+1, undirectedEdges[j][1]+1);
+                }
+            }
+            fprintf(stdout, "\\\\\n");
+        }
+    }
+}
+
 void writeStatistics() {
     if(automorphismInfo || needAutomorphisms){
         calculateAutomorphismGroup();
         if(vertexOrbitInfo){
             determineVertexOrbits();
+        }
+        if(edgeOrbitInfo){
+            determineEdgeOrbits();
         }
     }
     if(latex){
@@ -699,6 +811,9 @@ void writeStatistics() {
         if(vertexOrbitInfo){
             writeVertexOrbitsLatex();
         }
+        if(edgeOrbitInfo){
+            writeEdgeOrbitsLatex();
+        }
 
         fprintf(stdout, "\\\\\n");
     } else {
@@ -710,6 +825,9 @@ void writeStatistics() {
         writeFaceSizeVector();
         if(vertexOrbitInfo){
             writeVertexOrbits();
+        }
+        if(edgeOrbitInfo){
+            writeEdgeOrbits();
         }
 
         fprintf(stdout, "\n");
@@ -976,6 +1094,8 @@ void help(char *name) {
     fprintf(stderr, "       Give information about the automorphism group of the graphs.\n");
     fprintf(stderr, "    -V, --vertex-orbits\n");
     fprintf(stderr, "       Give an overview of the vertex orbits.\n");
+    fprintf(stderr, "    -E, --edge-orbits\n");
+    fprintf(stderr, "       Give an overview of the (undirected) edge orbits.\n");
 }
 
 void usage(char *name) {
@@ -996,11 +1116,12 @@ int main(int argc, char *argv[]) {
         {"summary", no_argument, NULL, 's'},
         {"filter", required_argument, NULL, 'f'},
         {"automorphisms", no_argument, NULL, 'a'},
-        {"vertex-orbits", no_argument, NULL, 'V'}
+        {"vertex-orbits", no_argument, NULL, 'V'},
+        {"edge-orbits", no_argument, NULL, 'E'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsf:aV", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hsf:aVE", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -1020,6 +1141,10 @@ int main(int argc, char *argv[]) {
             case 'V':
                 needAutomorphisms = TRUE;
                 vertexOrbitInfo = TRUE;
+                break;
+            case 'E':
+                needAutomorphisms = TRUE;
+                edgeOrbitInfo = TRUE;
                 break;
             case '?':
                 usage(name);
