@@ -959,18 +959,19 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 //====================== USAGE =======================
 
 void help(char *name) {
-    fprintf(stderr, "The program %s generates a summary of planar graphs.\n\n", name);
+    fprintf(stderr, "The program %s generates an overview of some statistics for the plane\n", name);
+    fprintf(stderr, "graphs read from standard in.\n\n");
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options]\n\n", name);
-    fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
-    fprintf(stderr, "graphs.\n\n");
+    fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile with a greater\n", MAXN);
+    fprintf(stderr, "value for MAXN if you need larger graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
-    fprintf(stderr, "    -t, --total\n");
-    fprintf(stderr, "       Include totals at the end.\n");
+    fprintf(stderr, "    -s, --summary\n");
+    fprintf(stderr, "       Include a summary at the end.\n");
     fprintf(stderr, "    -f, --filter number\n");
-    fprintf(stderr, "       Only print summary for the graph with the given number.\n");
+    fprintf(stderr, "       Only print information for the graph with the given number.\n");
     fprintf(stderr, "    -a, --automorphisms\n");
     fprintf(stderr, "       Give information about the automorphism group of the graphs.\n");
     fprintf(stderr, "    -V, --vertex-orbits\n");
