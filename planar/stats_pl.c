@@ -82,6 +82,8 @@ int latex = FALSE;
 int numberOfGraphs = 0;
 int reportsWritten = 0;
 
+boolean automorphismInfo = FALSE; 
+
 int nv;
 int ne;
 int nf;
@@ -368,9 +370,11 @@ void writeData() {
     fprintf(stdout, "Number of vertices: %d\n", nv);
     fprintf(stdout, "Number of edges: %d\n", ne/2);
     fprintf(stdout, "Number of faces: %d\n", nf);
-    fprintf(stdout, "Number of automorphisms: %d\n", automorphismsCount);
-    fprintf(stdout, "Number of orientation preserving automorphisms: %d\n", automorphismsCount - orientationReversingAutomorphismsCount);
-    fprintf(stdout, "Number of orientation reversing automorphisms: %d\n", orientationReversingAutomorphismsCount);
+    if(automorphismInfo){
+        fprintf(stdout, "Number of automorphisms: %d\n", automorphismsCount);
+        fprintf(stdout, "Number of orientation preserving automorphisms: %d\n", automorphismsCount - orientationReversingAutomorphismsCount);
+        fprintf(stdout, "Number of orientation reversing automorphisms: %d\n", orientationReversingAutomorphismsCount);
+    }
 }
 
 void writeDegreeSequence() {
@@ -465,10 +469,11 @@ void writeDataLatex() {
     fprintf(stdout, "Number of vertices: %d\\\\\n", nv);
     fprintf(stdout, "Number of edges: %d\\\\\n", ne/2);
     fprintf(stdout, "Number of faces: %d\\\\\n", nf);
-    fprintf(stdout, "Number of automorphisms: %d\\\\\n", automorphismsCount);
-    fprintf(stdout, "Number of orientation preserving automorphisms: %d\\\\\n", automorphismsCount - orientationReversingAutomorphismsCount);
-    fprintf(stdout, "Number of orientation reversing automorphisms: %d\\\\\n", orientationReversingAutomorphismsCount);
-
+    if(automorphismInfo){
+        fprintf(stdout, "Number of automorphisms: %d\\\\\n", automorphismsCount);
+        fprintf(stdout, "Number of orientation preserving automorphisms: %d\\\\\n", automorphismsCount - orientationReversingAutomorphismsCount);
+        fprintf(stdout, "Number of orientation reversing automorphisms: %d\\\\\n", orientationReversingAutomorphismsCount);
+    }
 }
 
 void writeDegreeSequenceLatex() {
@@ -556,7 +561,9 @@ void writeFaceSizeVectorLatex() {
 }
 
 void writeStatistics() {
-    calculateAutomorphismGroup();
+    if(automorphismInfo){
+        calculateAutomorphismGroup();
+    }
     if(latex){
         if(includeNumbering) writeNumberingLatex();
         writeDataLatex();
@@ -833,6 +840,8 @@ void help(char *name) {
     fprintf(stderr, "       Include totals at the end.\n");
     fprintf(stderr, "    -f, --filter number\n");
     fprintf(stderr, "       Only print summary for the graph with the given number.\n");
+    fprintf(stderr, "    -a, --automorphisms\n");
+    fprintf(stderr, "       Give information about the automorphism group of the graphs.\n");
 }
 
 void usage(char *name) {
@@ -851,11 +860,12 @@ int main(int argc, char *argv[]) {
         {"numbering", no_argument, &includeNumbering, TRUE},
         {"help", no_argument, NULL, 'h'},
         {"summary", no_argument, NULL, 's'},
-        {"filter", required_argument, NULL, 'f'}
+        {"filter", required_argument, NULL, 'f'},
+        {"automorphisms", no_argument, NULL, 'a'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsf:", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hsf:a", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -868,6 +878,9 @@ int main(int argc, char *argv[]) {
             case 'f':
                 filterOnly = atoi(optarg);
                 filterEnabled = TRUE;
+                break;
+            case 'a':
+                automorphismInfo = TRUE;
                 break;
             case '?':
                 usage(name);
