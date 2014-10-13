@@ -82,12 +82,19 @@ int latex = FALSE;
 int numberOfGraphs = 0;
 int reportsWritten = 0;
 
-boolean automorphismInfo = FALSE; 
+boolean automorphismInfo = FALSE;
+boolean needAutomorphisms = FALSE;
+boolean vertexOrbitInfo = FALSE;
+
+int vertexOrbits[MAXN];
+int vertexOrbitsSize[MAXN];
+int vertexOrbitCount;
 
 int nv;
 int ne;
 int nf;
 
+int automorphisms[2*MAXE][MAXN]; //there are at most 2e automorphisms (e = #arcs)
 int automorphismsCount;
 int orientationPreservingAutomorphismsCount;
 int orientationReversingAutomorphismsCount;
@@ -274,6 +281,12 @@ int hasBetterCertificateOrientationPreserving(EDGE *eStart){
         }
         currentPos++;
     }
+    if(needAutomorphisms){
+        for(j = 0; j < nv; j++){
+            automorphisms[automorphismsCount][j] 
+                    = reverseCanonicalLabelling[alternateLabelling[j]];
+        }
+    }
     automorphismsCount++;
     orientationPreservingAutomorphismsCount++;
     return 0;
@@ -320,6 +333,12 @@ int hasBetterCertificateOrientationReversing(EDGE *eStart){
         }
         currentPos++;
     }
+    if(needAutomorphisms){
+        for(j = 0; j < nv; j++){
+            automorphisms[automorphismsCount][j] 
+                    = reverseCanonicalLabelling[alternateLabelling[j]];
+        }
+    }
     if(hasChiralGroup){
         orientationPreservingAutomorphismsCount++;
     } else {
@@ -357,6 +376,59 @@ void calculateAutomorphismGroup(){
                                 orientationReversingStartingEdges[i]);
         //if result == 1, then the counts are already reset and the new certificate is stored
         //if result == 0, then the automorphism is already stored
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////////
+
+int findRootOfElement(int forest[], int element) {
+    //find with path-compression
+    if(element!=forest[element]){
+        forest[element]=findRootOfElement(forest, forest[element]);
+    }
+    return forest[element];
+}
+
+void unionElements(int forest[], int treeSizes[], int *numberOfComponents, int element1, int element2){
+    int root1 = findRootOfElement(forest, element1);
+    int root2 = findRootOfElement(forest, element2);
+
+    if(root1==root2) return;
+
+    if(treeSizes[root1]<treeSizes[root2]){
+        forest[root1]=root2;
+        treeSizes[root2]+=treeSizes[root1];
+    } else {
+        forest[root2]=root1;
+        treeSizes[root1]+=treeSizes[root2];
+    }
+    (*numberOfComponents)--;
+}
+
+void determineVertexOrbits(){
+    int i, j;
+    
+    for(i = 0; i < MAXN; i++){
+        vertexOrbits[i] = i;
+        vertexOrbitsSize[i] = 1;
+    }
+    vertexOrbitCount = nv;
+    
+    if(automorphismsCount == 1){
+        return; //trivial symmetry
+    }
+    
+    //we skip the first automorphism since this always corresponds to the identity
+    for(j = 1; j < automorphismsCount; j++){
+        for(i = 0; i < nv; i++){
+            unionElements(vertexOrbits, vertexOrbitsSize, &vertexOrbitCount,
+                    i, automorphisms[j][i]);
+        }
+    }
+    
+    //make sure that each element is connected to its root
+    for(i = 0; i < nv; i++){
+        findRootOfElement(vertexOrbits, i);
     }
 }
 
@@ -461,6 +533,31 @@ void writeFaceSizeVector() {
     fprintf(stdout, "\n");
 }
 
+void writeVertexOrbits() {
+    int i, j, count;
+    
+    if(automorphismsCount == 1){
+        fprintf(stdout, "Graph has trivial symmetry, so each vertex corresponds to an orbit.\n");
+        return;
+    }
+
+    fprintf(stdout, "Vertex orbits:\n");
+    
+    count = 0;
+    for (i = 0; i < nv; i++) {
+        if(vertexOrbits[i] == i){
+            count++;
+            fprintf(stdout, "   Orbit %d: %d", count, i+1);
+            for(j = i + 1; j < nv; j++){
+                if(vertexOrbits[j] == i){
+                    fprintf(stdout, ", %d", j + 1);
+                }
+            }
+            fprintf(stdout, "\n");
+        }
+    }
+}
+
 void writeNumberingLatex() {
     fprintf(stdout, "\\section*{Graph %d}\n", numberOfGraphs);
 }
@@ -560,9 +657,37 @@ void writeFaceSizeVectorLatex() {
     fprintf(stdout, "\\\\\n");
 }
 
+void writeVertexOrbitsLatex() {
+    int i, j, count;
+    
+    if(automorphismsCount == 1){
+        fprintf(stdout, "Graph has trivial symmetry, so each vertex corresponds to an orbit.\\\\\n");
+        return;
+    }
+
+    fprintf(stdout, "Vertex orbits:\\\\\n");
+    
+    count = 0;
+    for (i = 0; i < nv; i++) {
+        if(vertexOrbits[i] == i){
+            count++;
+            fprintf(stdout, "\\ \\  Orbit %d: %d", count, i+1);
+            for(j = i + 1; j < nv; j++){
+                if(vertexOrbits[j] == i){
+                    fprintf(stdout, ", %d", j + 1);
+                }
+            }
+            fprintf(stdout, "\\\\\n");
+        }
+    }
+}
+
 void writeStatistics() {
-    if(automorphismInfo){
+    if(automorphismInfo || needAutomorphisms){
         calculateAutomorphismGroup();
+        if(vertexOrbitInfo){
+            determineVertexOrbits();
+        }
     }
     if(latex){
         if(includeNumbering) writeNumberingLatex();
@@ -571,6 +696,9 @@ void writeStatistics() {
         writeDegreeVectorLatex();
         writeFaceSizeSequenceLatex();
         writeFaceSizeVectorLatex();
+        if(vertexOrbitInfo){
+            writeVertexOrbitsLatex();
+        }
 
         fprintf(stdout, "\\\\\n");
     } else {
@@ -580,6 +708,9 @@ void writeStatistics() {
         writeDegreeVector();
         writeFaceSizeSequence();
         writeFaceSizeVector();
+        if(vertexOrbitInfo){
+            writeVertexOrbits();
+        }
 
         fprintf(stdout, "\n");
     }
@@ -842,6 +973,8 @@ void help(char *name) {
     fprintf(stderr, "       Only print summary for the graph with the given number.\n");
     fprintf(stderr, "    -a, --automorphisms\n");
     fprintf(stderr, "       Give information about the automorphism group of the graphs.\n");
+    fprintf(stderr, "    -V, --vertex-orbits\n");
+    fprintf(stderr, "       Give an overview of the vertex orbits.\n");
 }
 
 void usage(char *name) {
@@ -861,11 +994,12 @@ int main(int argc, char *argv[]) {
         {"help", no_argument, NULL, 'h'},
         {"summary", no_argument, NULL, 's'},
         {"filter", required_argument, NULL, 'f'},
-        {"automorphisms", no_argument, NULL, 'a'}
+        {"automorphisms", no_argument, NULL, 'a'},
+        {"vertex-orbits", no_argument, NULL, 'V'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsf:a", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hsf:aV", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -881,6 +1015,10 @@ int main(int argc, char *argv[]) {
                 break;
             case 'a':
                 automorphismInfo = TRUE;
+                break;
+            case 'V':
+                needAutomorphisms = TRUE;
+                vertexOrbitInfo = TRUE;
                 break;
             case '?':
                 usage(name);
