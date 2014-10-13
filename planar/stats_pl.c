@@ -492,8 +492,8 @@ void determineEdgeOrbits(){
     }
     
     //make sure that each element is connected to its root
-    for(i = 0; i < nv; i++){
-        findRootOfElement(vertexOrbits, i);
+    for(i = 0; i < ne/2; i++){
+        findRootOfElement(edgeOrbits, i);
     }
 }
 
