@@ -647,33 +647,57 @@ int readPlanarCode(unsigned short code[], int *length, FILE *file) {
 void help(char *name) {
     fprintf(stderr, "The program %s filters plane graphs based on the size of the\nautomorphism group.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
-    fprintf(stderr, " %s [options] s\n\n", name);
+    fprintf(stderr, " %s [options] s\n", name);
+    fprintf(stderr, " %s [-n/-p/-r]\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -n, --non-trivial\n");
+    fprintf(stderr, "       Filter out the graphs that have a non-trivial automorphism group.\n");
+    fprintf(stderr, "    -p, --orientation-preserving\n");
+    fprintf(stderr, "       Filter out the graphs that have no orientation-reversing automorphisms.\n");
+    fprintf(stderr, "    -r, --orientation-reversing\n");
+    fprintf(stderr, "       Filter out the graphs that have orientation-reversing automorphisms.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
 
 void usage(char *name) {
     fprintf(stderr, "Usage: %s [options] s\n", name);
+    fprintf(stderr, "       %s [-n/-p/-r]\n", name);
     fprintf(stderr, "For more information type: %s -h \n\n", name);
 }
 
 int main(int argc, char *argv[]) {
+    
+    boolean nonTrivial = FALSE;
+    boolean orientationPreserving = FALSE;
+    boolean orientationReversing = FALSE;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"non-trivial", no_argument, NULL, 'n'},
+        {"orientation-preserving", no_argument, NULL, 'p'},
+        {"orientation-reversing", no_argument, NULL, 'r'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "nprh", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
+                break;
+            case 'n':
+                nonTrivial = TRUE;
+                break;
+            case 'p':
+                orientationPreserving = TRUE;
+                break;
+            case 'r':
+                orientationReversing = TRUE;
                 break;
             case 'h':
                 help(name);
@@ -688,13 +712,23 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    if (argc - optind != 1) {
+    if (argc - optind > 1) {
+        usage(name);
+        return EXIT_FAILURE;
+    } else if (nonTrivial || orientationPreserving || orientationReversing){
+        if(argc != optind || (nonTrivial + orientationPreserving + orientationReversing > 1)){
+            usage(name);
+            return EXIT_FAILURE;
+        }
+    } else if (argc == optind) {
         usage(name);
         return EXIT_FAILURE;
     }
     
     int size = 0;
-    size = atoi(argv[optind]);
+    if(!(nonTrivial || orientationPreserving || orientationReversing)){
+        size = atoi(argv[optind]);
+    }
     
     
     /*=========== read planar graphs ===========*/
@@ -705,7 +739,21 @@ int main(int argc, char *argv[]) {
         decodePlanarCode(code);
         numberOfGraphs++;
         calculateAutomorphismGroup();
+        
+        boolean filterGraph = FALSE;
         if(automorphismsCount == size){
+            filterGraph = TRUE;
+        } else if(nonTrivial && automorphismsCount > 1) {
+            filterGraph = TRUE;
+        } else if(orientationPreserving && 
+                orientationReversingAutomorphismsCount == 0){
+            filterGraph = TRUE;
+        } else if(orientationReversing && 
+                orientationReversingAutomorphismsCount > 0){
+            filterGraph = TRUE;
+        }
+        
+        if(filterGraph){
             writePlanarCode();
             filteredGraphs++;
         }
