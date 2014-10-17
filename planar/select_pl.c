@@ -342,6 +342,8 @@ void help(char *name) {
     fprintf(stderr, "    are read from the file provided and not from stdin. Instead the numbers of\n");
     fprintf(stderr, "    the graphs that should be filtered are read from stdin. The numbers should\n");
     fprintf(stderr, "    be given in ascending order and at least one number should be given.\n");
+    fprintf(stderr, " --skip-remainder\n");
+    fprintf(stderr, "    Immediately return after filtering the last graph.\n");
     fprintf(stderr, " -h, --help\n");
     fprintf(stderr, "    Print this help and return.\n");
 }
@@ -360,6 +362,8 @@ int main(int argc, char** argv) {
     
     boolean fromFile = FALSE;
     char *fromFile_fileName = NULL;
+
+    boolean skipRemainder = FALSE;
     
     boolean moduloEnabled = FALSE;
     int moduloRest;
@@ -370,6 +374,7 @@ int main(int argc, char** argv) {
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"skip-remainder", no_argument, NULL, 0},
         {"modulo", required_argument, NULL, 'm'},
         {"from-file", required_argument, NULL, 'F'},
         {"help", no_argument, NULL, 'h'}
@@ -378,6 +383,16 @@ int main(int argc, char** argv) {
 
     while ((c = getopt_long(argc, argv, "hm:F:", long_options, &option_index)) != -1) {
         switch (c) {
+            case 0:
+                switch (option_index) {
+                    case 0:
+                        skipRemainder = TRUE;
+                        break;
+                    default:
+                        fprintf(stderr, "Illegal option index %d.\n", option_index);
+                        usage(name);
+                        return EXIT_FAILURE;
+                }
             case 'm':
                 moduloEnabled = TRUE;
                 if(sscanf(optarg, "%d:%d", &moduloRest, &moduloMod)!=2){
@@ -474,6 +489,10 @@ int main(int argc, char** argv) {
                         fprintf(stderr, "Numbers should be given in ascending order -- exiting!");
                         return EXIT_FAILURE;
                     }
+                } else if(skipRemainder) {
+                    //last graph was filtered
+                    //skipping remainder
+                    break;
                 } else {
                     //no graphs left to filter
                     nextGraph = -1;
