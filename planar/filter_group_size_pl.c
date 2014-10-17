@@ -658,6 +658,8 @@ void help(char *name) {
     fprintf(stderr, "       Filter out the graphs that have no orientation-reversing automorphisms.\n");
     fprintf(stderr, "    -r, --orientation-reversing\n");
     fprintf(stderr, "       Filter out the graphs that have orientation-reversing automorphisms.\n");
+    fprintf(stderr, "    -N, --numbers\n");
+    fprintf(stderr, "       Instead of outputting the graphs, just output their numbers.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -673,6 +675,7 @@ int main(int argc, char *argv[]) {
     boolean nonTrivial = FALSE;
     boolean orientationPreserving = FALSE;
     boolean orientationReversing = FALSE;
+    boolean numbers = FALSE;
 
     /*=========== commandline parsing ===========*/
 
@@ -682,11 +685,12 @@ int main(int argc, char *argv[]) {
         {"non-trivial", no_argument, NULL, 'n'},
         {"orientation-preserving", no_argument, NULL, 'p'},
         {"orientation-reversing", no_argument, NULL, 'r'},
+        {"numbers", no_argument, NULL, 'N'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "nprh", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "nprhN", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -698,6 +702,9 @@ int main(int argc, char *argv[]) {
                 break;
             case 'r':
                 orientationReversing = TRUE;
+                break;
+            case 'N':
+                numbers = TRUE;
                 break;
             case 'h':
                 help(name);
@@ -754,7 +761,11 @@ int main(int argc, char *argv[]) {
         }
         
         if(filterGraph){
-            writePlanarCode();
+            if(numbers){
+                fprintf(stdout, "%d\n", numberOfGraphs);
+            } else {
+                writePlanarCode();
+            }
             filteredGraphs++;
         }
     }
