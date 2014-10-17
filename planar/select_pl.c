@@ -330,12 +330,18 @@ void help(char *name) {
     fprintf(stderr, "The program %s filters specified planar graphs from a file.\n\n", name);
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options] g1 g2 ...\n", name);
-    fprintf(stderr, " %s [options] -m r:m\n\n", name);
+    fprintf(stderr, " %s [options] -m r:m\n", name);
+    fprintf(stderr, " %s [options] -F file\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices.\n", MAXN);
     fprintf(stderr, "Recompile with a larger value for MAXN if you need larger graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
     fprintf(stderr, " -m, --modulo r:m\n");
     fprintf(stderr, "    Split the input into m parts and only output part r (0<=r<m).\n");
+    fprintf(stderr, " -F, --from-file file\n");
+    fprintf(stderr, "    When using the -F option, the behaviour of the program changes. The graphs\n");
+    fprintf(stderr, "    are read from the file provided and not from stdin. Instead the numbers of\n");
+    fprintf(stderr, "    the graphs that should be filtered are read from stdin. The numbers should\n");
+    fprintf(stderr, "    be given in ascending order and at least one number should be given.\n");
     fprintf(stderr, " -h, --help\n");
     fprintf(stderr, "    Print this help and return.\n");
 }
@@ -343,6 +349,7 @@ void help(char *name) {
 void usage(char *name) {
     fprintf(stderr, "Usage: %s [options] g1 g2 ...\n", name);
     fprintf(stderr, "       %s -m r:m\n", name);
+    fprintf(stderr, "       %s -F file\n", name);
     fprintf(stderr, "For more information type: %s -h \n\n", name);
 }
 
@@ -350,6 +357,9 @@ int main(int argc, char** argv) {
     
     unsigned long long int graphsRead = 0;
     int graphsFiltered = 0;
+    
+    boolean fromFile = FALSE;
+    char *fromFile_fileName = NULL;
     
     boolean moduloEnabled = FALSE;
     int moduloRest;
@@ -361,11 +371,12 @@ int main(int argc, char** argv) {
     char *name = argv[0];
     static struct option long_options[] = {
         {"modulo", required_argument, NULL, 'm'},
+        {"from-file", required_argument, NULL, 'F'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hm:", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hm:F:", long_options, &option_index)) != -1) {
         switch (c) {
             case 'm':
                 moduloEnabled = TRUE;
@@ -374,6 +385,10 @@ int main(int argc, char** argv) {
                     usage(name);
                     return EXIT_FAILURE;
                 }
+                break;
+            case 'F':
+                fromFile = TRUE;
+                fromFile_fileName = optarg;
                 break;
             case 'h':
                 help(name);
@@ -388,35 +403,82 @@ int main(int argc, char** argv) {
         }
     }
         
-    if (argc - optind == 0 && !moduloEnabled) {
+    if (argc - optind == 0 && !(moduloEnabled || fromFile)) {
         usage(name);
         return EXIT_FAILURE;
-    } else if(argc - optind > 0 && moduloEnabled){
+    } else if(argc - optind > 0 && (moduloEnabled || fromFile)) {
+        usage(name);
+        return EXIT_FAILURE;
+    } else if(moduloEnabled && fromFile) {
         usage(name);
         return EXIT_FAILURE;
     }
     
-    int i;
-    int selectedGraphs[argc - optind];
-    for (i = 0; i < argc - optind; i++){
-        selectedGraphs[i] = atoi(argv[i + optind]);
-    }
-    
-    unsigned short code[MAXCODELENGTH];
-    int length;
-    while (readPlanarCode(code, &length, stdin)) {
-        graphsRead++;
-        
-        if(moduloEnabled){
-            if(graphsRead % moduloMod == moduloRest){
+    if(!fromFile){
+        int i;
+        int selectedGraphs[argc - optind];
+        for (i = 0; i < argc - optind; i++){
+            selectedGraphs[i] = atoi(argv[i + optind]);
+        }
+
+        unsigned short code[MAXCODELENGTH];
+        int length;
+        while (readPlanarCode(code, &length, stdin)) {
+            graphsRead++;
+
+            if(moduloEnabled){
+                if(graphsRead % moduloMod == moduloRest){
+                    decodePlanarCode(code);
+                    graphsFiltered++;
+                    writePlanarCode();
+                }
+            } else if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
                 decodePlanarCode(code);
                 graphsFiltered++;
                 writePlanarCode();
             }
-        } else if (graphsFiltered < argc - optind && (graphsRead == selectedGraphs[graphsFiltered])) {
-            decodePlanarCode(code);
-            graphsFiltered++;
-            writePlanarCode();
+        }
+    } else {
+        //open file containing graphs
+        FILE *graphsIn = fopen(fromFile_fileName, "r");
+        
+        if(graphsIn == NULL){
+            fprintf(stderr, "Could not open %s to read graphs -- exiting!\n", fromFile_fileName);
+            return EXIT_FAILURE;
+        }
+        
+        char line[20];
+        int nextGraph = -1;
+        if(fgets(line, sizeof(line), stdin)){
+            nextGraph = atoi(line);
+        } else {
+            fprintf(stderr, "Unexpected end of file while reading graph numbers -- exiting!\n");
+            usage(name);
+            return EXIT_FAILURE;
+        }
+        
+        
+        unsigned short code[MAXCODELENGTH];
+        int length;
+        while (readPlanarCode(code, &length, graphsIn)) {
+            graphsRead++;
+
+            if (graphsRead == nextGraph) {
+                decodePlanarCode(code);
+                graphsFiltered++;
+                writePlanarCode();
+                //read number of next graph
+                if(fgets(line, sizeof(line), stdin)){
+                    nextGraph = atoi(line);
+                    if(nextGraph < graphsRead){
+                        fprintf(stderr, "Numbers should be given in ascending order -- exiting!");
+                        return EXIT_FAILURE;
+                    }
+                } else {
+                    //no graphs left to filter
+                    nextGraph = -1;
+                }
+            }
         }
     }
     
