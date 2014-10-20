@@ -150,7 +150,7 @@ void findStartingEdges(){
     }
     
     //build the frequency table of face sizes incident to a vertex with startingDegree
-    for(i = 0; i < MAXN; i++){
+    for(i = 0; i < nv; i++){
         if(degree[i] == startingDegree){
             start = edge = firstedge[i];
             
@@ -171,7 +171,7 @@ void findStartingEdges(){
     }
     
     //store all starting edges
-    for(i = 0; i < MAXN; i++){
+    for(i = 0; i < nv; i++){
         if(degree[i] == startingDegree){
             start = edge = firstedge[i];
             
