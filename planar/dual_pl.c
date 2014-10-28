@@ -118,7 +118,7 @@ void writeDualEdgeCode(){
     int i, counter=0;
     EDGE *e, *elast;
     
-    if(first){
+    if(first && !writeOriginal){
         first = FALSE;
         
         fprintf(stdout, ">>edge_code<<");
@@ -205,7 +205,7 @@ void writeDualPlanarCodeShort(){
 void writeDualPlanarCode(){
     static int first = TRUE;
     
-    if(first){
+    if(first && !writeOriginal){
         first = FALSE;
         
         fprintf(stdout, ">>planar_code<<");
