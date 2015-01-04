@@ -25,3 +25,13 @@ This repository is organised as follows:
 * **planar**: programs to work with plane graphs in planarcode format
 * **signed**: programs to work with signed graphs in signedcode format
 * **visualise**: programs to construct images of graphs
+
+Naming conventions for programs
+-------------------------------
+
+When the programs are built, all programs are put together in a single directory. There are some naming conventions to make it easier to find the correct program:
+
+* **name starts with _multi\__**: this program operates on graphs in multicode format
+* **name ends with _\_pl_**: this program operates on plane graphs in planarcode format
+* **name starts with _signed\__**: this program operates on signed graphs in signedcode format
+* **name starts with _cubic\__**: this program operates on cubic graphs in multicode format
