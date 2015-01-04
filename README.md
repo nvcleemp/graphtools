@@ -39,7 +39,7 @@ When the programs are built, all programs are put together in a single directory
 File formats
 ------------
 
-### multicode format
+### The multicode format
 
 Any filename is allowed, but the convention is to use the extension `.mc`, `.multicode` or `.code`.
 The file starts with a header this header is one of `>>multi_code<<`, `>>multi_code le<<` or `>>multi_code be<<`.
@@ -58,3 +58,7 @@ but now each entry consists of two bytes instead of one byte.
 These two-byte-numbers are in little endian or big endian depending on the header of the file.
 
 In both cases, after the last entry the following graph follows immediately.
+
+### Old-style files
+
+For each of the previous file formats there also exists an old-style format. These old-style formats are exactly the same except that they do not include the header. Note that without the header it becomes very difficult to know which code a file contains if the file does not have a 'well-chosen' name. At the moment most programs in this repository do not support the old-style formats.
