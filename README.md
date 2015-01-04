@@ -35,3 +35,26 @@ When the programs are built, all programs are put together in a single directory
 * **name ends with _\_pl_**: this program operates on plane graphs in planarcode format
 * **name starts with _signed\__**: this program operates on signed graphs in signedcode format
 * **name starts with _cubic\__**: this program operates on cubic graphs in multicode format
+
+File formats
+------------
+
+### multicode format
+
+Any filename is allowed, but the convention is to use the extension `.mc`, `.multicode` or `.code`.
+The file starts with a header this header is one of `>>multi_code<<`, `>>multi_code le<<` or `>>multi_code be<<`.
+The first two headers mean that little endian is used, the third that big endian is being used (see later).
+If the graph contains less than 255 vertices, then the first entry is the order of the graph.
+Then to each vertex *x* there is a list of neighbours of *x* with higher numbers than *x*.
+The vertices are numbered from 1 to *n* (where *n* is the order of the graph).
+Each list is closed by a zero.
+It is possible that some lists are empty.
+The last list is always empty (no neighbours of n with a higher number than *n*),
+so the last "list" is not followed by a zero.
+
+If the graph contains 255 or more vertices, then the first entry is a zero.
+After that the same format as with the smaller graphs is used,
+but now each entry consists of two bytes instead of one byte.
+These two-byte-numbers are in little endian or big endian depending on the header of the file.
+
+In both cases, after the last entry the following graph follows immediately.
