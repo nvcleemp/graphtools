@@ -59,6 +59,24 @@ These two-byte-numbers are in little endian or big endian depending on the heade
 
 In both cases, after the last entry the following graph follows immediately.
 
+### The planarcode format
+
+Any filename is allowed, but the convention is to use the extension `.pc`, `.plc`, or `.planarcode`.
+The file starts with a header this header is one of `>>planar_code<<`, `>>planar_code le<<` or `>>planar_code be<<`.
+The first two headers mean that little endian is used, the third that big endian is being used (see later).
+If the graph contains less than 255 vertices, then the first entry is the order of the graph.
+Then to each vertex *x* there is a list of neighbours of *x* in their cyclic order around *x*.
+There is no convention about clockwise or counterclockwise, but of course it should be the same for any vertex.
+The vertices are numbered from 1 to *n* (where *n* is the order of the graph).
+Each list is closed by a zero.
+
+If the graph contains 255 or more vertices, then the first entry is a zero.
+After that the same format as with the smaller graphs is used,
+but now each entry consists of two bytes instead of one byte.
+These two-byte-numbers are in little endian or big endian depending on the header of the file.
+
+In both cases, after the last entry the following graph follows immediately.
+
 ### Old-style files
 
 For each of the previous file formats there also exists an old-style format. These old-style formats are exactly the same except that they do not include the header. Note that without the header it becomes very difficult to know which code a file contains if the file does not have a 'well-chosen' name. At the moment most programs in this repository do not support the old-style formats.
