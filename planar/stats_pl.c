@@ -88,6 +88,7 @@ boolean needAutomorphisms = FALSE;
 boolean vertexOrbitInfo = FALSE;
 boolean edgeOrbitInfo = FALSE;
 boolean faceOrbitInfo = FALSE;
+boolean groupedOutput = FALSE;
 
 int vertexOrbits[MAXN];
 int vertexOrbitsSize[MAXN];
@@ -654,6 +655,18 @@ void writeFaceSizeVector() {
     fprintf(stdout, "\n");
 }
 
+void writeFace(FILE *f, int i) {
+    EDGE *e, *eStart;
+    e = eStart = facestart[i];
+    fprintf(f, "%d", e->start + 1);
+    e = e->inverse->prev;
+    while (e!=eStart){
+        fprintf(f, ", %d", e->start + 1);
+        e = e->inverse->prev;
+    }
+    fprintf(f, "\n");
+}
+
 void writeFaces() {
     int i;
     EDGE *e, *eStart;
@@ -739,6 +752,28 @@ void writeFaceOrbits() {
             for(j = i + 1; j < nf; j++){
                 if(faceOrbits[j] == i){
                     fprintf(stdout, ", F%d", j + 1);
+                }
+            }
+            fprintf(stdout, "\n");
+        }
+    }
+}
+
+void writeFaceOrbits_grouped() {
+    int i, j, count;
+
+    fprintf(stdout, "Face orbits:\n");
+    
+    count = 0;
+    for (i = 0; i < nf; i++) {
+        if(faceOrbits[i] == i){
+            count++;
+            fprintf(stdout, "   Orbit %d:\n      F%d) ", count, i + 1);
+            writeFace(stdout, i);
+            for(j = i + 1; j < nf; j++){
+                if(faceOrbits[j] == i){
+                    fprintf(stdout, "      F%d) ", j + 1);
+                    writeFace(stdout, j);
                 }
             }
             fprintf(stdout, "\n");
@@ -845,6 +880,18 @@ void writeFaceSizeVectorLatex() {
     fprintf(stdout, "\\\\\n");
 }
 
+void writeFaceLatex(FILE* f, int i) {
+    EDGE *e, *eStart;
+    e = eStart = facestart[i];
+    fprintf(f, "%d", e->start + 1);
+    e = e->inverse->prev;
+    while (e!=eStart){
+        fprintf(f, ", %d", e->start + 1);
+        e = e->inverse->prev;
+    }
+    fprintf(f, "\\\\\n");
+}
+
 void writeFacesLatex() {
     int i;
     EDGE *e, *eStart;
@@ -937,6 +984,28 @@ void writeFaceOrbitsLatex() {
     }
 }
 
+void writeFaceOrbits_groupedLatex() {
+    int i, j, count;
+
+    fprintf(stdout, "Face orbits:\\\\\n");
+    
+    count = 0;
+    for (i = 0; i < nf; i++) {
+        if(faceOrbits[i] == i){
+            count++;
+            fprintf(stdout, "\\ \\  Orbit %d:\\\\\\ \\ \\ \\ F%d) ", count, i+1);
+            writeFaceLatex(stdout, i);
+            for(j = i + 1; j < nf; j++){
+                if(faceOrbits[j] == i){
+                    fprintf(stdout, "\\ \\ \\ \\ F%d) ", j + 1);
+                    writeFaceLatex(stdout, j);
+                }
+            }
+            fprintf(stdout, "\\\\\n");
+        }
+    }
+}
+
 void writeStatistics() {
     if(automorphismInfo || needAutomorphisms){
         calculateAutomorphismGroup();
@@ -958,7 +1027,9 @@ void writeStatistics() {
         writeFaceSizeSequenceLatex();
         writeFaceSizeVectorLatex();
         if(showFaces){
-            writeFacesLatex();
+            if(!groupedOutput){
+                writeFacesLatex();
+            }
         }
         if(vertexOrbitInfo){
             writeVertexOrbitsLatex();
@@ -967,7 +1038,11 @@ void writeStatistics() {
             writeEdgeOrbitsLatex();
         }
         if(faceOrbitInfo){
-            writeFaceOrbitsLatex();
+            if(groupedOutput){
+                writeFaceOrbits_groupedLatex();
+            } else {
+                writeFaceOrbitsLatex();
+            }
         }
 
         fprintf(stdout, "\\\\\n");
@@ -979,7 +1054,9 @@ void writeStatistics() {
         writeFaceSizeSequence();
         writeFaceSizeVector();
         if(showFaces){
-            writeFaces();
+            if(!groupedOutput){
+                writeFaces();
+            }
         }
         if(vertexOrbitInfo){
             writeVertexOrbits();
@@ -988,7 +1065,11 @@ void writeStatistics() {
             writeEdgeOrbits();
         }
         if(faceOrbitInfo){
-            writeFaceOrbits();
+            if(groupedOutput){
+                writeFaceOrbits_grouped();
+            } else {
+                writeFaceOrbits();
+            }
         }
 
         fprintf(stdout, "\n");
@@ -1259,6 +1340,8 @@ void help(char *name) {
     fprintf(stderr, "       Give an overview of the (undirected) edge orbits.\n");
     fprintf(stderr, "    -F, --face-orbits\n");
     fprintf(stderr, "       Give an overview of the face orbits.\n");
+    fprintf(stderr, "    -g, --grouped\n");
+    fprintf(stderr, "       Print the faces per orbit when using -F.\n");
 }
 
 void usage(char *name) {
@@ -1281,11 +1364,12 @@ int main(int argc, char *argv[]) {
         {"automorphisms", no_argument, NULL, 'a'},
         {"vertex-orbits", no_argument, NULL, 'V'},
         {"edge-orbits", no_argument, NULL, 'E'},
-        {"face-orbits", no_argument, NULL, 'F'}
+        {"face-orbits", no_argument, NULL, 'F'},
+        {"grouped", no_argument, NULL, 'g'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "hsf:aVEF", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hsf:aVEFg", long_options, &option_index)) != -1) {
         switch (c) {
             case 0:
                 break;
@@ -1314,6 +1398,9 @@ int main(int argc, char *argv[]) {
                 needAutomorphisms = TRUE;
                 showFaces = TRUE;
                 faceOrbitInfo = TRUE;
+                break;
+            case 'g':
+                groupedOutput = TRUE;
                 break;
             case '?':
                 usage(name);
