@@ -117,11 +117,12 @@ boolean hasHypoHamiltonianPath(GRAPH graph, ADJACENCY adj){
     }
     
     //just look for a hamiltonian path in all graphs
-    for(i=0; i<=MAXN; i++){
-        currentPath[i] = FALSE;
-    }
-    
     for(v = 1; v <= order; v++){
+        //clear possible previous path
+        for(i=0; i<=MAXN; i++){
+            currentPath[i] = FALSE;
+        }
+        
         currentPath[v] = TRUE;
         //we mark v as visited, so it is as if it got removed
         if(!remainingGraphHasHamiltonianPath(graph, adj, order-1, v)){
