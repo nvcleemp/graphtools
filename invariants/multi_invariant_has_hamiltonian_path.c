@@ -99,7 +99,7 @@ boolean hasHamiltonianPath(GRAPH graph, ADJACENCY adj){
     }
     
     if(minDegree > 1){
-        for(v = 0; v < order-1; v++){
+        for(v = 1; v < order; v++){
             //we try to start the path from each vertex (except the last)
             if(startPath(graph, adj, v, order)){
                 return TRUE;
