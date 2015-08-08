@@ -66,7 +66,7 @@ boolean startPath(GRAPH graph, ADJACENCY adj, int startVertex, int order){
 }
 
 boolean hasHamiltonianPath(GRAPH graph, ADJACENCY adj){
-    int i, j, v;
+    int i, v;
     int order = graph[0][0];
     int minDegree;
     int minDegreeVertex;
