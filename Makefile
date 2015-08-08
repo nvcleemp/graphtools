@@ -74,6 +74,7 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
             build/multi_invariant_hamiltonian_cycles_universal_edges\
             build/multi_invariant_hamiltonian_cycles_uncovered_edges\
             build/multi_invariant_has_hamiltonian_path\
+            build/multi_invariant_has_hypo_hamiltonian_path\
             build/multi_invariant_is_hamiltonian build/multi_invariant_chromatic_number\
             build/multi_invariant_maximum_degree build/multi_invariant_vertex_connectivity\
             build/multi_invariant_number_of_perfect_matchings\
@@ -406,6 +407,12 @@ build/multi_invariant_has_hamiltonian_path: invariants/multi_boolean_invariant.c
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=hasHamiltonianPath -DINVARIANTNAME="has hamiltonian path" $^
+
+build/multi_invariant_has_hypo_hamiltonian_path: invariants/multi_boolean_invariant.c \
+                             invariants/multi_invariant_has_hypo_hamiltonian_path.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DINVARIANT=hasHypoHamiltonianPath -DINVARIANTNAME="has hypo hamiltonian path" $^
 
 build/multi_invariant_is_hamiltonian: invariants/multi_boolean_invariant.c \
                              invariants/multi_invariant_is_hamiltonian.c \
