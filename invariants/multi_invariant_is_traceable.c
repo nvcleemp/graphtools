@@ -6,11 +6,12 @@
  */
 
 /*
- * Computes whether a graph in multicode format has a hamiltonian path
+ * Computes whether a graph in multicode format is traceable (i.e., has a 
+ * hamiltonian path)
  * 
  * Compile like this:
  *     
- *     cc -o multi_invariant_has_hamiltonian_path -O4 -DINVARIANT=hasHamiltonianPath \
+ *     cc -o multi_invariant_is_traceable -O4 -DINVARIANT=isTraceable \
  *     multi_boolean_invariant.c \
  *     ../multicode/shared/multicode_base.c\
  *     ../multicode/shared/multicode_input.c \
@@ -65,7 +66,7 @@ boolean startPath(GRAPH graph, ADJACENCY adj, int startVertex, int order){
     return FALSE;
 }
 
-boolean hasHamiltonianPath(GRAPH graph, ADJACENCY adj){
+boolean isTraceable(GRAPH graph, ADJACENCY adj){
     int i, v;
     int order = graph[0][0];
     int minDegree;

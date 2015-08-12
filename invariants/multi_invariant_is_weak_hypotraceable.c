@@ -6,12 +6,13 @@
  */
 
 /*
- * Computes whether a graph in multicode format has the property that removing any
- * vertex gives a graph containing a hamiltonian path
+ * Computes whether a graph in multicode format is weak hypotraceable (i.e., removing
+ * any vertex gives a traceable graph, but no restriction on the original graph being
+ * traceable or not)
  * 
  * Compile like this:
  *     
- *     cc -o multi_invariant_has_hypo_hamiltonian_path -O4 -DINVARIANT=hasHypoHamiltonianPath \
+ *     cc -o multi_invariant_is_weak_hypotraceable -O4 -DINVARIANT=isWeakHypotraceable \
  *     multi_boolean_invariant.c \
  *     ../multicode/shared/multicode_base.c\
  *     ../multicode/shared/multicode_input.c \
@@ -66,7 +67,7 @@ boolean startPath(GRAPH graph, ADJACENCY adj, int startVertex, int order){
     return FALSE;
 }
 
-boolean remainingGraphHasHamiltonianPath(GRAPH graph, ADJACENCY adj, int remainingOrder, int removedVertex){
+boolean remainingGraphIsTraceable(GRAPH graph, ADJACENCY adj, int remainingOrder, int removedVertex){
     int i;
     
     for(i = 1; i <= remainingOrder; i++){
@@ -80,7 +81,7 @@ boolean remainingGraphHasHamiltonianPath(GRAPH graph, ADJACENCY adj, int remaini
     return FALSE;
 }
 
-boolean hasHypoHamiltonianPath(GRAPH graph, ADJACENCY adj){
+boolean isWeakHypotraceable(GRAPH graph, ADJACENCY adj){
     int i, v;
     int order = graph[0][0];
     int minDegree;
@@ -125,7 +126,7 @@ boolean hasHypoHamiltonianPath(GRAPH graph, ADJACENCY adj){
         
         currentPath[v] = TRUE;
         //we mark v as visited, so it is as if it got removed
-        if(!remainingGraphHasHamiltonianPath(graph, adj, order-1, v)){
+        if(!remainingGraphIsTraceable(graph, adj, order-1, v)){
             return FALSE;
         }
         currentPath[v] = FALSE;
