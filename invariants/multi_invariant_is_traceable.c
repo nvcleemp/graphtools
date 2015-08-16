@@ -48,16 +48,14 @@ boolean continuePath(GRAPH graph, ADJACENCY adj, int last, int remaining) {
 }
 
 boolean startPath(GRAPH graph, ADJACENCY adj, int startVertex, int order){
-    int i, j;
+    int i;
     
     currentPath[startVertex]=TRUE;
     for(i = 1; i < adj[startVertex]; i++){
         currentPath[graph[startVertex][i]]=TRUE;
-        for(j = 0; j < i; j++){
-            //search for path containing the edge (v, graph[v][i])
-            if(continuePath(graph, adj, graph[startVertex][i], order - 2)){
-                return TRUE;
-            }
+        //search for path containing the edge (v, graph[v][i])
+        if(continuePath(graph, adj, graph[startVertex][i], order - 2)){
+            return TRUE;
         }
         currentPath[graph[startVertex][i]]=FALSE;
     }
