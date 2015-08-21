@@ -91,7 +91,7 @@ boolean isTraceableFromVertexIncludingCheckForHamiltonianCycle_vertexDeleted(GRA
     boolean traceable = FALSE;
     
     currentPath[startVertex]=TRUE;
-    for(i = 1; i < adj[startVertex]; i++){
+    for(i = 0; i < adj[startVertex]; i++){
         if(graph[startVertex][i]!=deletedVertex){
             currentPath[graph[startVertex][i]]=TRUE;
             //search for path containing the edge (startVertex, graph[startVertex][i])
@@ -120,7 +120,7 @@ boolean isTraceableFromVertex_vertexDeleted(GRAPH graph, ADJACENCY adj, int star
     currentPath[deletedVertex] = TRUE;
     
     currentPath[startVertex]=TRUE;
-    for(i = 1; i < adj[startVertex]; i++){
+    for(i = 0; i < adj[startVertex]; i++){
         if(graph[startVertex][i]!=deletedVertex){
             currentPath[graph[startVertex][i]]=TRUE;
             //search for path containing the edge (startVertex, graph[startVertex][i])
@@ -221,7 +221,7 @@ boolean isTraceableFromVertexIncludingCheckForHamiltonianCycle(GRAPH graph, ADJA
     boolean traceable = FALSE;
     
     currentPath[startVertex]=TRUE;
-    for(i = 1; i < adj[startVertex]; i++){
+    for(i = 0; i < adj[startVertex]; i++){
         currentPath[graph[startVertex][i]]=TRUE;
         //search for path containing the edge (startVertex, graph[startVertex][i])
         if(continuePathIncludingCheckForHamiltonianCycle(graph, adj, graph[startVertex][i], graph[0][0] - 2, startVertex, foundHamiltonianCycle)){
@@ -246,7 +246,7 @@ boolean isTraceableFromVertex(GRAPH graph, ADJACENCY adj, int startVertex){
     }
     
     currentPath[startVertex]=TRUE;
-    for(i = 1; i < adj[startVertex]; i++){
+    for(i = 0; i < adj[startVertex]; i++){
         currentPath[graph[startVertex][i]]=TRUE;
         //search for path containing the edge (startVertex, graph[startVertex][i])
         if(continuePath(graph, adj, graph[startVertex][i], graph[0][0] - 2)){
