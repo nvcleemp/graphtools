@@ -166,7 +166,7 @@ build/fill_face_pl: planar/fill_face_pl.c
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
-build/show_pl: planar/show_pl.c
+build/show_pl: planar/show_pl.c planar/shared/planar_base.c planar/shared/planar_input.c
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
