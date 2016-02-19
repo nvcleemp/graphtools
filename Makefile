@@ -77,6 +77,7 @@ invariants: build/multi_invariant_order build/multi_invariant_edge_connectivity 
             build/multi_invariant_is_traceable\
             build/multi_invariant_is_weak_hypotraceable\
             build/multi_invariant_is_2_leaf_stable\
+            build/multi_invariant_is_hamiltonian_connected\
             build/multi_invariant_is_hamiltonian build/multi_invariant_chromatic_number\
             build/multi_invariant_maximum_degree build/multi_invariant_vertex_connectivity\
             build/multi_invariant_number_of_perfect_matchings\
@@ -429,6 +430,13 @@ build/multi_invariant_is_2_leaf_stable: invariants/multi_boolean_invariant.c \
                              $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 -DINVARIANT=is2LeafStable -DINVARIANTNAME="2-leaf-stable" $^
+
+
+build/multi_invariant_is_hamiltonian_connected: invariants/multi_boolean_invariant.c \
+                             invariants/multi_invariant_is_hamiltonian_connected.c \
+                             $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 -DINVARIANT=isHamiltonianConnected -DINVARIANTNAME="hamiltonian connected" $^
 
 
 build/multi_invariant_is_hamiltonian: invariants/multi_boolean_invariant.c \
