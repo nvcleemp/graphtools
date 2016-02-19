@@ -84,6 +84,25 @@ void printAdjacencyList(){
     fprintf(stdout, "\n");
 }
 
+void printCode(unsigned short* code) {
+    int i, j, codePosition;
+
+    nv = code[0];
+    codePosition = 1;
+    
+    fprintf(stdout, "%d\n", nv);
+
+    for (i = 0; i < nv; i++) {
+        fprintf(stdout, "%d ", code[codePosition]);
+        codePosition++;
+        for (j = 1; code[codePosition]; j++, codePosition++) {
+            fprintf(stdout, "%d ", code[codePosition]);
+        }
+        fprintf(stdout, "0\n");
+        codePosition++; /* read the closing 0 */
+    }
+}
+
 //=============== Reading and decoding planarcode ===========================
 
 EDGE *findEdge(int from, int to) {
@@ -285,6 +304,8 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices.\n", MAXN);
     fprintf(stderr, "Recompile with a larger value for MAXN if you need larger graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, " -c, --code\n");
+    fprintf(stderr, "    Print a structured form of the planar_code instead of an adjacency list.\n");
     fprintf(stderr, " -h, --help\n");
     fprintf(stderr, "    Print this help and return.\n");
 }
@@ -297,18 +318,23 @@ void usage(char *name) {
 int main(int argc, char** argv) {
     
     int graphsRead = 0;
+    boolean showCode = FALSE;
 
     /*=========== commandline parsing ===========*/
 
     int c;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"code", no_argument, NULL, 'c'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "hc", long_options, &option_index)) != -1) {
         switch (c) {
+            case 'c':
+                showCode = TRUE;
+                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
@@ -325,8 +351,12 @@ int main(int argc, char** argv) {
     unsigned short code[MAXCODELENGTH];
     int length;
     while (readPlanarCode(code, &length, stdin)) {
-        decodePlanarCode(code);
-        printAdjacencyList();
+        if(showCode){
+            printCode(code);
+        } else {
+            decodePlanarCode(code);
+            printAdjacencyList();
+        }
         graphsRead++;
     }
     
