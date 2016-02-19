@@ -1661,6 +1661,11 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Filtering out graphs that %shave one of the following groups:\n", inverted ? "do not " : "");
         printGroupList(stderr, filterList, 0, printItem);
     }
+    
+    //avoid running the program without any output
+    if(!(singleInfo || filterEnabled)){
+        giveSummary = TRUE;
+    }
 
     /*=========== read planar graphs ===========*/
 
