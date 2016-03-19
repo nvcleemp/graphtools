@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
     
     unsigned short *code;
     DEFAULT_PG_INPUT_OPTIONS(options);
-    while (code = readPlanarCode(stdin, &options)) {
+    while ((code = readPlanarCode(stdin, &options))) {
         if(showCode){
             printCode(code);
         } else {

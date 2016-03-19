@@ -7,6 +7,7 @@
 
 #include "planar_input.h"
 #include <stdlib.h>
+#include <string.h>
 
 PLANE_GRAPH *decodePlanarCode(unsigned short* code, PG_INPUT_OPTIONS *options) {
     int i, j, codePosition, nv, maxn;

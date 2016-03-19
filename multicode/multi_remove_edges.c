@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
     
     for (i = 0; i < edgeCount; i++){
         if(sscanf(argv[optind + i], "%d,%d", edgesToRemove[i], edgesToRemove[i]+1)!=2){
-            fprintf(stderr, "Error while reading edges to be removed.\n", c);
+            fprintf(stderr, "Error while reading edges to be removed.\n");
             usage(name);
             return EXIT_FAILURE;
         }

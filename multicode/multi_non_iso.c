@@ -89,7 +89,7 @@ unten += 24; oben += 24;
 
 /**********UMWANDELN****************************************************/
 
-umwandeln(g,nautyg,m)
+void umwandeln(g,nautyg,m)
 
 GRAPH g;
 NAUTYGRAPH nautyg;
@@ -230,7 +230,7 @@ return copy;
 
 /****************************EINFUGEN****************************************/
 
-einfugen (gr,adj,v,w)
+void einfugen (gr,adj,v,w)
 GRAPH gr;
 unsigned char adj[knoten+1];
 unsigned char v, w;
@@ -249,7 +249,7 @@ adj[w]++;
 /**************************DECODIERE*****************************************/
 
 
-decodiere(unsigned char *code,GRAPH graph,ADJAZENZ adj,int codelaenge)
+void decodiere(unsigned char *code,GRAPH graph,ADJAZENZ adj,int codelaenge)
 
 {
 int i,j;
@@ -386,7 +386,8 @@ if (knotenzahl=='>') /* koennte ein header sein -- oder 'ne 62, also ausreichend
 	if ((a=='>') && (b=='m')) /*garantiert header*/
 	  { 
 	    gepuffert=0;
-	    while ((ucharpuffer=getc(fil)) != '<');
+	    while ((ucharpuffer=getc(fil)) != '<')
+            ;
 	    /* noch zweimal: */ ucharpuffer=getc(fil); 
 	    if (ucharpuffer!='<') { fprintf(stderr,"Problems with header -- single '<'\n"); exit(1); }
 	    if ((knotenzahl=getc(fil))==EOF) return EOF;
@@ -417,8 +418,7 @@ return 1;
 
 /******************************MAIN************************************/
 
-
-main(argc,argv)
+int main(argc,argv)
 
 int argc;
 char *argv[];

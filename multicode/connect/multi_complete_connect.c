@@ -111,7 +111,7 @@ int main(int argc, char** argv) {
     }
     
     if (optind == argc) {
-        fprintf(stderr, "Error: number of copies omitted.\n", c);
+        fprintf(stderr, "Error: number of copies omitted.\n");
         usage(name);
         return EXIT_FAILURE;
     }
@@ -124,7 +124,7 @@ int main(int argc, char** argv) {
     
     for (i = 0; i < connectionCount; i++){
         if(sscanf(argv[optind + 1 + i], "%d,%d", connections[i], connections[i]+1)!=2){
-            fprintf(stderr, "Error while reading connections to be made.\n", c);
+            fprintf(stderr, "Error while reading connections to be made.\n");
             usage(name);
             return EXIT_FAILURE;
         }

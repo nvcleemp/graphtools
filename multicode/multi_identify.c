@@ -25,6 +25,8 @@
 #include "shared/multicode_input.h"
 #include "shared/multicode_output.h"
 
+int doFind(int *parents, int element);
+
 void doPathCompress(int *parents, int minimumElement, int maximumElement){
     int i;
     for(i=minimumElement; i<= maximumElement; i++){
@@ -174,7 +176,7 @@ int main(int argc, char** argv) {
         int u;
         int v;
         if(sscanf(argv[optind + i], "%d,%d", &u, &v)!=2){
-            fprintf(stderr, "Error while reading vertices to be identified.\n", c);
+            fprintf(stderr, "Error while reading vertices to be identified.\n");
             usage(name);
             return EXIT_FAILURE;
         }

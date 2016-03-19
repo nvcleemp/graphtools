@@ -100,7 +100,7 @@ void writeGraph(GRAPH g) {
 
 }
 
-main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
     GRAPH graph;
     ADJACENCY adj;
     int graphCount, i;

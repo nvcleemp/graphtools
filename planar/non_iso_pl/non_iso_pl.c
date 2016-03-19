@@ -172,6 +172,9 @@ int elmarks[MAXE+1];
 #define ISMARKED_EL(x) (elmarks[x]==elmarkvalue)
 #define UNMARKED_EL(x) (elmarks[x]!=elmarkvalue)
 
+int comparenodes(short *, int , SPLAYNODE *);
+void outputnode(SPLAYNODE*);
+int hashit(HASHFIELD *, uint32_t *);
 
 #include "splay.c"
 
@@ -700,7 +703,7 @@ return(test);
 
 /*********************OUTPUTNODE***********************************/
 
-outputnode(SPLAYNODE *liste)
+void outputnode(SPLAYNODE *liste)
 
 {
 static char first=1;
@@ -1809,7 +1812,8 @@ if (*type=='p')
    lauf=3;
    /* jetzt wurden 3 Zeichen gelesen */
    if ((code[1]=='>') && (code[2]=='p')) /*garantiert header*/
-     { while ((ucharpuffer=getc(file)) != '<');
+     { while ((ucharpuffer=getc(file)) != '<')
+         ;
      /* noch zweimal: */ ucharpuffer=getc(file); 
      if (ucharpuffer!='<') { fprintf(stderr,"Problems with header -- single '<'\n"); exit(1); }
      if (!fread(&ucharpuffer,sizeof(unsigned char),1,file)) return(0);
@@ -2015,7 +2019,7 @@ void  subdividedubbelandloop(int colour[])
 
 /*******************MAIN********************************/
 
-main(argc,argv)
+int main(argc,argv)
 
 int argc;
 char *argv[];
@@ -2121,7 +2125,7 @@ while (lesecode(code, &lauf, stdin, &codetype))
 
    if (codetype=='p')
      {
-	if (test=check_code(code,neuer_code)) decodiereplanar(code,map,degree);
+	if ((test=check_code(code,neuer_code))) decodiereplanar(code,map,degree);
 	else { decodiereplanar(neuer_code,map,degree); globaltest++; }
 	for (i=1;i<=nv;i++) colour[i]=degree[i];
      }

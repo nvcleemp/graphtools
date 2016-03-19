@@ -8,6 +8,7 @@
 #include "pngtoolkit.h"
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 
 typedef int boolean;
 #define TRUE 1

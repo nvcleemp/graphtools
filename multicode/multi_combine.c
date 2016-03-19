@@ -138,7 +138,7 @@ int main(int argc, char** argv) {
         int g1;
         int g2;
         if(sscanf(argv[optind + i], "%d,%d", &g1, &g2)!=2){
-            fprintf(stderr, "Error while reading vertices to be identified.\n", c);
+            fprintf(stderr, "Error while reading vertices to be identified.\n");
             usage(name);
             return EXIT_FAILURE;
         }

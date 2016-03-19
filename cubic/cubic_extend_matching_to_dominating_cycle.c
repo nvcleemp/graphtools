@@ -260,7 +260,7 @@ int main(int argc, char** argv) {
     
     for (i = 0; i < matchingSize; i++){
         if(sscanf(argv[optind + i], "%d,%d", matchingEdges[i], matchingEdges[i]+1)!=2){
-            fprintf(stderr, "Error while reading matching.\n", c);
+            fprintf(stderr, "Error while reading matching.\n");
             usage(name);
             return EXIT_FAILURE;
         }

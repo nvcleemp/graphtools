@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 
 #include "../multicode/shared/multicode_base.h"
 #include "../multicode/shared/multicode_output.h"
