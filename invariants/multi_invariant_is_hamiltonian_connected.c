@@ -21,7 +21,7 @@
 
 #include "../multicode/shared/multicode_base.h"
 #include <stdio.h>
-#include <malloc.h>
+#include <stdlib.h>
 
 boolean currentPath[MAXN+1];
 int pathSequence[MAXN];

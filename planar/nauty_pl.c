@@ -144,7 +144,7 @@ boolean readPlanarCode(FILE *f){
 
 void help(char *name) {
     fprintf(stderr, "The program %s reads plane graphs and uses nauty to determine the\n", name);
-    fprintf(stderr, "automorphism groups of the underlying graphs.\n", name);
+    fprintf(stderr, "automorphism groups of the underlying graphs.\n");
     fprintf(stderr, "Usage\n=====\n");
     fprintf(stderr, " %s [options]\n\n", name);
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);

@@ -47,7 +47,7 @@ int graphCount = 0;
 /* This method translates the internal data structure to nauty's dense graph
  * data structure, so the graph can be passed to nauty.
  */
-inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
+static inline void translateGraphToNautyDenseGraph(GRAPH graph, ADJACENCY adj){
     int n, i, j;
     
     n = graph[0][0];

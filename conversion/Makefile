@@ -1,6 +1,6 @@
 #### Compiler and tool definitions shared by all build targets #####
 CC = gcc
-BASICOPTS = -O4
+BASICOPTS = -O3
 CFLAGS = $(BASICOPTS)
 
 

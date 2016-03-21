@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
-
+#include <string.h>
 
 #ifndef MAXN
 #define MAXN 64            /* the maximum number of vertices */

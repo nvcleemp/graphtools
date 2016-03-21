@@ -23,7 +23,6 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <string.h>
-#include <malloc.h>
 
 #include "shared/cubic_base.h"
 #include "shared/cubic_input.h"

@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     
     for (i = 0; i < connectionCount; i++){
         if(sscanf(argv[optind + i], "%d,%d", connections[i], connections[i]+1)!=2){
-            fprintf(stderr, "Error while reading edges to be added.\n", c);
+            fprintf(stderr, "Error while reading edges to be added.\n");
             usage(name);
             return EXIT_FAILURE;
         }
