@@ -40,7 +40,8 @@ CUBIC_SHARED = cubic/shared/cubic_base.c cubic/shared/cubic_input.c\
 SIGNED_SHARED = signed/shared/signed_base.c signed/shared/signed_input.c\
                 signed/shared/signed_output.c
 
-all: planar conversion multi visualise embedders invariants cubic signed
+all: planar conversion multi visualise embedders invariants cubic signed\
+     multilib
 
 planar: build/stats_pl build/count_pl build/select_pl \
 	build/split_pl build/nauty_pl build/dual_pl \
@@ -65,6 +66,9 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_suppress_degree_2 build/multi_remove_degree_1\
        build/multi_simplify build/multi_cut_vertices build/multi_biconnected_components\
        build/multi_edge_orbits build/multi_vertex_orbits
+
+multilib: build/headers/multicode_base.h build/headers/multicode_input.h \
+          build/headers/multicode_output.h build/libmultilib.a build/libmultilib-debug.a
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -603,6 +607,49 @@ build/signed_underlying: signed/signed_underlying.c $(SIGNED_SHARED)
 build/signed_has_balanced_hamiltonian_cycle: signed/signed_has_balanced_hamiltonian_cycle.c $(SIGNED_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
+
+build/multicode_base.o: multicode/lib/multicode_base.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -O3 -Wall
+
+build/multicode_input.o: multicode/lib/multicode_input.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -O3 -Wall
+
+build/multicode_output.o: multicode/lib/multicode_output.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -O3 -Wall
+
+build/multicode_base.debug.o: multicode/lib/multicode_base.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -g -Wall
+
+build/multicode_input.debug.o: multicode/lib/multicode_input.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -g -Wall
+
+build/multicode_output.debug.o: multicode/lib/multicode_output.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -g -Wall
+
+build/libmultilib.a: build/multicode_base.o build/multicode_input.o build/multicode_output.o
+	ar rcs $@ $^
+
+build/libmultilib-debug.a: build/multicode_base.debug.o build/multicode_input.debug.o build/multicode_output.debug.o
+	ar rcs $@ $^
+
+build/headers/multicode_base.h: multicode/lib/multicode_base.h
+	mkdir -p build/headers
+	cp $^ $@
+
+build/headers/multicode_input.h: multicode/lib/multicode_input.h
+	mkdir -p build/headers
+	cp $^ $@
+
+build/headers/multicode_output.h: multicode/lib/multicode_output.h
+	mkdir -p build/headers
+	cp $^ $@
+
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
