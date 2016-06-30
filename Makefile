@@ -1,3 +1,4 @@
+include libraries.mk
 
 SOURCES = planar/stats_pl.c planar/count_pl.c planar/select_pl.c\
           planar/split_pl.c planar/dual_pl.c planar/non_iso_pl/non_iso_pl.c\

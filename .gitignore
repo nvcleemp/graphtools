@@ -25,3 +25,6 @@
 
 # nauty library
 nauty/
+
+# File specifying the location of the libraries
+libraries.mk

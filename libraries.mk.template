@@ -1,0 +1,10 @@
+# Copy this file and rename it to libraries.mk
+# Change the value of the variables below so that the 
+# correct headers and libraries can be found during
+# compilation. At the moment this project requires
+# the following libraries:
+# 
+#     1) cprogutil
+
+IFLAGS = -I/path/to/headers
+LFLAGS = -L/path/to/libraries
