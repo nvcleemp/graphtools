@@ -22,17 +22,21 @@ GRAPH *decodeMultiCode(unsigned short* code, GRAPH_INPUT_OPTIONS *options) {
     }
     
     //determine max degree
+    int degrees[vertexCount];
+    for(i = 0; i < vertexCount; i++){
+        degrees[i] = 0;
+    }
     maxval = j = 0;
     i = 1;
     currentVertex = 0;
     while(currentVertex < vertexCount) {
         if (code[i] == 0) {
-            if(j > maxval)
-                maxval = j;
-            j = 0;
+            if(degrees[currentVertex] > maxval)
+                maxval = degrees[currentVertex];
             currentVertex++;
         } else {
-            j++;
+            degrees[currentVertex]++;
+            degrees[code[i]-1]++;
         }
         i++;
     }
