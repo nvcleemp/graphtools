@@ -136,7 +136,7 @@ unsigned short *readPlanarCode(FILE *file, PG_INPUT_OPTIONS *options) {
     if(options->removeInternalHeaders){
         if (fread(&c, sizeof (unsigned char), 1, file) == 0) {
             //nothing left in file
-            return (0);
+            return NULL;
         }
 
         if (c == '>') {
