@@ -232,6 +232,9 @@ unsigned short *readPlanarCode(FILE *file, PG_INPUT_OPTIONS *options) {
 
 PLANE_GRAPH *readAndDecodePlanarCode(FILE *f, PG_INPUT_OPTIONS *options){
     unsigned short *code = readPlanarCode(f, options);
+    if(code==NULL){
+        return NULL;
+    }
     PLANE_GRAPH *pg = decodePlanarCode(code, options);
     free(code);
     return pg;
