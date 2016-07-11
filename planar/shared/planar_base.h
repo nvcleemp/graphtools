@@ -99,5 +99,7 @@ PG_EDGE *findEdge(PLANE_GRAPH *pg, int from, int to);
 
 void clearAllEdgeLabels(PLANE_GRAPH *pg);
 
+PLANE_GRAPH *getDualGraph(PLANE_GRAPH *pg);
+
 #endif	/* PLANAR_BASE_H */
 

@@ -166,3 +166,67 @@ void clearAllEdgeLabels(PLANE_GRAPH *pg){
         pg->edges[i].label = NULL;
     }
 }
+
+PLANE_GRAPH *getDualGraph(PLANE_GRAPH *pg){
+    int i;
+    
+    if(!pg->dualComputed){
+        makeDual(pg);
+    }
+    
+    PLANE_GRAPH *dual = newPlaneGraph(pg->nf, pg->ne);
+    
+    if(dual==NULL){
+        fprintf(stderr, "Insufficient memory to create dual.\n");
+        return NULL;
+    }
+    
+    for(i = 0; i < pg->ne; i++){
+        pg->edges[i].index = i;
+    }
+    
+    dual->nv = pg->nf;
+    dual->ne = pg->ne;
+    dual->nf = pg->nv;
+    
+    for(i = 0; i < pg->ne; i++){
+        dual->edges[i].start = pg->edges[i].rightface;
+        dual->edges[i].end = pg->edges[i].inverse->rightface;
+        dual->edges[i].rightface = pg->edges[i].end;
+        
+        dual->edges[i].inverse = dual->edges + pg->edges[i].inverse->index;
+        dual->edges[i].next = dual->edges + pg->edges[i].inverse->prev->index;
+        dual->edges[i].prev = dual->edges + pg->edges[i].next->inverse->index;
+    }
+    
+    for(i = 0; i < pg->nf; i++){
+        dual->degree[i] = pg->faceSize[i];
+        dual->firstedge[i] = dual->edges + pg->facestart[i]->index;
+    }
+    
+    dual->maxf = pg->nv;
+    
+    dual->facestart = (PG_EDGE **)malloc(sizeof(PG_EDGE *)*(dual->maxf));
+        
+    if(dual->facestart == NULL){
+        dual->maxf = 0;
+        return dual;
+    }
+
+    dual->faceSize = (int *)malloc(sizeof(int)*(dual->maxf));
+
+    if(dual->faceSize == NULL){
+        dual->maxf = 0;
+        free(dual->facestart);
+        return dual;
+    }
+    
+    for(i = 0; i < pg->nv; i++){
+        dual->faceSize[i] = pg->degree[i];
+        dual->facestart[i] = dual->edges + pg->firstedge[i]->inverse->index;
+    }
+    
+    dual->dualComputed = TRUE;
+    
+    return dual;
+}
