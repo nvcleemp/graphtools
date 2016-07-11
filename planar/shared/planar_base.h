@@ -66,18 +66,20 @@ struct __plane_graph {
     
     //TRUE if the dual of this graph has been computed
     boolean dualComputed;
+    
+    //should be set to 30000 for a new graph
+    int markvalue;
 };
 
-static int markvalue = 30000;
-#define RESETMARKS(pg) {int mki; if ((markvalue += 2) > 30000) \
-       { markvalue = 2; for (mki=0;mki<(pg)->maxe;++mki) (pg)->edges[mki].mark=0;}}
-#define MARK(e) (e)->mark = markvalue
-#define MARKLO(e) (e)->mark = markvalue
-#define MARKHI(e) (e)->mark = markvalue+1
-#define UNMARK(e) (e)->mark = markvalue-1
-#define ISMARKED(e) ((e)->mark >= markvalue)
-#define ISMARKEDLO(e) ((e)->mark == markvalue)
-#define ISMARKEDHI(e) ((e)->mark > markvalue)
+#define RESETMARKS(pg) {int mki; if (((pg)->markvalue += 2) > 30000) \
+       { (pg)->markvalue = 2; for (mki=0;mki<(pg)->maxe;++mki) (pg)->edges[mki].mark=0;}}
+#define MARK(pg, e) (e)->mark = (pg)->markvalue
+#define MARKLO(pg, e) (e)->mark = (pg)->markvalue
+#define MARKHI(pg, e) (e)->mark = (pg)->markvalue+1
+#define UNMARK(pg, e) (e)->mark = (pg)->markvalue-1
+#define ISMARKED(pg, e) ((e)->mark >= (pg)->markvalue)
+#define ISMARKEDLO(pg, e) ((e)->mark == (pg)->markvalue)
+#define ISMARKEDHI(pg, e) ((e)->mark > (pg)->markvalue)
 
 /**
  * Creates a new planar graph data structure that can hold plane graphs with

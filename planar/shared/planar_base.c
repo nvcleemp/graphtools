@@ -63,6 +63,7 @@ PLANE_GRAPH *newPlaneGraph(int maxn, int maxe) {
     pg->facestart = NULL;
     pg->faceSize = NULL;
     pg->dualComputed = FALSE;
+    pg->markvalue = 30000;
     
     return pg;
 }
@@ -139,12 +140,12 @@ void makeDual(PLANE_GRAPH *pg) {
 
         e = ex = pg->firstedge[i];
         do {
-            if (!ISMARKEDLO(e)) {
+            if (!ISMARKEDLO(pg, e)) {
                 pg->facestart[nf] = ef = efx = e;
                 sz = 0;
                 do {
                     ef->rightface = nf;
-                    MARKLO(ef);
+                    MARKLO(pg, ef);
                     ef = ef->inverse->prev;
                     ++sz;
                 } while (ef != efx);
