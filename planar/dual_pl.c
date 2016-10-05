@@ -322,7 +322,7 @@ void writePlanarCodeShort(){
         exit(-1);
     }
     
-    for(i=0; i<nf; i++){
+    for(i=0; i<nv; i++){
         e = elast = firstedge[i];
         do {
             temp = e->end + 1;
