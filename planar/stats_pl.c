@@ -453,7 +453,7 @@ void determineEdgeOrbits(){
         edgeOrbits[i] = i;
         edgeOrbitsSize[i] = 1;
     }
-    vertexOrbitCount = ne/2;
+    edgeOrbitCount = ne/2;
     
     for(i = 0, j = 0; i < ne; i++){
         if(edges[i].start < edges[i].end){
