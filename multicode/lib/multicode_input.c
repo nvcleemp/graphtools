@@ -29,7 +29,7 @@ GRAPH *decodeMultiCode(unsigned short* code, GRAPH_INPUT_OPTIONS *options) {
     maxval = j = 0;
     i = 1;
     currentVertex = 0;
-    while(currentVertex < vertexCount) {
+    while(currentVertex < vertexCount - 1) {
         if (code[i] == 0) {
             if(degrees[currentVertex] > maxval)
                 maxval = degrees[currentVertex];
@@ -40,6 +40,9 @@ GRAPH *decodeMultiCode(unsigned short* code, GRAPH_INPUT_OPTIONS *options) {
         }
         i++;
     }
+    //check last vertex
+    if(degrees[currentVertex] > maxval)
+        maxval = degrees[currentVertex];
     
     if(options->maxval > 0){
         maxval = options->maxval;
@@ -55,7 +58,7 @@ GRAPH *decodeMultiCode(unsigned short* code, GRAPH_INPUT_OPTIONS *options) {
     //go through code and add edges
     i = 1;
     currentVertex = 0;
-    while(currentVertex < vertexCount) {
+    while(currentVertex < vertexCount - 1) {
         if (code[i] == 0) {
             currentVertex++;
         } else {
