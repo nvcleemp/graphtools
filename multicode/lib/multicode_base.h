@@ -29,17 +29,17 @@ struct __graph {
 
 #define NEIGHBOUR(g,v,i) (g->graph[v*(g->maxval)+i])
 
-GRAPH *newGraph(int maxn, int maxval);
+GRAPH *new_graph(int maxn, int maxval);
 
-void freeGraph(GRAPH *graph);
+void free_graph(GRAPH *graph);
 
-void addEdge(GRAPH *graph, int v, int w);
+void add_edge(GRAPH *graph, int v, int w);
 
-void removeEdge(GRAPH *graph, int v, int w, boolean all);
+void remove_edge(GRAPH *graph, int v, int w, boolean all);
 
-void prepareGraph(GRAPH *graph, int vertexCount);
+void prepare_graph(GRAPH *graph, int vertex_count);
 
-boolean areAdjacent(GRAPH *graph, int v, int w);
+boolean are_adjacent(GRAPH *graph, int v, int w);
 
 #endif	/* MULTICODE_BASE_H */
 

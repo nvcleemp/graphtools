@@ -9,7 +9,7 @@
 #include "multicode_base.h"
 
 
-GRAPH *newGraph(int maxn, int maxval){
+GRAPH *new_graph(int maxn, int maxval){
     if(maxn <= 0){
         fprintf(stderr, "maxn should be a positive integer -- exiting!\n");
         return NULL;
@@ -52,7 +52,7 @@ GRAPH *newGraph(int maxn, int maxval){
     return graph;
 }
 
-void freeGraph(GRAPH *graph){
+void free_graph(GRAPH *graph){
     free(graph->degrees);
     free(graph->graph);
     free(graph);
@@ -60,7 +60,7 @@ void freeGraph(GRAPH *graph){
 
 /* This method adds the edge (v,w) to graph.
  */
-void addEdge(GRAPH *graph, int v, int w) {
+void add_edge(GRAPH *graph, int v, int w) {
     NEIGHBOUR(graph, v, graph->degrees[v]) = w;
     NEIGHBOUR(graph, w, graph->degrees[w]) = v;
     graph->degrees[v]++;
@@ -71,7 +71,7 @@ void addEdge(GRAPH *graph, int v, int w) {
     }
 }
 
-boolean _removeEdge(GRAPH *graph, int v, int w){
+boolean _remove_edge(GRAPH *graph, int v, int w){
     int vi = 0, wi = 0;
     
     //find first position of w in the adjacency list of v
@@ -105,33 +105,33 @@ boolean _removeEdge(GRAPH *graph, int v, int w){
  * If all is TRUE, then all edges between v and w are removed. For simple graphs
  * the value of all is ignored.
  */
-void removeEdge(GRAPH *graph, int v, int w, boolean all){
-    boolean edgeRemoved = _removeEdge(graph, v, w);
-    while(all && edgeRemoved){
-        edgeRemoved = _removeEdge(graph, v, w);
+void remove_edge(GRAPH *graph, int v, int w, boolean all){
+    boolean was_an_edge_removed = _remove_edge(graph, v, w);
+    while(all && was_an_edge_removed){
+        was_an_edge_removed = _remove_edge(graph, v, w);
     }
 }
 
-void prepareGraph(GRAPH *graph, int vertexCount) {
+void prepare_graph(GRAPH *graph, int vertex_count) {
     int i, j;
     
-    if(vertexCount > graph->maxn){
-        fprintf(stderr, "Illegal size for graph (%d) -- exiting!\n", vertexCount);
+    if(vertex_count > graph->maxn){
+        fprintf(stderr, "Illegal size for graph (%d) -- exiting!\n", vertex_count);
         exit(-1);
     }
     
     //mark all vertices as having degree 0
-    for (i = 0; i < vertexCount; i++) {
+    for (i = 0; i < vertex_count; i++) {
         graph->degrees[i] = 0;
         for (j = 0; j < graph->maxval; j++) {
             NEIGHBOUR(graph, i, j) = EMPTY;
         }
     }
     
-    graph->n = vertexCount;
+    graph->n = vertex_count;
 }
 
-boolean areAdjacent(GRAPH *graph, int v, int w){
+boolean are_adjacent(GRAPH *graph, int v, int w){
     int i;
     
     for(i = 0; i < graph->degrees[v]; i++){

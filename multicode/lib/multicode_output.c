@@ -7,15 +7,15 @@
 
 #include "multicode_output.h"
 
-void writeMultiCodeChar(GRAPH *graph, FILE *f){
+void write_multi_code_char(GRAPH *graph, FILE *f){
     int i, j;
     
-    int vertexCount = graph->n;
+    int vertex_count = graph->n;
     
     //write the number of vertices
-    fputc(vertexCount, f);
+    fputc(vertex_count, f);
     
-    for(i=0; i<vertexCount-1; i++){
+    for(i=0; i<vertex_count-1; i++){
         for(j=0; j<graph->degrees[i]; j++){
             if(i<NEIGHBOUR(graph, i, j)){
                 fputc(NEIGHBOUR(graph, i, j) + 1, f);
@@ -25,33 +25,33 @@ void writeMultiCodeChar(GRAPH *graph, FILE *f){
     }
 }
 
-void writeShort(unsigned short value, FILE *f){
+void write_short(unsigned short value, FILE *f){
     if (fwrite(&value, sizeof (unsigned short), 1, f) != 1) {
         fprintf(stderr, "fwrite() failed -- exiting!\n");
         exit(-1);
     }
 }
 
-void writeMultiCodeShort(GRAPH *graph, FILE *f){
+void write_multi_code_short(GRAPH *graph, FILE *f){
     int i, j;
     
-    int vertexCount = graph->n;
+    int vertex_count = graph->n;
     
     //write the number of vertices
     fputc(0, f);
-    writeShort(vertexCount, f);
+    write_short(vertex_count, f);
     
-    for(i=1; i<vertexCount; i++){
+    for(i=1; i<vertex_count; i++){
         for(j=0; j<graph->degrees[i]; j++){
             if(i<NEIGHBOUR(graph, i, j)){
-                writeShort(NEIGHBOUR(graph, i, j) + 1, f);
+                write_short(NEIGHBOUR(graph, i, j) + 1, f);
             }
         }
-        writeShort(0, f);
+        write_short(0, f);
     }
 }
 
-void writeMultiCode(GRAPH *graph, FILE *f){
+void write_multi_code(GRAPH *graph, FILE *f){
     static int first = TRUE;
     
     if(first){
@@ -61,9 +61,9 @@ void writeMultiCode(GRAPH *graph, FILE *f){
     }
     
     if (graph->n <= 252) {
-        writeMultiCodeChar(graph, f);
+        write_multi_code_char(graph, f);
     } else if (graph->n <= 252*256) {
-        writeMultiCodeShort(graph, f);
+        write_multi_code_short(graph, f);
     } else {
         fprintf(stderr, "Graphs of that size are currently not supported -- exiting!\n");
         exit(-1);

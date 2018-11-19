@@ -11,7 +11,7 @@
 #include "multicode_base.h"
 #include<stdio.h>
 
-void writeMultiCode(GRAPH *graph, FILE *f);
+void write_multi_code(GRAPH *graph, FILE *f);
 
 #endif	/* MULTICODE_OUTPUT_H */
 
