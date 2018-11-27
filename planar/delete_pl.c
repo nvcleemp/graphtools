@@ -368,6 +368,8 @@ void help(char *name) {
     fprintf(stderr, "\nThis program can handle graphs up to %d vertices. Recompile if you need larger\n", MAXN);
     fprintf(stderr, "graphs.\n\n");
     fprintf(stderr, "Valid options\n=============\n");
+    fprintf(stderr, "    -a, --all\n");
+    fprintf(stderr, "       Write all vertex-deleted subgraphs to stdout.\n");
     fprintf(stderr, "    -h, --help\n");
     fprintf(stderr, "       Print this help and return.\n");
 }
@@ -381,15 +383,21 @@ int main(int argc, char *argv[]) {
 
     /*=========== commandline parsing ===========*/
 
+    boolean all_vertex_deleted = FALSE;
+    
     int c, i;
     char *name = argv[0];
     static struct option long_options[] = {
+        {"all", no_argument, NULL, 'a'},
         {"help", no_argument, NULL, 'h'}
     };
     int option_index = 0;
 
-    while ((c = getopt_long(argc, argv, "h", long_options, &option_index)) != -1) {
+    while ((c = getopt_long(argc, argv, "ah", long_options, &option_index)) != -1) {
         switch (c) {
+            case 'a':
+                all_vertex_deleted = TRUE;
+                break;
             case 'h':
                 help(name);
                 return EXIT_SUCCESS;
@@ -407,27 +415,41 @@ int main(int argc, char *argv[]) {
         deleted[i] = FALSE;
     }
     
-    for (i = 0; i < argc - optind; i++){
-        int deletedVertex = atoi(argv[optind+i]);
-        if(deletedVertex <= MAXN){
-            deleted[deletedVertex-1] = TRUE;
-        }
-    }
-
-    /*=========== read planar graphs ===========*/
-
-    unsigned short code[MAXCODELENGTH];
-    int length;
-    if (readPlanarCode(code, &length, stdin)) {
-        decodePlanarCode(code);
-        relabelVertices();
-        writeVertexDeletedPlanarCode();
-    
-        fprintf(stderr, "Read graph with %d %s.\n", nv, 
-                    nv==1 ? "vertex" : "vertices");
-        fprintf(stderr, "Written graph with %d %s.\n", newNv, 
-                    newNv==1 ? "vertex" : "vertices");
+    if(all_vertex_deleted){
+        unsigned short code[MAXCODELENGTH];
+        int length;
+        if (readPlanarCode(code, &length, stdin)) {
+            decodePlanarCode(code);
+            for(i = 0; i < nv; i++){
+                deleted[i] = TRUE;
+                relabelVertices();
+                writeVertexDeletedPlanarCode();
+                deleted[i] = FALSE;
+            }
+        }        
     } else {
-        fprintf(stderr, "Input contains no graph -- exiting!\n");
+        for (i = 0; i < argc - optind; i++){
+            int deletedVertex = atoi(argv[optind+i]);
+            if(deletedVertex <= MAXN){
+                deleted[deletedVertex-1] = TRUE;
+            }
+        }
+
+        /*=========== read planar graphs ===========*/
+
+        unsigned short code[MAXCODELENGTH];
+        int length;
+        if (readPlanarCode(code, &length, stdin)) {
+            decodePlanarCode(code);
+            relabelVertices();
+            writeVertexDeletedPlanarCode();
+
+            fprintf(stderr, "Read graph with %d %s.\n", nv, 
+                        nv==1 ? "vertex" : "vertices");
+            fprintf(stderr, "Written graph with %d %s.\n", newNv, 
+                        newNv==1 ? "vertex" : "vertices");
+        } else {
+            fprintf(stderr, "Input contains no graph -- exiting!\n");
+        }
     }
 }
