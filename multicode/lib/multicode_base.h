@@ -41,5 +41,10 @@ void prepare_graph(GRAPH *graph, int vertex_count);
 
 boolean are_adjacent(GRAPH *graph, int v, int w);
 
+int get_graph_order(GRAPH *graph);
+int get_graph_size(GRAPH *graph);
+int get_maximum_degree(GRAPH *graph);
+int get_minimum_degree(GRAPH *graph);
+
 #endif	/* MULTICODE_BASE_H */
 

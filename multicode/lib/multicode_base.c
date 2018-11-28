@@ -140,3 +140,43 @@ boolean are_adjacent(GRAPH *graph, int v, int w){
     
     return FALSE;
 }
+
+int get_graph_order(GRAPH *graph){
+    return graph->n;
+}
+
+int get_graph_size(GRAPH *graph){
+    int i, arc_count = 0;
+    
+    for(i = 0; i < graph->n; i++){
+        arc_count += graph->degrees[i];
+    }
+    
+    return arc_count/2;
+}
+
+int get_maximum_degree(GRAPH *graph){
+    int i, maximum_degree = 0;
+    
+    for(i = 0; i < graph->n; i++){
+        if(graph->degrees[i] > maximum_degree){
+            maximum_degree = graph->degrees[i];
+        }
+    }
+    
+    return maximum_degree;
+}
+
+int get_minimum_degree(GRAPH *graph){
+    if(graph->n == 0) return 0;
+    
+    int i, minimum_degree = graph->degrees[0];
+    
+    for(i = 1; i < graph->n; i++){
+        if(graph->degrees[i] < minimum_degree){
+            minimum_degree = graph->degrees[i];
+        }
+    }
+    
+    return minimum_degree;
+}
