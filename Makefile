@@ -51,7 +51,7 @@ planar: build/stats_pl build/count_pl build/select_pl \
 	build/delete_edges_pl build/filter_group_size_pl build/group_pl\
 	build/has_automorphism_swapping_partitions_pl\
 	build/suppress_degree2_pl build/delete_max_degree_pl\
-	build/name_pl
+	build/name_pl build/filter_degree_pl
 
 conversion: build/gconv build/genreg2multicode build/freetree2multicode\
             build/multicode2signedcode build/pregraphcode2multicode
@@ -197,6 +197,10 @@ build/suppress_degree2_pl: planar/suppress_degree2_pl.c
 build/name_pl: planar/name_pl.c planar/shared/planar_base.c planar/shared/planar_input.c planar/shared/planar_automorphismgroup.c
 	mkdir -p build
 	cc $(IFLAGS) $(LFLAGS) -o $@ -g $^ -lcprogutil
+
+build/filter_degree_pl: planar/filter_degree_pl.c
+	mkdir -p build
+	cc -o $@ -O4 $^
 
 build/subdivide_vertex: planar/subdivide_vertex.c
 	mkdir -p build
