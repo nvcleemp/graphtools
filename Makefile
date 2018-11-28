@@ -69,7 +69,8 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_edge_orbits build/multi_vertex_orbits
 
 multilib: build/headers/multicode_base.h build/headers/multicode_input.h \
-          build/headers/multicode_output.h build/libmultilib.a build/libmultilib-debug.a
+          build/headers/multicode_output.h build/headers/multicode_connectivity.h \
+          build/libmultilib.a build/libmultilib-debug.a
 
 visualise: build/writegraph2png build/writegraph2png.jar build/writegraph2tikz
 
@@ -625,6 +626,10 @@ build/multicode_output.o: multicode/lib/multicode_output.c
 	mkdir -p build
 	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -O3 -Wall
 
+build/multicode_connectivity.o: multicode/lib/multicode_connectivity.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -O3 -Wall
+
 build/multicode_base.debug.o: multicode/lib/multicode_base.c
 	mkdir -p build
 	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -g -Wall
@@ -637,10 +642,14 @@ build/multicode_output.debug.o: multicode/lib/multicode_output.c
 	mkdir -p build
 	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -g -Wall
 
-build/libmultilib.a: build/multicode_base.o build/multicode_input.o build/multicode_output.o
+build/multicode_connectivity.debug.o: multicode/lib/multicode_connectivity.c
+	mkdir -p build
+	cc $(IFLAGS) $(LFLAGS) -c $^ -o $@ -g -Wall
+
+build/libmultilib.a: build/multicode_base.o build/multicode_input.o build/multicode_output.o build/multicode_connectivity.o
 	ar rcs $@ $^
 
-build/libmultilib-debug.a: build/multicode_base.debug.o build/multicode_input.debug.o build/multicode_output.debug.o
+build/libmultilib-debug.a: build/multicode_base.debug.o build/multicode_input.debug.o build/multicode_output.debug.o build/multicode_connectivity.debug.o
 	ar rcs $@ $^
 
 build/headers/multicode_base.h: multicode/lib/multicode_base.h
@@ -655,6 +664,9 @@ build/headers/multicode_output.h: multicode/lib/multicode_output.h
 	mkdir -p build/headers
 	cp $^ $@
 
+build/headers/multicode_connectivity.h: multicode/lib/multicode_connectivity.h
+	mkdir -p build/headers
+	cp $^ $@
 
 sources: dist/graphtools-sources.zip dist/graphtools-sources.tar.gz
 
