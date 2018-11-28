@@ -65,6 +65,7 @@ multi: build/multiread build/multi_add_edges build/multi_cyclic_connect \
        build/multi_complement build/multi_multiply build/multi_star_product\
        build/multi_components build/multi_adjacency_matrix\
        build/multi_suppress_degree_2 build/multi_remove_degree_1\
+       build/multi_add_vertices\
        build/multi_simplify build/multi_cut_vertices build/multi_biconnected_components\
        build/multi_edge_orbits build/multi_vertex_orbits
 
@@ -213,6 +214,10 @@ build/multi_remove_edges: multicode/multi_remove_edges.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
 	
+build/multi_add_vertices: multicode/multi_add_vertices.c $(MULTICODE_SHARED)
+	mkdir -p build
+	cc -o $@ -O4 $^
+
 build/multi_combine: multicode/multi_combine.c $(MULTICODE_SHARED)
 	mkdir -p build
 	cc -o $@ -O4 $^
